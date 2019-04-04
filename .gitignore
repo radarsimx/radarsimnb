@@ -106,4 +106,8 @@ venv.bak/
 \.vscode/
 *.png
 
-\rasimpy/
+\radarsimpy/
+\.idea/
+
+# test
+test_*.ipynb
