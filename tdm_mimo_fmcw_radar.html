@@ -11320,7 +11320,7 @@ div.text_cell_render {
   /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
   outline: none;
   resize: none;
-  width: inherit;
+  
   border-style: none;
   padding: 0.5em 0.5em 0.5em 0.4em;
   color: #000;
@@ -11598,7 +11598,7 @@ kbd {
   font-size: 12px;
   line-height: 1.5;
   border-radius: 1px;
-  width: inherit;
+  
   font-size: inherit;
   height: 22px;
   padding: 0px;
@@ -11706,7 +11706,7 @@ select[multiple].celltoolbar select {
   line-height: 1.5;
   border-radius: 1px;
   box-shadow: none;
-  width: inherit;
+  
   font-size: inherit;
   height: 22px;
   line-height: 22px;
@@ -13111,10 +13111,8 @@ div#notebook {
     <!-- End of mathjax configuration --></head>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
 
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="TDM-MIMO-FMCW-Radar">TDM MIMO FMCW Radar<a class="anchor-link" href="#TDM-MIMO-FMCW-Radar">&#182;</a></h1><p>This is a time-division-multiplexing (TDM) multiple-input and multiple-output (MIMO) FMCW radar simulation example based on <code>RadarSimPy</code>.</p>
 <blockquote><p><code>RadarSimPy</code> is a radar simulation package built with python. <strong>This package is still under development by myself, and there is no plan to release it yet</strong>.</p>
@@ -13369,8 +13367,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Receiver">Receiver<a class="anchor-link" href="#Receiver">&#182;</a></h3><p>The parameters of the receiver are listed in the table below.</p>
 <table>
@@ -13437,8 +13434,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Transmitter-array">Transmitter array<a class="anchor-link" href="#Transmitter-array">&#182;</a></h3><p>The transmitter array consists of 4 antenna elements with a $2\lambda$ spacing. Both of the transmitter antenna elements have the same radiation pattern $\cos{\theta}$. The gain of the transmitter antenna elements is 6 dB.</p>
 
@@ -13493,8 +13489,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Receiver-array">Receiver array<a class="anchor-link" href="#Receiver-array">&#182;</a></h3><p>The receiver array consists of 8 antenna elements with a $\lambda /2$ spacing. All of the receiver antenna elements have the same radiation pattern $\cos{\theta}$. The gain of the receiver antenna elements is 6 dB.</p>
 
@@ -13524,8 +13519,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Create the FMCW radar model based on all the parameters defined above.</p>
 
@@ -13547,8 +13541,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Calculate the characteristics of the FMCW radar:</p>
 <ul>
@@ -13604,8 +13597,7 @@ Range_resolution:  1.5  m
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Targets">Targets<a class="anchor-link" href="#Targets">&#182;</a></h3><p>The propertities of targets are defined here. There are 3 targets in this simulation. The locations of the targets are defined through $(x, y, z)$ coordinates in meters, and the speeds of the targets are defined trough $(v_x, v_y, v_z)$ in $m/s$. The propertites of the targets also includes radar cross-section (RCS (dBsm)) and phase (radian).</p>
 
@@ -13630,108 +13622,7 @@ Range_resolution:  1.5  m
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">plotly.offline</span> <span class="k">import</span> <span class="n">download_plotlyjs</span><span class="p">,</span> <span class="n">init_notebook_mode</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">iplot</span>
-<span class="kn">import</span> <span class="nn">plotly.graph_objs</span> <span class="k">as</span> <span class="nn">go</span>
-<span class="kn">from</span> <span class="nn">plotly</span> <span class="k">import</span> <span class="n">tools</span>
 
-<span class="n">init_notebook_mode</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">rx_loc_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]))</span>
-<span class="n">rx_loc_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]))</span>
-<span class="n">rx_loc_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]))</span>
-<span class="k">for</span> <span class="n">rx_idx</span><span class="p">,</span> <span class="n">rx_element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]):</span>
-    <span class="n">rx_loc_x</span><span class="p">[</span><span class="n">rx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">rx_element</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">rx_loc_y</span><span class="p">[</span><span class="n">rx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">rx_element</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">rx_loc_z</span><span class="p">[</span><span class="n">rx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">rx_element</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
-
-<span class="n">tx_loc_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]))</span>
-<span class="n">tx_loc_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]))</span>
-<span class="n">tx_loc_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]))</span>
-<span class="k">for</span> <span class="n">tx_idx</span><span class="p">,</span> <span class="n">tx_element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;array&#39;</span><span class="p">]):</span>
-    <span class="n">tx_loc_x</span><span class="p">[</span><span class="n">tx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tx_element</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">tx_loc_y</span><span class="p">[</span><span class="n">tx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tx_element</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">tx_loc_z</span><span class="p">[</span><span class="n">tx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tx_element</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
-
-<span class="n">virtual_loc_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">channel_number</span><span class="p">)</span>
-<span class="n">virtual_loc_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">channel_number</span><span class="p">)</span>
-<span class="n">virtual_loc_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">channel_number</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">virtual_idx</span><span class="p">,</span> <span class="n">virtual_element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">virtual_array</span><span class="p">):</span>
-    <span class="n">virtual_loc_x</span><span class="p">[</span><span class="n">virtual_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">virtual_element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">virtual_loc_y</span><span class="p">[</span><span class="n">virtual_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">virtual_element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">virtual_loc_z</span><span class="p">[</span><span class="n">virtual_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">virtual_element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-
-<span class="n">rx_axis</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">rx_loc_x</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">rx_loc_y</span><span class="p">,</span>
-    <span class="n">z</span><span class="o">=</span><span class="n">rx_loc_z</span><span class="p">,</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Receiver&#39;</span><span class="p">,</span>
-    <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgb(17, 157, 255)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;square&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">tx_axis</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">tx_loc_x</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">tx_loc_y</span><span class="p">,</span>
-    <span class="n">z</span><span class="o">=</span><span class="n">tx_loc_z</span><span class="p">,</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Transmitter&#39;</span><span class="p">,</span>
-    <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgb(233, 30, 99)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;square&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">virtual_axis</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">virtual_loc_x</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">virtual_loc_y</span><span class="p">,</span>
-    <span class="n">z</span><span class="o">=</span><span class="n">virtual_loc_z</span><span class="p">,</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Virtual array&#39;</span><span class="p">,</span>
-    <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgb(255, 152, 0)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;diamond&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">rx_axis</span><span class="p">,</span> <span class="n">tx_axis</span><span class="p">,</span> <span class="n">virtual_axis</span><span class="p">]</span>
-
-<span class="k">for</span> <span class="n">target_idx</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
-    <span class="n">target_loc</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">target</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
-        <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">target</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>
-        <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="n">target</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]],</span>
-        <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Target &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">target_idx</span><span class="p">),</span>
-        <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_loc</span><span class="p">]</span>
-
-<span class="n">camera</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">up</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-    <span class="n">center</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-    <span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">1.8</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Radar Scene&#39;</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
-    <span class="n">scene</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;X (m)&#39;</span><span class="p">),</span>
-        <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Y (m)&#39;</span><span class="p">),</span>
-        <span class="n">zaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Z (m)&#39;</span><span class="p">),</span>
-        <span class="n">camera</span><span class="o">=</span><span class="n">camera</span><span class="p">,</span>
-        <span class="n">aspectmode</span><span class="o">=</span><span class="s1">&#39;cube&#39;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">120</span><span class="p">),</span>
-    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;h&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;radar_scene.html&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 <div class="output_wrapper">
 <div class="output">
@@ -13769,15 +13660,13 @@ if (document.getElementById("67361c56-e4d9-4d90-a160-d62ec6d95f6a")) {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Simulate-Baseband-Beat-Signals">Simulate Baseband Beat Signals<a class="anchor-link" href="#Simulate-Baseband-Beat-Signals">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Calculate beat signal matrix (beat_matrix):
 $$[channel, slow~time, fast~time]$$</p>
@@ -13803,40 +13692,7 @@ $$[channel, slow~time, fast~time]$$</p>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">samples_per_chirp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;pulse_length&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rx</span><span class="p">[</span><span class="s1">&#39;fs&#39;</span><span class="p">])</span>
 
-<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">ch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-        <span class="n">chirp</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">time_matrix</span><span class="p">[</span><span class="n">ch_idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-                <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;fc&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;bandwidth&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
-                <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;fc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;bandwidth&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
-                <span class="n">samples_per_chirp</span><span class="p">,</span>
-                <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Tx &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ch_idx</span><span class="o">/</span><span class="mi">8</span><span class="p">))</span><span class="o">+</span> <span class="s1">&#39;, Chirp &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[</span><span class="n">chirp</span><span class="p">]</span>
-
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Transmitter chirps&#39;</span><span class="p">,</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Frequency (GHz)&#39;</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Time (µs)&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;chirps.html&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 <div class="output_wrapper">
 <div class="output">
@@ -13863,35 +13719,7 @@ if (document.getElementById("21b0036a-de5d-437a-9a2c-b161a2b5bf3b")) {
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">beat_I</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">time_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">beat_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;I&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">beat_Q</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">time_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">beat_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">beat_I</span><span class="p">,</span> <span class="n">beat_Q</span><span class="p">]</span>
 
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Beat signal at chirp 0 and channel 0&#39;</span><span class="p">,</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Amplitude (V)&#39;</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Time (µs)&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;beat.html&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 <div class="output_wrapper">
 <div class="output">
@@ -13917,8 +13745,7 @@ if (document.getElementById("f995651a-eb0a-4d72-ae32-e5f28ba44eeb")) {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">&#182;</a></h2><h3 id="Range-profile">Range profile<a class="anchor-link" href="#Range-profile">&#182;</a></h3>
 </div>
@@ -13942,34 +13769,7 @@ if (document.getElementById("f995651a-eb0a-4d72-ae32-e5f28ba44eeb")) {
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">temp</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">)</span>
 
-<span class="n">range_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">max_range</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">samples_per_pulse</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">doppler_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;pulse_counts&#39;</span><span class="p">],</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;pulse_counts&#39;</span><span class="p">],</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])]</span>
-
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Range Profile&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Range (m)&#39;</span><span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Amplitude (dB)&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;range_profile.html&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 <div class="output_wrapper">
 <div class="output">
@@ -13995,8 +13795,7 @@ if (document.getElementById("f54631fa-7ed6-4ffc-9fdf-8e86edd9bcb9")) {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Digital-Beamforming">Digital Beamforming<a class="anchor-link" href="#Digital-Beamforming">&#182;</a></h3>
 </div>
@@ -14040,13 +13839,6 @@ if (document.getElementById("f54631fa-7ed6-4ffc-9fdf-8e86edd9bcb9")) {
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\Users\Zach\Anaconda3\envs\zpeng\lib\site-packages\scipy\signal\windows\windows.py:1435: UserWarning:
-
-This window is not suitable for spectral analysis for attenuation values lower than about 45dB because the equivalent noise bandwidth of a Chebyshev window does not grow monotonically with increasing sidelobe attenuation when the attenuation is smaller than about 45 dB.
-
-</pre>
-</div>
 </div>
 
 </div>
@@ -14054,55 +13846,7 @@ This window is not suitable for spectral analysis for attenuation values lower t
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">map_2d</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">polar_image</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">AF</span><span class="p">),</span> <span class="n">radar</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">samples_per_pulse</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
 
-<span class="n">range_axis_la</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">max_range</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">samples_per_pulse</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">range_axis_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-    <span class="o">-</span><span class="n">radar</span><span class="o">.</span><span class="n">max_range</span><span class="p">,</span>
-    <span class="n">radar</span><span class="o">.</span><span class="n">max_range</span><span class="p">,</span>
-    <span class="n">radar</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">samples_per_pulse</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">go</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">range_axis_lo</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">range_axis_la</span><span class="p">,</span>
-        <span class="n">z</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">map_2d</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">),</span>
-        <span class="n">colorscale</span><span class="o">=</span><span class="s1">&#39;Rainbow&#39;</span><span class="p">)</span>
-<span class="p">]</span>
-
-<span class="n">camera</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">up</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-    <span class="n">center</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-    <span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">2.5</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;2D Mapping&#39;</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
-    <span class="n">scene</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Latitude (m)&#39;</span><span class="p">),</span>
-        <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Longitude (m)&#39;</span><span class="p">),</span>
-        <span class="n">zaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Amplitude (dB)&#39;</span><span class="p">),</span>
-        <span class="n">camera</span><span class="o">=</span><span class="n">camera</span><span class="p">,</span>
-        <span class="n">aspectmode</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="c1">#     margin=dict(l=0, r=0, b=60, t=100),</span>
-<span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;map_2d.html&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 <div class="output_wrapper">
 <div class="output">
@@ -14128,20 +13872,7 @@ if (document.getElementById("5820d672-373a-4381-8f4e-7d583bc66056")) {
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
 
-    </div>
-</div>
-</div>
-
-</div>
-    </div>
   </div>
 </body>
 
