@@ -13823,7 +13823,9 @@ if (document.getElementById("f54631fa-7ed6-4ffc-9fdf-8e86edd9bcb9")) {
 <span class="n">AF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span>
     <span class="n">A</span><span class="p">,</span> <span class="n">range_profile</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
         <span class="n">bf_window</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">samples_per_pulse</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">AF_dB</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">AF</span><span class="p">))</span>
+
+<span class="n">map_2d</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">polar_image</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">AF</span><span class="p">),</span> <span class="n">radar</span><span class="o">.</span><span class="n">receiver</span><span class="o">.</span><span class="n">samples_per_pulse</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
 </pre></div>
 
     </div>
