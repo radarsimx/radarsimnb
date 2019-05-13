@@ -11021,7 +11021,7 @@ div.output_subarea {
   box-flex: 1;
   /* Modern browsers */
   flex: 1;
-  max-width: calc(100% - 14ex);
+  max-width: 100%;
 }
 div.output_scroll div.output_subarea {
   overflow-x: visible;
@@ -13111,10 +13111,8 @@ div#notebook {
     <!-- End of mathjax configuration --></head>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
 
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Doppler-(Interferometry)-Radar">Doppler (Interferometry) Radar<a class="anchor-link" href="#Doppler-(Interferometry)-Radar">&#182;</a></h1><p>This is a Doppler (interferometry) radar simulation example based on <code>RadarSimPy</code>.</p>
 <blockquote><p><code>RadarSimPy</code> is a radar simulation package built with python. <strong><a href="https://zpeng.me/#contact">Contact me</a> if you are interested in this module.</strong></p>
@@ -13216,8 +13214,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Targets">Targets<a class="anchor-link" href="#Targets">&#182;</a></h3><p>The propertities of targets are defined here. There is only one target in this simulaiton. The motion of the target is defined by <code>1.5+1e-3*math.sin(2*math.pi*1*t)</code>.</p>
 
@@ -13241,15 +13238,13 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Simulate-Baseband-Beat-Signals">Simulate Baseband Beat Signals<a class="anchor-link" href="#Simulate-Baseband-Beat-Signals">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Calculate baseband signal matrix:
 $$[channels, pulses, ADC~samples]$$</p>
@@ -13316,7 +13311,6 @@ $$[channels, pulses, ADC~samples]$$</p>
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13343,7 +13337,6 @@ $$[channels, pulses, ADC~samples]$$</p>
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13438,7 +13431,6 @@ if (outputEl) {{
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13495,8 +13487,7 @@ if (outputEl) {{
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Phase-demodulation">Phase demodulation<a class="anchor-link" href="#Phase-demodulation">&#182;</a></h2>
 </div>
@@ -13548,7 +13539,6 @@ if (outputEl) {{
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13618,7 +13608,7 @@ if (outputEl) {{
 </div>
 
 </div>
-    </div>
+    
   </div>
 </body>
 

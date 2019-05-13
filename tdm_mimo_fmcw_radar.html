@@ -11021,7 +11021,7 @@ div.output_subarea {
   box-flex: 1;
   /* Modern browsers */
   flex: 1;
-  max-width: calc(100% - 14ex);
+  max-width: 100%;
 }
 div.output_scroll div.output_subarea {
   overflow-x: visible;
@@ -13111,10 +13111,8 @@ div#notebook {
     <!-- End of mathjax configuration --></head>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
 
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="TDM-MIMO-FMCW-Radar">TDM MIMO FMCW Radar<a class="anchor-link" href="#TDM-MIMO-FMCW-Radar">&#182;</a></h1><p>This is a time-division-multiplexing (TDM) multiple-input and multiple-output (MIMO) FMCW radar simulation example based on <code>RadarSimPy</code>.</p>
 <blockquote><p><code>RadarSimPy</code> is a radar simulation package built with python. <strong><a href="https://zpeng.me/#contact">Contact me</a> if you are interested in this module.</strong></p>
@@ -13400,8 +13398,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Receiver">Receiver<a class="anchor-link" href="#Receiver">&#182;</a></h3><p>The parameters of the receiver are listed in the table below.</p>
 <table>
@@ -13473,8 +13470,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Create the FMCW radar model based on all the parameters defined above.</p>
 
@@ -13494,8 +13490,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Calculate the characteristics of the FMCW radar:</p>
 <ul>
@@ -13535,7 +13530,6 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -13551,8 +13545,7 @@ Range_resolution:  1.5  m
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Targets">Targets<a class="anchor-link" href="#Targets">&#182;</a></h3><p>The propertities of targets are defined here. There are 3 targets in this simulation. The locations of the targets are defined through $(x, y, z)$ coordinates in meters, and the speeds of the targets are defined trough $(v_x, v_y, v_z)$ in $m/s$. The propertites of the targets also includes radar cross-section (RCS (dBsm)) and phase (radian).</p>
 
@@ -13667,7 +13660,6 @@ Range_resolution:  1.5  m
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13694,7 +13686,6 @@ Range_resolution:  1.5  m
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13751,15 +13742,13 @@ if (outputEl) {{
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Simulate-Baseband-Beat-Signals">Simulate Baseband Beat Signals<a class="anchor-link" href="#Simulate-Baseband-Beat-Signals">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Calculate baseband signal matrix:
 $$[channel, slow~time, fast~time]$$</p>
@@ -13824,7 +13813,6 @@ $$[channel, slow~time, fast~time]$$</p>
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13918,7 +13906,6 @@ if (outputEl) {{
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -13975,8 +13962,7 @@ if (outputEl) {{
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">&#182;</a></h2><h3 id="Range-profile">Range profile<a class="anchor-link" href="#Range-profile">&#182;</a></h3>
 </div>
@@ -14035,7 +14021,6 @@ if (outputEl) {{
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -14092,8 +14077,7 @@ if (outputEl) {{
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"> <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Digital-Beamforming">Digital Beamforming<a class="anchor-link" href="#Digital-Beamforming">&#182;</a></h3>
 </div>
@@ -14136,7 +14120,6 @@ if (outputEl) {{
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -14206,7 +14189,6 @@ This window is not suitable for spectral analysis for attenuation values lower t
 
 <div class="output_area">
 
-    <div class="prompt"></div>
 
 
 
@@ -14256,31 +14238,10 @@ if (outputEl) {{
             </script>
         </div>
 </div>
-
-</div>
-
 </div>
 </div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-    </div>
 </div>
 </div>
-
 </div>
-    </div>
-  </div>
 </body>
-
- 
-
-
 </html>
