@@ -37,13 +37,13 @@ it_pfa = np.nditer(pfa, flags=['f_index'])
 data = []
 while not it_pfa.finished:
     data.append(go.Scatter(
-        x=snr, y=pd[it_pfa.index, :], name=r'$P_{fa} = '+str(it_pfa[0])+', N = 1$'))
+        x=snr, y=pd[it_pfa.index, :], name='Pfa = '+str(it_pfa[0])))
     it_pfa.iternext()
 
 layout = go.Layout(
-    title='Swerling 3',
-    yaxis=dict(title=r'$\text{Probability of detection } P_d$'),
-    xaxis=dict(title=r'$\text{SNR (dB)}$'),
+    title=r'$Swerling~3, N = 1$',
+    yaxis=dict(title='Probability of detection Pd'),
+    xaxis=dict(title='SNR (dB)'),
 )
 go.Figure(data=data, layout=layout)
 
@@ -59,14 +59,14 @@ it_pfa = np.nditer(pfa, flags=['f_index'])
 data = []
 while not it_pfa.finished:
     data.append(go.Scatter(
-        x=snr, y=pd[it_pfa.index, :], name=r'$P_{fa} = '+str(it_pfa[0])+', N = 20$'))
+        x=snr, y=pd[it_pfa.index, :], name='Pfa = '+str(it_pfa[0])))
     it_pfa.iternext()
 
 
 layout = go.Layout(
-    title='Swerling 3',
-    yaxis=dict(title=r'$\text{Probability of detection } P_d$'),
-    xaxis=dict(title=r'$\text{SNR (dB)}$'),
+    title=r'$Swerling~3, N = 20$',
+    yaxis=dict(title='Probability of detection Pd'),
+    xaxis=dict(title='SNR (dB)'),
 )
 go.Figure(data=data, layout=layout)
 
@@ -88,17 +88,17 @@ pd_real = roc_pd(pfa, snr, N, 'Real')
 
 #%%
 data = []
-data.append(go.Scatter(x=snr, y=pd_sw1, name='Swerling 1'+', N = '+str(N)))
-data.append(go.Scatter(x=snr, y=pd_sw2, name='Swerling 2'+', N = '+str(N)))
-data.append(go.Scatter(x=snr, y=pd_sw3, name='Swerling 3'+', N = '+str(N)))
-data.append(go.Scatter(x=snr, y=pd_sw4, name='Swerling 4'+', N = '+str(N)))
-data.append(go.Scatter(x=snr, y=pd_sw5, name='Swerling 5'+', N = '+str(N)))
-data.append(go.Scatter(x=snr, y=pd_coherent, name='Coherent'+', N = '+str(N)))
-data.append(go.Scatter(x=snr, y=pd_real, name='Real'+', N = '+str(N)))
+data.append(go.Scatter(x=snr, y=pd_sw1, name='Swerling 1'))
+data.append(go.Scatter(x=snr, y=pd_sw2, name='Swerling 2'))
+data.append(go.Scatter(x=snr, y=pd_sw3, name='Swerling 3'))
+data.append(go.Scatter(x=snr, y=pd_sw4, name='Swerling 4'))
+data.append(go.Scatter(x=snr, y=pd_sw5, name='Swerling 5'))
+data.append(go.Scatter(x=snr, y=pd_coherent, name='Coherent'))
+data.append(go.Scatter(x=snr, y=pd_real, name='Real'))
 
 
 layout = go.Layout(
-    title=r'$P_{fa} = '+str(pfa)+'$',
+    title=r'$P_{fa} = '+str(pfa)+', N = '+str(N)+'$',
     yaxis=dict(title=r'$\text{Probability of detection } P_d$'),
     xaxis=dict(title=r'$\text{SNR (dB)}$'),
 )
@@ -124,17 +124,17 @@ snr_real = roc_snr(pfa, pd, N, 'Real')
 
 #%%
 data = []
-data.append(go.Scatter(x=pd, y=snr_sw1, name='Swerling 1'+', N = '+str(N)))
-data.append(go.Scatter(x=pd, y=snr_sw2, name='Swerling 2'+', N = '+str(N)))
-data.append(go.Scatter(x=pd, y=snr_sw3, name='Swerling 3'+', N = '+str(N)))
-data.append(go.Scatter(x=pd, y=snr_sw4, name='Swerling 4'+', N = '+str(N)))
-data.append(go.Scatter(x=pd, y=snr_sw5, name='Swerling 5'+', N = '+str(N)))
-data.append(go.Scatter(x=pd, y=snr_coherent, name='Coherent'+', N = '+str(N)))
-data.append(go.Scatter(x=pd, y=snr_real, name='Real'+', N = '+str(N)))
+data.append(go.Scatter(x=pd, y=snr_sw1, name='Swerling 1'))
+data.append(go.Scatter(x=pd, y=snr_sw2, name='Swerling 2'))
+data.append(go.Scatter(x=pd, y=snr_sw3, name='Swerling 3'))
+data.append(go.Scatter(x=pd, y=snr_sw4, name='Swerling 4'))
+data.append(go.Scatter(x=pd, y=snr_sw5, name='Swerling 5'))
+data.append(go.Scatter(x=pd, y=snr_coherent, name='Coherent'))
+data.append(go.Scatter(x=pd, y=snr_real, name='Real'))
 
 
 layout = go.Layout(
-    title=r'$P_{fa} = '+str(pfa)+'$',
+    title=r'$P_{fa} = '+str(pfa)+', N = '+str(N)+'$',
     xaxis=dict(title=r'$\text{Probability of detection } P_d$'),
     yaxis=dict(title=r'$\text{Minimal SNR (dB)}$'),
 )
