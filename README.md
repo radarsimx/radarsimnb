@@ -12,5 +12,12 @@ Jupyter notebooks for radar systems simulation based on `radarsimpy`.
 - Target simulation
   - [Target RCS evaluation with ray tracing](https://zpeng.me/index.php/rcs-calculation-with-ray-tracing)
 
+- Radar systen and scene simulation with ray tracing
+  - [FMCW radar ray tracing](https://zpeng.me/index.php/fmcw-radar-ray-tracing/)
+  - [Multi-path effect with ray tracing](https://zpeng.me/index.php/multi-path-effect-with-ray-tracing/)
+
+- LIDAR (Experimental)
+  - [LIDAR point cloud](https://zpeng.me/index.php/lidar-point-cloud/)
+
 - Characterization
-  - [Receiver Operating Characteristic (ROC)](https://zpeng.me/index.php/receiver-operating-characteristic/)
+  - [Receiver operating characteristic (ROC)](https://zpeng.me/index.php/receiver-operating-characteristic/)
