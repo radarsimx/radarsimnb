@@ -12,7 +12,7 @@ Jupyter notebooks for radar systems simulation based on `radarsimpy`.
 - Target simulation
   - [Target RCS evaluation with ray tracing](https://zpeng.me/index.php/rcs-calculation-with-ray-tracing)
 
-- Radar systen and scene simulation with ray tracing
+- Radar system and scene simulation with ray tracing
   - [FMCW radar ray tracing](https://zpeng.me/index.php/fmcw-radar-ray-tracing/)
   - [Multi-path effect with ray tracing](https://zpeng.me/index.php/multi-path-effect-with-ray-tracing/)
 
