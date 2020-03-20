@@ -11021,7 +11021,7 @@ div.output_subarea {
   box-flex: 1;
   /* Modern browsers */
   flex: 1;
-  max-width: calc(100% - 14ex);
+  max-width: 100%;
 }
 div.output_scroll div.output_subarea {
   overflow-x: visible;
@@ -13072,10 +13072,8 @@ div#notebook {
     <!-- End of mathjax configuration --></head>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
 
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Multi-Path-Effect-with-Raytracing">Multi-Path Effect with Raytracing<a class="anchor-link" href="#Multi-Path-Effect-with-Raytracing">&#182;</a></h1><p>This is an example of using <code>RadarSimPy</code> to simulate an FMCW radar with a corner reflector model above the ground surface. Ray-Tracing/Shoot-and-Bounce-Rays method is used in <code>RadarSimPy</code>. The ray-tracing engine <code>RadarSimC</code>, which is built with C++, is integrated in RadarSimPy.</p>
 <blockquote><p><code>RadarSimPy</code> is a radar simulation package built with python. <strong><a href="https://zpeng.me/#contact" target="_blank">Contact me</a> if you are interested in this module.</strong></p>
@@ -13245,8 +13243,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Case-1:-A-corner-reflector-with-ground-surface">Case 1: A corner reflector with ground surface<a class="anchor-link" href="#Case-1:-A-corner-reflector-with-ground-surface">&#182;</a></h2>
 </div>
@@ -13300,8 +13297,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Case-2:-A-corner-reflector-without-ground-surface">Case 2: A corner reflector without ground surface<a class="anchor-link" href="#Case-2:-A-corner-reflector-without-ground-surface">&#182;</a></h2>
 </div>
@@ -13341,8 +13337,7 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Results">Results<a class="anchor-link" href="#Results">&#182;</a></h2><p>Duo to the multi-path:</p>
 <ul>
@@ -13386,8 +13381,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
+    
 
 
 <div class="output_html rendered_html output_subarea ">
@@ -13417,7 +13411,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    
 
 
 
@@ -13472,7 +13466,6 @@ if (outputEl) {{
 </div>
 </div>
 
-</div>
     </div>
   </div>
 </body>
