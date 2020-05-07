@@ -10455,7 +10455,8 @@ border-width: 0px;
 border-style: solid;
 border-color: transparent;
 width: 100%;
-padding: 0px;
+padding-top: 5px;
+padding-bottom: 5px;
 /* This acts as a spacer between cells, that is outside the border */
 margin: 0px;
 outline: none;
