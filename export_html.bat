@@ -17,3 +17,5 @@ jupyter nbconvert --output-dir='./html' --template my_template.tpl --to html not
 jupyter nbconvert --output-dir='./html' --template my_template.tpl --to html notebooks/tdm_mimo_fmcw_radar.ipynb
 
 jupyter nbconvert --output-dir='./html' --template my_template.tpl --to html notebooks/doppler_rotating_target_raytracing.ipynb
+
+jupyter nbconvert --output-dir='./html' --template my_template.tpl --to html notebooks/isar_raytracing.ipynb
