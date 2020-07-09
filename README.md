@@ -24,10 +24,15 @@ There are 7 modules in this package:
 - numpy
 - scipy
 - numpy-stl
+- plotly
+- Jupyter Notebook
+- python 3.8.x (64-bits) only
 
 ## Installation
 
 [Contact me](https://zpeng.me/#contact) if you are interested in this module.
+
+Install the dependencies into python `pip install numpy scipy numpy-stl plotly notebook`
 
 To use the module, please put the radarsimpy folder within your project folder as shown below.
 
