@@ -6,33 +6,25 @@ Jupyter notebooks for radar systems simulation based on `radarsimpy`.
 There are 7 modules in this package:
 
 1. `Radar`: Defines radar parameters
-
 1. `simulator`: Simulates and generates raw time domain baseband data
-
+1. `simulatorcpp`: C++ enginer of radar simulator for simulating and generating raw time domain baseband data
 1. `processing`: Basic radar signal processing
-
 1. `tools`: Receiver operating characteristic analysis
-
 1. `lidar_scene`: Simulates LiDAR's point cloud based on a 3D environment model with ray tracing
-
 1. `rcs`: Simulates target's radar cross section (RCS) based on the 3D model with ray tracing
-
 1. `scene`: Simulates radar's response signal in a 3D enviroment model with ray tracing
 
 ## Dependence
 
 - numpy
 - scipy
-- numpy-stl
-- plotly
-- Jupyter Notebook
-- python 3.8.x (64-bits) only
+- numpy-stl (for ray-tracing)
+- plotly (for visualization)
+- Jupyter notebook
 
 ## Installation
 
 [Contact me](https://zpeng.me/#contact) if you are interested in this module.
-
-Install the dependencies into python `pip install numpy scipy numpy-stl plotly notebook`
 
 To use the module, please put the radarsimpy folder within your project folder as shown below.
 
