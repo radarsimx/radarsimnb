@@ -6,6 +6,8 @@ jupyter nbconvert --output-dir=./html --to html notebooks/fmcw_radar.ipynb
 
 jupyter nbconvert --output-dir=./html --to html notebooks/fmcw_reflector_raytracing.ipynb
 
+jupyter nbconvert --output-dir=./html --to html notebooks/fmcw_car_raytracing.ipynb
+
 jupyter nbconvert --output-dir=./html --to html notebooks/lidar.ipynb
 
 jupyter nbconvert --output-dir=./html --to html notebooks/multi_path_raytracing.ipynb
