@@ -1,3 +1,5 @@
+<a href="https://rookiepeng.github.io/radarsimpy/" target="_blank" rel="nofollow"><img src="https://img.shields.io/badge/Documentation-latest-brightgree?style=flat&logo=read-the-docs" height="20" ></a>
+
 # Radar Simulation
 
 Jupyter notebooks for radar systems simulation based on `radarsimpy`.
