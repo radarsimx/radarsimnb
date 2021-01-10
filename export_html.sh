@@ -23,3 +23,5 @@ jupyter nbconvert --output-dir=./html --to html notebooks/tdm_mimo_fmcw_radar.ip
 jupyter nbconvert --output-dir=./html --to html notebooks/doppler_rotating_target_raytracing.ipynb
 
 jupyter nbconvert --output-dir=./html --to html notebooks/isar_raytracing.ipynb
+
+jupyter nbconvert --output-dir=./html --to html notebooks/cfar.ipynb
