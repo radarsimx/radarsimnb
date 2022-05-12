@@ -108,6 +108,7 @@ venv.bak/
 
 \radarsimpy/
 \.idea/
+\meshio/
 
 # test
 test_*.ipynb
