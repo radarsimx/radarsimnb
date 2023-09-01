@@ -7661,7 +7661,7 @@ if (outputEl) {{
 <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
     <span class="n">rcs</span><span class="p">[</span><span class="n">f_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span>
-        <span class="n">rcs_sbr</span><span class="p">(</span><span class="s1">'../models/cr.stl'</span><span class="p">,</span>
+        <span class="n">rcs_sbr</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span>
                 <span class="n">f</span><span class="p">,</span>
                 <span class="n">phi</span><span class="p">,</span>
                 <span class="n">theta</span><span class="p">,</span>
@@ -7789,7 +7789,7 @@ if (outputEl) {{
 <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">phi_idx</span><span class="p">,</span> <span class="n">phi_ang</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
     <span class="n">rcs</span><span class="p">[</span><span class="n">phi_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span>
-        <span class="n">rcs_sbr</span><span class="p">(</span><span class="s1">'../models/cr.stl'</span><span class="p">,</span>
+        <span class="n">rcs_sbr</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span>
                 <span class="n">freq</span><span class="p">,</span>
                 <span class="n">phi_ang</span><span class="p">,</span>
                 <span class="n">theta</span><span class="p">,</span>
