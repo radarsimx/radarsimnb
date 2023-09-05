@@ -1,11 +1,11 @@
 [![Documentations](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Documentation&logo=read-the-docs)](https://radarsimx.github.io/radarsimpy/)
 [![Download](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Download&logo=python)](https://radarsimx.com/product/radarsimpy/)
 
-# Jupyter Notebook Examples for RadarSimPy
+# Jupyter Notebook Examples of RadarSimPy
 
 <img src="https://github.com/radarsimx/radarsimpy/blob/master/assets/radarsimnb.svg" alt="logo" width="200"/>
 
-Jupyter notebooks for radar systems simulation based on `RadarSimPy` & `RadarSimC`.
+Jupyter notebooks of radar systems simulation based on `RadarSimPy` & `RadarSimC`.
 
 - [`RadarSimPy`](https://radarsimx.com/radarsimx/radarsimpy/) is a radar simulation package built with python
 - [`RadarSimC`](https://radarsimx.com/radarsimx/radarsimc/) is the C++/CUDA backend of `RadarSimPy`
