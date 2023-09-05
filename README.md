@@ -1,4 +1,5 @@
-<a href="https://radarsimx.github.io/radarsimpy/" target="_blank" rel="nofollow"><img src="https://img.shields.io/badge/Documentation-latest-brightgree?style=flat&logo=read-the-docs" height="20"></a>
+[![Documentations](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Documentation&logo=read-the-docs)](https://radarsimx.github.io/radarsimpy/)
+[![Download](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Download&logo=python)](https://radarsimx.com/product/radarsimpy/)
 
 # Jupyter Notebook Examples for RadarSimPy
 
@@ -14,7 +15,6 @@ Jupyter notebooks for radar systems simulation based on `RadarSimPy` & `RadarSim
 - numpy
 - scipy
 - [PyMeshLab](https://github.com/cnr-isti-vclab/PyMeshLab)
-- [Visual C++ Runtime](https://aka.ms/vs/16/release/vc_redist.x64.exe/) (*Windows only*)
 
 ## Installation
 
@@ -23,6 +23,7 @@ To use the module, please put the radarsimpy folder within your project folder a
 ---
 
 - ### Windows
+
   - your_project.py
   - your_project.ipynb
   - radarsimpy
@@ -34,6 +35,7 @@ To use the module, please put the radarsimpy folder within your project folder a
 ---
 
 - ### Linux
+
   - your_project.py
   - your_project.ipynb
   - radarsimpy
@@ -66,31 +68,4 @@ To use the module, please put the radarsimpy folder within your project folder a
 
 ## Usage Examples
 
-- ### Radar modeling and point target simulation
-  - [Doppler radar](./notebooks/doppler_radar.ipynb)
-  - [FMCW radar](./notebooks/fmcw_radar.ipynb)
-  - [TDM MIMO FMCW radar](./notebooks/tdm_mimo_fmcw_radar.ipynb)
-  - [PMCW radar](./notebooks/pmcw_radar.ipynb)
-  - [Arbitrary waveform](./notebooks/arbitrary_waveform.ipynb)
-  - [Phase noise](./notebooks/phase_noise.ipynb)
-  - [CFAR](./notebooks/cfar.ipynb)
-
-- ### Radar modeling and 3D scene simulation with raytracing
-  - [Imaging radar](./notebooks/rt_fmcw_imaging_radar.ipynb)
-  - [FMCW radar with a corner reflector](./notebooks/rt_fmcw_corner_reflector.ipynb)
-  - [FMCW radar with a plate](./notebooks/rt_fmcw_plate.ipynb)
-  - [FMCW radar with a car](./notebooks/rt_fmcw_car.ipynb)
-  - [Doppler of a turbine](./notebooks/rt_doppler_turbine.ipynb)
-  - [Micro-Doppler](./notebooks/rt_micro_doppler.ipynb)
-  - [Multi-path effect](./notebooks/rt_multi_path.ipynb)
-
-- ### 3D modeled target's RCS simulation
-  - [Corner reflector RCS](./notebooks/rcs_corner_reflector.ipynb)
-  - [Plate RCS](./notebooks/rcs_plate.ipynb)
-  - [Car RCS](./notebooks/rcs_car.ipynb)
-
-- ### LiDAR point cloud
-  - [LIDAR point cloud](./notebooks/lidar.ipynb)
-
-- ### Characterization
-  - [Receiver operating characteristic (ROC)](./notebooks/roc.ipynb)
+Check [Jupyter notebooks](./notebooks) or visit [radarsimx.com](https://radarsimx.com/category/examples/).
