@@ -6,10 +6,10 @@
 
 <img src="https://github.com/radarsimx/radarsimpy/blob/master/assets/radarsimnb.svg" alt="logo" width="200"/>
 
-Jupyter notebooks of radar systems simulation based on `RadarSimPy` & `RadarSimC`.
+Jupyter notebooks of radar systems simulation based on `RadarSimPy` & `RadarSimCpp`.
 
 - [`RadarSimPy`](https://radarsimx.com/radarsimx/radarsimpy/) is a radar simulation package built with python
-- [`RadarSimC`](https://radarsimx.com/radarsimx/radarsimc/) is the C++/CUDA backend of `RadarSimPy`
+- [`RadarSimCpp`](https://radarsimx.com/radarsimx/radarsimcpp/) is the C++/CUDA backend of `RadarSimPy`
 
 ## Dependence
 
@@ -29,7 +29,7 @@ To use the module, please put the radarsimpy folder within your project folder a
   - your_project.ipynb
   - radarsimpy
     - \_\_init__.py
-    - radarsimc.dll
+    - radarsimcpp.dll
     - scene.xxx.pyd
     - ...
 
@@ -41,7 +41,7 @@ To use the module, please put the radarsimpy folder within your project folder a
   - your_project.ipynb
   - radarsimpy
     - \_\_init__.py
-    - libradarsimc.so
+    - libradarsimcpp.so
     - scene.xxx.so
     - ...
 
