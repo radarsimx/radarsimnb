@@ -1,5 +1,5 @@
 [![Documentations](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Documentation&logo=read-the-docs)](https://radarsimx.github.io/radarsimpy/)
-[![Download-CPU](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Download-CPU&logo=python)](https://radarsimx.com/product/radarsimpy/)
+[![Download](https://img.shields.io/github/v/tag/radarsimx/radarsimpy?label=Download&logo=python)](https://radarsimx.com/product/radarsimpy/)
 
 # Jupyter Notebook Examples of RadarSimPy
 
