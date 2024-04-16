@@ -7484,8 +7484,8 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">radarsimpy</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'`RadarSimPy` used in this example is version: '</span> <span class="o">+</span>
-      <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -7498,7 +7498,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>`RadarSimPy` used in this example is version: 12.1.0
+<pre>`RadarSimPy` used in this example is version: 12.3.0
 </pre>
 </div>
 </div>
@@ -7539,35 +7539,35 @@ a.anchor-link {
 <span class="n">car3_yaw</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># deg/s</span>
 
 <span class="n">ground</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'model'</span><span class="p">:</span> <span class="s1">'../models/surface_60x60.stl'</span><span class="p">,</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/surface_60x60.stl"</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">car_1</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'model'</span><span class="p">:</span> <span class="s1">'../models/vehicles/ford_raptor.stl'</span><span class="p">,</span>
-    <span class="s1">'location'</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'rotation'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/vehicles/ford_raptor.stl"</span><span class="p">,</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"rotation"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
 <span class="p">}</span>
 
 <span class="n">car_2</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'model'</span><span class="p">:</span> <span class="s1">'../models/vehicles/lamborgini_aventador.stl'</span><span class="p">,</span>
-    <span class="s1">'location'</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'rotation'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'rotation_rate'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'speed'</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/vehicles/lamborgini_aventador.stl"</span><span class="p">,</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"rotation"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"rotation_rate"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
 <span class="p">}</span>
 
 <span class="n">car_3</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'model'</span><span class="p">:</span> <span class="s1">'../models/vehicles/tesla_model_s.stl'</span><span class="p">,</span>
-    <span class="s1">'location'</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'rotation'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/vehicles/tesla_model_s.stl"</span><span class="p">,</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"rotation"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
 <span class="p">}</span>
 
 <span class="n">car_4</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'model'</span><span class="p">:</span> <span class="s1">'../models/vehicles/scania_truck.stl'</span><span class="p">,</span>
-    <span class="s1">'location'</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'rotation'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'rotation_rate'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="s1">'speed'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/vehicles/scania_truck.stl"</span><span class="p">,</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"rotation"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"rotation_rate"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
 <span class="p">}</span>
 
 <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">ground</span><span class="p">,</span> <span class="n">car_1</span><span class="p">,</span> <span class="n">car_2</span><span class="p">,</span> <span class="n">car_3</span><span class="p">,</span> <span class="n">car_4</span><span class="p">]</span>
@@ -7601,9 +7601,9 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">lidar</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'position'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
-    <span class="s1">'phi'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="s1">'theta'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="s2">"position"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">"phi"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="s2">"theta"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -7640,14 +7640,16 @@ a.anchor-link {
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">time_seq</span><span class="p">:</span>
     <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lidar_scene</span><span class="p">(</span><span class="n">lidar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">))</span>
 
-    <span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'rotation'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">car3_yaw</span><span class="o">*</span><span class="n">delta_t</span>
-    <span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'location'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">car3_speed</span> <span class="o">*</span> \
-        <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'rotation'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">180</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">delta_t</span>
-    <span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'location'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">car3_speed</span> <span class="o">*</span> \
-        <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'rotation'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">180</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">delta_t</span>
+    <span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s2">"rotation"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">car3_yaw</span> <span class="o">*</span> <span class="n">delta_t</span>
+    <span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s2">"location"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">car3_speed</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s2">"rotation"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span>
+    <span class="p">)</span>
+    <span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s2">"location"</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">car3_speed</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s2">"rotation"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span>
+    <span class="p">)</span>
 
 <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Exection time:'</span><span class="p">,</span> <span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">,</span> <span class="s1">'s'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Exection time:"</span><span class="p">,</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7660,7 +7662,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Exection time: 15.182188272476196 s
+<pre>Exection time: 15.293108701705933 s
 </pre>
 </div>
 </div>
@@ -7690,39 +7692,45 @@ a.anchor-link {
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                    <span class="n">specs</span><span class="o">=</span><span class="p">[[{</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'scatter3d'</span><span class="p">},</span> <span class="p">{</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'scatter3d'</span><span class="p">}],</span>
-                           <span class="p">[{</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'scatter3d'</span><span class="p">},</span> <span class="p">{</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'scatter3d'</span><span class="p">}],</span>
-                           <span class="p">[{</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'scatter3d'</span><span class="p">},</span> <span class="p">{</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'scatter3d'</span><span class="p">}]],</span>
-                    <span class="n">subplot_titles</span><span class="o">=</span><span class="p">(</span><span class="s1">'Frame 0'</span><span class="p">,</span> <span class="s1">'Frame 1'</span><span class="p">,</span>
-                                    <span class="s1">'Frame 2'</span><span class="p">,</span> <span class="s1">'Frame 3'</span><span class="p">,</span>
-                                    <span class="s1">'Frame 4'</span><span class="p">,</span> <span class="s1">'Frame 5'</span><span class="p">),</span>
-                    <span class="n">horizontal_spacing</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-                    <span class="n">vertical_spacing</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
+    <span class="n">rows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">cols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">specs</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">[{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"scatter3d"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"scatter3d"</span><span class="p">}],</span>
+        <span class="p">[{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"scatter3d"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"scatter3d"</span><span class="p">}],</span>
+        <span class="p">[{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"scatter3d"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"scatter3d"</span><span class="p">}],</span>
+    <span class="p">],</span>
+    <span class="n">subplot_titles</span><span class="o">=</span><span class="p">(</span><span class="s2">"Frame 0"</span><span class="p">,</span> <span class="s2">"Frame 1"</span><span class="p">,</span> <span class="s2">"Frame 2"</span><span class="p">,</span> <span class="s2">"Frame 3"</span><span class="p">,</span> <span class="s2">"Frame 4"</span><span class="p">,</span> <span class="s2">"Frame 5"</span><span class="p">),</span>
+    <span class="n">horizontal_spacing</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">vertical_spacing</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="k">for</span> <span class="n">t_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_seq</span><span class="p">)):</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
-        <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s1">'positions'</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span>
-                     <span class="n">y</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s1">'positions'</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
-                     <span class="n">z</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s1">'positions'</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">],</span>
-                     <span class="n">mode</span><span class="o">=</span><span class="s1">'markers'</span><span class="p">,</span>
-                     <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                 <span class="n">color</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s1">'positions'</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">],</span>
-                                 <span class="n">colorscale</span><span class="o">=</span><span class="s1">'Rainbow'</span><span class="p">,</span>
-                                 <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                 <span class="p">),</span>
-                     <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                     <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">t_idx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">t_idx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">"markers"</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">t_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Rainbow"</span><span class="p">,</span>
+                <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">row</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">t_idx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">col</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">t_idx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_scenes</span><span class="p">(</span><span class="n">aspectmode</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span>
-                      <span class="n">row</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">t_idx</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
-                      <span class="n">col</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">t_idx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_scenes</span><span class="p">(</span>
+        <span class="n">aspectmode</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
+        <span class="n">row</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">t_idx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">col</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">t_idx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">height</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span>
-    <span class="n">template</span><span class="o">=</span><span class="s1">'plotly_dark'</span><span class="p">,</span>
-    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">"plotly_dark"</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
 <span class="c1"># fig.show()</span>
