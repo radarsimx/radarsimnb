@@ -2,7 +2,7 @@
 
 <img src="https://github.com/radarsimx/radarsimpy/blob/master/assets/radarsimnb.svg" alt="logo" width="200"/>
 
-Jupyter Notebook Examples of `RadarSimPy`. **Check notebook results on [radarsimx.com](https://radarsimx.com/category/examples/)**.
+`RadarSimNb` is a repository containing Jupyter Notebooks that provide detailed, hands-on examples for using `RadarSimPy`. These notebooks serve as a practical guide to help you get started quickly and effectively. Explore the [examples](https://radarsimx.com/category/examples/) to dive in!
 
 ```mermaid
 %%{init: {
