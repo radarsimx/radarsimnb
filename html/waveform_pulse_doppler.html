@@ -7515,7 +7515,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Receiver</span><span class="p">,</span> <span class="n">Transmitter</span>
@@ -7540,8 +7540,8 @@ a.anchor-link {
 <span class="n">pulse_width</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">pulse_bw</span>  <span class="c1"># Pulse width</span>
 <span class="n">prf</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">max_range</span><span class="p">)</span>  <span class="c1"># Pulse repetition frequency</span>
 <span class="n">prp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span>
-<span class="n">fs</span> <span class="o">=</span> <span class="mf">64e6</span>  <span class="c1"># Sampling rate 6 msps</span>
-<span class="n">fc</span> <span class="o">=</span> <span class="mf">35e9</span>  <span class="c1"># Carrier frequency</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mf">6e6</span>  <span class="c1"># Sampling rate 6 msps</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="mf">10e9</span>  <span class="c1"># Carrier frequency</span>
 <span class="n">num_pulse</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="n">total_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">prp</span> <span class="o">*</span> <span class="n">num_pulse</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
@@ -7588,9 +7588,16 @@ a.anchor-link {
 
 <span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
 
-<span class="n">target</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># target = dict(location=(1000, 0, 0), speed=(150, 0, 0), rcs=10, phase=0)</span>
 
-<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="p">[</span><span class="n">target</span><span class="p">])</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span>
+    <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">,</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">timestamp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>
 <span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>  <span class="c1"># noise is left out on purpose</span>
 
@@ -7599,6 +7606,41 @@ a.anchor-link {
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
         <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:],</span>
         <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Phase"</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Phase (rad)"</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">"Angle"</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="p">)</span>
@@ -7619,193 +7661,6 @@ a.anchor-link {
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">tx_channel</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="p">}</span>
-
-<span class="n">freq_nonlinear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="mf">2.40750000e10</span><span class="p">,</span>
-        <span class="mf">2.40760901e10</span><span class="p">,</span>
-        <span class="mf">2.40771786e10</span><span class="p">,</span>
-        <span class="mf">2.40782654e10</span><span class="p">,</span>
-        <span class="mf">2.40793506e10</span><span class="p">,</span>
-        <span class="mf">2.40804341e10</span><span class="p">,</span>
-        <span class="mf">2.40815161e10</span><span class="p">,</span>
-        <span class="mf">2.40825964e10</span><span class="p">,</span>
-        <span class="mf">2.40836750e10</span><span class="p">,</span>
-        <span class="mf">2.40847521e10</span><span class="p">,</span>
-        <span class="mf">2.40858275e10</span><span class="p">,</span>
-        <span class="mf">2.40869012e10</span><span class="p">,</span>
-        <span class="mf">2.40879734e10</span><span class="p">,</span>
-        <span class="mf">2.40890439e10</span><span class="p">,</span>
-        <span class="mf">2.40901127e10</span><span class="p">,</span>
-        <span class="mf">2.40911800e10</span><span class="p">,</span>
-        <span class="mf">2.40922456e10</span><span class="p">,</span>
-        <span class="mf">2.40933096e10</span><span class="p">,</span>
-        <span class="mf">2.40943719e10</span><span class="p">,</span>
-        <span class="mf">2.40954326e10</span><span class="p">,</span>
-        <span class="mf">2.40964917e10</span><span class="p">,</span>
-        <span class="mf">2.40975491e10</span><span class="p">,</span>
-        <span class="mf">2.40986049e10</span><span class="p">,</span>
-        <span class="mf">2.40996591e10</span><span class="p">,</span>
-        <span class="mf">2.41007117e10</span><span class="p">,</span>
-        <span class="mf">2.41017626e10</span><span class="p">,</span>
-        <span class="mf">2.41028119e10</span><span class="p">,</span>
-        <span class="mf">2.41038595e10</span><span class="p">,</span>
-        <span class="mf">2.41049055e10</span><span class="p">,</span>
-        <span class="mf">2.41059499e10</span><span class="p">,</span>
-        <span class="mf">2.41069927e10</span><span class="p">,</span>
-        <span class="mf">2.41080338e10</span><span class="p">,</span>
-        <span class="mf">2.41090733e10</span><span class="p">,</span>
-        <span class="mf">2.41101111e10</span><span class="p">,</span>
-        <span class="mf">2.41111473e10</span><span class="p">,</span>
-        <span class="mf">2.41121819e10</span><span class="p">,</span>
-        <span class="mf">2.41132149e10</span><span class="p">,</span>
-        <span class="mf">2.41142462e10</span><span class="p">,</span>
-        <span class="mf">2.41152759e10</span><span class="p">,</span>
-        <span class="mf">2.41163039e10</span><span class="p">,</span>
-        <span class="mf">2.41173304e10</span><span class="p">,</span>
-        <span class="mf">2.41183552e10</span><span class="p">,</span>
-        <span class="mf">2.41193783e10</span><span class="p">,</span>
-        <span class="mf">2.41203999e10</span><span class="p">,</span>
-        <span class="mf">2.41214198e10</span><span class="p">,</span>
-        <span class="mf">2.41224380e10</span><span class="p">,</span>
-        <span class="mf">2.41234546e10</span><span class="p">,</span>
-        <span class="mf">2.41244696e10</span><span class="p">,</span>
-        <span class="mf">2.41254830e10</span><span class="p">,</span>
-        <span class="mf">2.41264947e10</span><span class="p">,</span>
-        <span class="mf">2.41275048e10</span><span class="p">,</span>
-        <span class="mf">2.41285133e10</span><span class="p">,</span>
-        <span class="mf">2.41295202e10</span><span class="p">,</span>
-        <span class="mf">2.41305254e10</span><span class="p">,</span>
-        <span class="mf">2.41315289e10</span><span class="p">,</span>
-        <span class="mf">2.41325309e10</span><span class="p">,</span>
-        <span class="mf">2.41335312e10</span><span class="p">,</span>
-        <span class="mf">2.41345298e10</span><span class="p">,</span>
-        <span class="mf">2.41355269e10</span><span class="p">,</span>
-        <span class="mf">2.41365223e10</span><span class="p">,</span>
-        <span class="mf">2.41375161e10</span><span class="p">,</span>
-        <span class="mf">2.41385082e10</span><span class="p">,</span>
-        <span class="mf">2.41394987e10</span><span class="p">,</span>
-        <span class="mf">2.41404876e10</span><span class="p">,</span>
-        <span class="mf">2.41414748e10</span><span class="p">,</span>
-        <span class="mf">2.41424605e10</span><span class="p">,</span>
-        <span class="mf">2.41434444e10</span><span class="p">,</span>
-        <span class="mf">2.41444268e10</span><span class="p">,</span>
-        <span class="mf">2.41454075e10</span><span class="p">,</span>
-        <span class="mf">2.41463866e10</span><span class="p">,</span>
-        <span class="mf">2.41473640e10</span><span class="p">,</span>
-        <span class="mf">2.41483399e10</span><span class="p">,</span>
-        <span class="mf">2.41493140e10</span><span class="p">,</span>
-        <span class="mf">2.41502866e10</span><span class="p">,</span>
-        <span class="mf">2.41512575e10</span><span class="p">,</span>
-        <span class="mf">2.41522268e10</span><span class="p">,</span>
-        <span class="mf">2.41531945e10</span><span class="p">,</span>
-        <span class="mf">2.41541605e10</span><span class="p">,</span>
-        <span class="mf">2.41551249e10</span><span class="p">,</span>
-        <span class="mf">2.41560876e10</span><span class="p">,</span>
-        <span class="mf">2.41570488e10</span><span class="p">,</span>
-        <span class="mf">2.41580083e10</span><span class="p">,</span>
-        <span class="mf">2.41589661e10</span><span class="p">,</span>
-        <span class="mf">2.41599224e10</span><span class="p">,</span>
-        <span class="mf">2.41608770e10</span><span class="p">,</span>
-        <span class="mf">2.41618299e10</span><span class="p">,</span>
-        <span class="mf">2.41627812e10</span><span class="p">,</span>
-        <span class="mf">2.41637309e10</span><span class="p">,</span>
-        <span class="mf">2.41646790e10</span><span class="p">,</span>
-        <span class="mf">2.41656254e10</span><span class="p">,</span>
-        <span class="mf">2.41665702e10</span><span class="p">,</span>
-        <span class="mf">2.41675134e10</span><span class="p">,</span>
-        <span class="mf">2.41684550e10</span><span class="p">,</span>
-        <span class="mf">2.41693949e10</span><span class="p">,</span>
-        <span class="mf">2.41703331e10</span><span class="p">,</span>
-        <span class="mf">2.41712698e10</span><span class="p">,</span>
-        <span class="mf">2.41722048e10</span><span class="p">,</span>
-        <span class="mf">2.41731381e10</span><span class="p">,</span>
-        <span class="mf">2.41740699e10</span><span class="p">,</span>
-        <span class="mf">2.41750000e10</span><span class="p">,</span>
-    <span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">tx_nonlinear</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">freq_nonlinear</span><span class="p">,</span>
-    <span class="n">t</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>
-<span class="p">)</span>
-
-<span class="n">rx_channel</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="p">}</span>
-
-<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="mf">2e5</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>
-<span class="p">)</span>
-
-<span class="n">radar_nonlinear</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx_nonlinear</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
-
-<span class="n">targets</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span>
-        <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-
-<span class="n">result</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar_nonlinear</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">result</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>array([[[ 0.00042601-2.93681651e-03j,  0.00148935-2.56677427e-03j,
-         -0.00046196-2.93141011e-03j, -0.00290341-6.13889558e-04j,
-         -0.00014568+2.96402297e-03j,  0.00239102-1.75774519e-03j,
-         -0.00287518+7.34832136e-04j,  0.00272075-1.18493486e-03j,
-         -0.00135757+2.63884542e-03j, -0.0019856 -2.20539896e-03j,
-          0.00185658-2.31502894e-03j,  0.00296738-2.79537656e-05j,
-          0.0027857 +1.02265165e-03j,  0.00291446+5.58266724e-04j,
-          0.00260711-1.41722117e-03j, -0.00040577-2.93949713e-03j]]])</pre>
-</div>
 </div>
 </div>
 </div>
