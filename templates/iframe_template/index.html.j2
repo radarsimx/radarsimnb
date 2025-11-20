@@ -11,15 +11,20 @@
     --jp-prompt-color: #303f9f;
 }
 
-/* Only target code input areas */
+/* Only target code input areas - apply border to InputArea only */
 .jp-Cell.jp-CodeCell .jp-InputArea,
-.jp-Cell.jp-CodeCell .jp-Cell-inputWrapper,
 div.code_cell div.input_area {
     background-color: var(--jp-cell-bg);
     border: 1px solid var(--jp-cell-border);
     border-radius: 2px;
     margin: 8px 0;
     padding: 4px;
+}
+
+/* Remove border from wrapper to avoid double border */
+.jp-Cell.jp-CodeCell .jp-Cell-inputWrapper {
+    border: none !important;
+    background: transparent;
 }
 
 /* Ensure markdown cells have no border */
