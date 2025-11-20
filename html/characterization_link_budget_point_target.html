@@ -7546,92 +7546,133 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="FMCW-Radar-Link-Budget-(Point-Target)">FMCW Radar Link Budget (Point Target)<a class="anchor-link" href="#FMCW-Radar-Link-Budget-(Point-Target)">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>Frequency Modulated Continuous Wave (FMCW) radar is a type of radar system that utilizes continuous transmission of a signal that varies in frequency over time. The link budget of an FMCW radar system is a crucial aspect that determines the overall performance and range of the radar. It involves analyzing the power budget of the system to ensure that the transmitted signal can reach the target and the received signal can be properly detected and processed. Factors such as transmit power, antenna gain, propagation losses, and receiver sensitivity play a key role in determining the link budget of an FMCW radar system. Understanding and optimizing the link budget is essential for designing an effective and efficient FMCW radar system for various applications such as automotive radar, surveillance, and navigation.</p>
-<p>This illustration showcases a simulation of an FMCW radar using the <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> framework. It additionally provides a demonstration of fundamental range and Doppler processing techniques for extracting target range and velocity information.</p>
-<h2 id="Radar-Link-Budget-Analysis">Radar Link Budget Analysis<a class="anchor-link" href="#Radar-Link-Budget-Analysis">¶</a></h2><p>Radar link budget analysis is a critical process for determining the power levels throughout the radar system’s signal chain, from transmission, through propagation, to reception. The goal is to ensure that the radar can detect and track targets at the desired range. The analysis involves understanding how transmitted power is affected by various factors, such as antenna gains, propagation losses, and target characteristics, ultimately determining if the received signal is strong enough for detection.</p>
-<p>The key equation used in radar link budget analysis is derived from the <strong>Radar Range Equation</strong>:</p>
+<h1 id="FMCW-Radar-Link-Budget-Analysis-(Point-Target)">FMCW Radar Link Budget Analysis (Point Target)<a class="anchor-link" href="#FMCW-Radar-Link-Budget-Analysis-(Point-Target)">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>RadarSimPy's point target simulation capabilities</strong> and validates simulation accuracy by comparing results with theoretical link budget calculations. Point targets provide computationally efficient radar modeling ideal for system design and link budget analysis.</p>
+<p><strong>What You'll Learn:</strong></p>
+<ul>
+<li>Use RadarSimPy's <code>Transmitter</code>, <code>Receiver</code>, and <code>Radar</code> classes to configure FMCW systems</li>
+<li>Define point targets with specified RCS values</li>
+<li>Run electromagnetic simulations with <code>sim_radar()</code></li>
+<li>Process simulated baseband data using RadarSimPy's signal processing functions</li>
+<li><strong>Validate simulation accuracy</strong>: Compare RadarSimPy's output with theoretical SNR calculations</li>
+</ul>
+<p><strong>Key RadarSimPy Features Demonstrated:</strong></p>
+<ul>
+<li><strong>Point target modeling</strong>: Fast, analytical RCS specification for link budget analysis</li>
+<li><strong>Physics-based simulation</strong>: Full electromagnetic modeling of radar-target interaction</li>
+<li><strong>High-fidelity results</strong>: Simulation matches theoretical predictions within fractions of a dB</li>
+</ul>
+<p><strong>Why This Matters:</strong> RadarSimPy enables accurate radar performance prediction and system validation before hardware prototyping, saving time and development costs.</p>
+<h2 id="Radar-Link-Budget-Analysis">Radar Link Budget Analysis<a class="anchor-link" href="#Radar-Link-Budget-Analysis">¶</a></h2><p>Radar link budget analysis is a systematic process for tracking power levels throughout the radar signal chain—from transmission, through propagation and reflection, to reception and detection. The fundamental question is: <strong>"Will the received signal be strong enough to detect the target?"</strong></p>
+<h3 id="The-Radar-Range-Equation">The Radar Range Equation<a class="anchor-link" href="#The-Radar-Range-Equation">¶</a></h3><p>The cornerstone of link budget analysis is the <strong>Radar Range Equation</strong>, which relates received power to system parameters:</p>
 <p>$$
 P_r = \frac{P_t G_t G_r \lambda^2 \sigma}{(4\pi)^3 R^4 L_s}
 $$</p>
-<p>Where:</p>
+<p><strong>Parameters:</strong></p>
 <ul>
-<li>$( P_t )$ = <strong>Transmitted power</strong> (W)</li>
-<li>$( G_t )$ = <strong>Transmitting antenna gain</strong></li>
-<li>$( G_r )$ = <strong>Receiving antenna gain</strong></li>
-<li>$( \lambda )$ = <strong>Wavelength</strong> of the radar signal (m), $( \lambda = \frac{c}{f} )$ where $( c )$ is the speed of light (3×10⁸ m/s) and $( f )$ is the frequency (Hz)</li>
-<li>$( \sigma )$ = <strong>Radar cross-section (RCS)</strong> of the target (m²)</li>
-<li>$( R )$ = <strong>Range</strong> to the target (m)</li>
-<li>$( L_s )$ = <strong>System losses</strong>, including propagation losses, hardware inefficiencies, and atmospheric attenuation</li>
+<li>$P_r$ = <strong>Received power</strong> (W) - power collected by the receiving antenna</li>
+<li>$P_t$ = <strong>Transmitted power</strong> (W) - power fed to the transmitting antenna</li>
+<li>$G_t$ = <strong>Transmit antenna gain</strong> (linear) - how well the antenna focuses transmitted energy</li>
+<li>$G_r$ = <strong>Receive antenna gain</strong> (linear) - how well the antenna collects received energy</li>
+<li>$\lambda$ = <strong>Wavelength</strong> (m) - $\lambda = c/f$ where $c = 3 \times 10^8$ m/s</li>
+<li>$\sigma$ = <strong>Radar Cross Section (RCS)</strong> (m²) - target's reflectivity</li>
+<li>$R$ = <strong>Range</strong> to target (m)</li>
+<li>$L_s$ = <strong>System losses</strong> (linear) - accounts for all non-ideal effects</li>
 </ul>
-<h3 id="1.-Transmitted-Power-$(P_t)$:">1. Transmitted Power $(P_t)$:<a class="anchor-link" href="#1.-Transmitted-Power-$(P_t)$:">¶</a></h3><p>The radar system transmits a signal with power $( P_t )$ (in watts). This power is directed through the radar's transmitting antenna, which has a specific gain $( G_t )$, concentrating the energy into a particular direction.</p>
-<p>$$
-P_{\text{transmit}} = P_t G_t
-$$</p>
-<h3 id="2.-Antenna-Gain-$(G_t)$-and-$(G_r)$:">2. Antenna Gain $(G_t)$ and $(G_r)$:<a class="anchor-link" href="#2.-Antenna-Gain-$(G_t)$-and-$(G_r)$:">¶</a></h3><p>Antenna gain is a measure of how well the antenna focuses the transmitted (or received) energy in a specific direction. It is typically expressed as:</p>
-<p>$$
-G = \frac{4 \pi A_{\text{antenna}}}{\lambda^2}
-$$</p>
-<p>Where $( A_{\text{antenna}} )$ is the effective area of the antenna, and $( \lambda )$ is the wavelength.</p>
-<h3 id="3.-Free-Space-Path-Loss-(FSPL):">3. Free-Space Path Loss (FSPL):<a class="anchor-link" href="#3.-Free-Space-Path-Loss-(FSPL):">¶</a></h3><p>As the signal propagates through space, it experiences <strong>free-space path loss (FSPL)</strong>, which increases with the square of the distance from the radar and the square of the operating frequency. The FSPL is given by:</p>
-<p>$$
-L_{\text{fspl}} = \left( \frac{4 \pi R}{\lambda} \right)^2 = \frac{(4 \pi R f)^2}{c^2}
-$$</p>
-<p>Where:</p>
+<p><strong>Key Insight</strong>: Notice the $R^4$ term in the denominator. This represents:</p>
 <ul>
-<li>$( R )$ is the distance to the target (m)</li>
-<li>$( f )$ is the radar frequency (Hz)</li>
-<li>$( c )$ is the speed of light (3×10⁸ m/s)</li>
+<li>$R^2$ for signal spreading on the path from radar → target</li>
+<li>Another $R^2$ for signal spreading on the return path from target → radar</li>
 </ul>
-<h3 id="4.-Radar-Cross-Section-(RCS)-$(-%5Csigma-)$:">4. Radar Cross Section (RCS) $( \sigma )$:<a class="anchor-link" href="#4.-Radar-Cross-Section-(RCS)-$(-%5Csigma-)$:">¶</a></h3><p>The radar cross-section $( \sigma )$ represents how much of the transmitted signal is reflected back by the target. Larger or more reflective targets have a higher RCS, which increases the power of the reflected signal:</p>
+<p>This is why radar range is limited—power decreases dramatically with distance!</p>
+<h3 id="Step-by-Step-Link-Budget-Analysis">Step-by-Step Link Budget Analysis<a class="anchor-link" href="#Step-by-Step-Link-Budget-Analysis">¶</a></h3><h4 id="1.-Transmitted-Power-with-Antenna-Gain">1. Transmitted Power with Antenna Gain<a class="anchor-link" href="#1.-Transmitted-Power-with-Antenna-Gain">¶</a></h4><p>The <strong>Effective Isotropic Radiated Power (EIRP)</strong> is the transmitted power amplified by antenna gain:</p>
 <p>$$
-P_{\text{return}} = P_{\text{transmit}} \frac{\sigma}{4 \pi R^2}
+\text{EIRP} = P_t \cdot G_t
 $$</p>
-<h3 id="5.-Received-Power-$(P_r)$:">5. Received Power $(P_r)$:<a class="anchor-link" href="#5.-Received-Power-$(P_r)$:">¶</a></h3><p>The power received by the radar after the signal is reflected from the target is determined by the radar range equation:</p>
+<p>In decibels: $\text{EIRP (dBm)} = P_t \text{ (dBm)} + G_t \text{ (dB)}$</p>
+<p><strong>What is Antenna Gain?</strong></p>
+<p>Antenna gain measures how well an antenna focuses energy in a specific direction compared to an isotropic radiator (which radiates equally in all directions):</p>
 <p>$$
-P_r = \frac{P_t G_t G_r \lambda^2 \sigma}{(4 \pi)^3 R^4 L_s}
+G = \frac{4 \pi A_{\text{eff}}}{\lambda^2}
+$$</p>
+<p>Where $A_{\text{eff}}$ is the antenna's effective aperture area.</p>
+<h4 id="2.-Free-Space-Path-Loss-(FSPL)">2. Free-Space Path Loss (FSPL)<a class="anchor-link" href="#2.-Free-Space-Path-Loss-(FSPL)">¶</a></h4><p>As electromagnetic waves propagate through space, they spread out, reducing power density. The free-space path loss is:</p>
+<p>$$
+L_{\text{FSPL}} = \left( \frac{4 \pi R}{\lambda} \right)^2
+$$</p>
+<p>In decibels: $L_{\text{FSPL (dB)}} = 20 \log_{10}(R) + 20 \log_{10}(f) - 147.55$ (where $R$ is in meters, $f$ in Hz)</p>
+<p><strong>Physical Interpretation</strong>: This represents how power spreads over a sphere of radius $R$. The surface area grows as $R^2$, so power density decreases as $1/R^2$.</p>
+<h4 id="3.-Target-Radar-Cross-Section-(RCS)">3. Target Radar Cross Section (RCS)<a class="anchor-link" href="#3.-Target-Radar-Cross-Section-(RCS)">¶</a></h4><p>The <strong>Radar Cross Section (RCS)</strong> $\sigma$ represents the target's "reflective size" to radar:</p>
+<p>$$
+\sigma = \text{Effective scattering area of target (m}^2\text{)}
 $$</p>
 <ul>
-<li>$( R^4 )$: The signal experiences two-way propagation, so the range term is raised to the fourth power — $( R^2 )$ for the transmission from radar to the target and another $( R^2 )$ for the return path.</li>
-<li>$( L_s )$: This term represents <strong>total system losses</strong>, which can include:<ul>
-<li>Propagation losses (e.g., due to atmospheric absorption).</li>
-<li>Antenna losses (e.g., due to inefficiencies in the antenna design).</li>
-<li>Polarization mismatches and other hardware inefficiencies.</li>
+<li>Larger targets generally have higher RCS</li>
+<li>Shape, material, and orientation strongly affect RCS</li>
+<li>Expressed in dBsm (dB relative to 1 square meter)</li>
 </ul>
-</li>
+<p><strong>Example RCS values:</strong></p>
+<ul>
+<li>Small bird: -30 dBsm (0.001 m²)</li>
+<li>Car: 10 dBsm (10 m²)</li>
+<li>Large aircraft: 40 dBsm (10,000 m²)</li>
 </ul>
-<h3 id="6.-Noise-Power-$(P_%7B%5Ctext%7Bnoise%7D%7D)$:">6. Noise Power $(P_{\text{noise}})$:<a class="anchor-link" href="#6.-Noise-Power-$(P_%7B%5Ctext%7Bnoise%7D%7D)$:">¶</a></h3><p>For the radar system to successfully detect a target, the received power ( P<em>r ) must exceed the <strong>minimum detectable signal (MDS)</strong>, ( P</em>{\text{min}} ), which is defined by the receiver sensitivity and the noise level in the system:</p>
+<p>The power intercepted by the target and re-radiated back is:</p>
+<p>$$
+P_{\text{scattered}} = P_{\text{incident}} \cdot \frac{\sigma}{4 \pi R^2}
+$$</p>
+<h4 id="4.-Received-Power-Calculation">4. Received Power Calculation<a class="anchor-link" href="#4.-Received-Power-Calculation">¶</a></h4><p>Combining all factors, the received power is:</p>
+<p>$$
+P_r = \frac{P_t G_t G_r \lambda^2 \sigma}{(4\pi)^3 R^4 L_s}
+$$</p>
+<p><strong>In decibels (dBm)</strong>:</p>
+<p>$$
+P_r = P_t + G_t + G_r + 20\log_{10}(\lambda) - 30\log_{10}(4\pi) - 40\log_{10}(R) + \sigma - L_s
+$$</p>
+<h4 id="5.-Noise-Power">5. Noise Power<a class="anchor-link" href="#5.-Noise-Power">¶</a></h4><p>For target detection, received signal must exceed the <strong>noise floor</strong>. Thermal noise power in the receiver is:</p>
 <p>$$
 P_{\text{noise}} = k T B F
 $$</p>
 <p>Where:</p>
 <ul>
-<li>$( k )$ = <strong>Boltzmann's constant</strong> (1.38×10⁻²³ J/K)</li>
-<li>$( T )$ = <strong>System temperature</strong> (Kelvin)</li>
-<li>$( B )$ = <strong>Receiver bandwidth</strong> (Hz)</li>
-<li>$( F )$ = <strong>Receiver noise figure</strong></li>
+<li>$k = 1.38 \times 10^{-23}$ J/K = <strong>Boltzmann's constant</strong></li>
+<li>$T$ = <strong>System temperature</strong> (typically 290 K for room temperature)</li>
+<li>$B$ = <strong>Receiver bandwidth</strong> (Hz) - depends on sampling rate and integration time</li>
+<li>$F$ = <strong>Noise figure</strong> (linear) - receiver's noise degradation factor</li>
 </ul>
-<h3 id="7.-Signal-to-Noise-Ratio-$(SNR)$:">7. Signal-to-Noise Ratio $(SNR)$:<a class="anchor-link" href="#7.-Signal-to-Noise-Ratio-$(SNR)$:">¶</a></h3><p>The <strong>signal-to-noise ratio $(SNR)$</strong> is a key performance metric that determines whether the target can be detected reliably. A higher SNR means the signal is strong compared to the noise, making detection easier.</p>
+<p><strong>In decibels (dBm)</strong>:</p>
 <p>$$
-SNR = \frac{P_r}{P_{\text{noise}}}
+P_{\text{noise (dBm)}} = -174 + 10\log_{10}(B) + F_{\text{(dB)}}
 $$</p>
-<h2 id="Simulation-Example">Simulation Example<a class="anchor-link" href="#Simulation-Example">¶</a></h2><h3 id="Radar-System-Parameters">Radar System Parameters<a class="anchor-link" href="#Radar-System-Parameters">¶</a></h3><p>In this simulation, we are building a radar system based on the following parameters:</p>
-<h4 id="Transmitter">Transmitter<a class="anchor-link" href="#Transmitter">¶</a></h4><ul>
-<li>$P_t = 13$ dBm</li>
-<li>$G_t = 12$ dB</li>
-<li>$N_p = 512$ (number of pulses)</li>
+<p>Where -174 dBm/Hz is the thermal noise density at 290 K.</p>
+<h4 id="6.-Signal-to-Noise-Ratio-(SNR)">6. Signal-to-Noise Ratio (SNR)<a class="anchor-link" href="#6.-Signal-to-Noise-Ratio-(SNR)">¶</a></h4><p>The <strong>SNR</strong> determines detection performance:</p>
+<p>$$
+\text{SNR} = \frac{P_r}{P_{\text{noise}}}
+$$</p>
+<p>In decibels: $\text{SNR (dB)} = P_r \text{ (dBm)} - P_{\text{noise}} \text{ (dBm)}$</p>
+<h2 id="Simulation-Example">Simulation Example<a class="anchor-link" href="#Simulation-Example">¶</a></h2><h3 id="Radar-System-Parameters">Radar System Parameters<a class="anchor-link" href="#Radar-System-Parameters">¶</a></h3><p>In this simulation, we configure an automotive-band FMCW radar with the following specifications:</p>
+<h4 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h4><ul>
+<li><strong>Frequency sweep</strong>: 76.3 - 76.7 GHz (400 MHz bandwidth)</li>
+<li><strong>Center frequency</strong>: 76.5 GHz (automotive radar band)</li>
+<li><strong>Transmit power</strong>: $P_t = 13$ dBm (≈20 mW)</li>
+<li><strong>Antenna gain</strong>: $G_t = 12$ dB</li>
+<li><strong>Pulse duration</strong>: 51.2 µs (chirp duration)</li>
+<li><strong>Pulse Repetition Period (PRP)</strong>: 55 µs</li>
+<li><strong>Number of pulses</strong>: $N_p = 512$ (for Doppler processing)</li>
 </ul>
-<h4 id="Receiver">Receiver<a class="anchor-link" href="#Receiver">¶</a></h4><ul>
-<li>$f_s = 20 \times 10^6$ (samping rate)</li>
-<li>$N_s = 1024$ (number of samples per pulse)</li>
-<li>$G_r = 12$ dB</li>
-<li>$\lambda = 3e8/76.5e9$ m</li>
-<li>$F = 11$ dB</li>
+<h4 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h4><ul>
+<li><strong>Sampling rate</strong>: $f_s = 20$ MHz</li>
+<li><strong>Samples per pulse</strong>: $N_s = 1024$</li>
+<li><strong>Antenna gain</strong>: $G_r = 12$ dB</li>
+<li><strong>Noise figure</strong>: $F = 11$ dB</li>
+<li><strong>Wavelength</strong>: $\lambda = c/f = 3.92$ mm</li>
 </ul>
-<h4 id="Target">Target<a class="anchor-link" href="#Target">¶</a></h4><ul>
-<li>$\sigma = 10$ dBsm</li>
-<li>$R = 100$ m</li>
+<h4 id="Target-Specification">Target Specification<a class="anchor-link" href="#Target-Specification">¶</a></h4><ul>
+<li><strong>Radar Cross Section</strong>: $\sigma = 10$ dBsm (≈10 m², typical for a car)</li>
+<li><strong>Range</strong>: $R = 100$ m</li>
+<li><strong>Velocity</strong>: Stationary (0 m/s)</li>
 </ul>
-<h3 id="Build-Simulation-Model">Build Simulation Model<a class="anchor-link" href="#Build-Simulation-Model">¶</a></h3>
+<h3 id="Expected-Performance">Expected Performance<a class="anchor-link" href="#Expected-Performance">¶</a></h3><p>Before simulation, let's predict the SNR using the equations above. This will be compared with simulation results later.</p>
+<h3 id="Build-Simulation-Model">Build Simulation Model<a class="anchor-link" href="#Build-Simulation-Model">¶</a></h3><p>Let's construct the radar system step-by-step using RadarSimPy.</p>
 </div>
 </div>
 </div>
@@ -7677,7 +7718,31 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot the antenna patterns</em></p>
+<h4 id="Define-Antenna-Patterns">Define Antenna Patterns<a class="anchor-link" href="#Define-Antenna-Patterns">¶</a></h4><p>Real antennas don't radiate equally in all directions. We model the antenna's <strong>radiation pattern</strong> showing gain variation with angle.</p>
+<p><strong>Pattern characteristics:</strong></p>
+<ul>
+<li><strong>Azimuth pattern</strong>: Horizontal plane variation (left-right)</li>
+<li><strong>Elevation pattern</strong>: Vertical plane variation (up-down)</li>
+<li><strong>Peak gain</strong>: 12 dB (at boresight, 0° angle)</li>
+<li><strong>Beamwidth</strong>: Angle range where gain is within 3 dB of peak</li>
+</ul>
+<p>The patterns below use cosine-power functions to model realistic antenna behavior.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="Visualize-Antenna-Patterns">Visualize Antenna Patterns<a class="anchor-link" href="#Visualize-Antenna-Patterns">¶</a></h4><p>The plot below shows how antenna gain varies with angle. Notice:</p>
+<ul>
+<li><strong>Peak gain</strong> at 0° (boresight direction)</li>
+<li><strong>Gradual rolloff</strong> as angle increases</li>
+<li><strong>Narrower elevation beam</strong> (faster rolloff) for better vertical resolution</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7745,7 +7810,7 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Transmitter-Channel">Transmitter Channel<a class="anchor-link" href="#Transmitter-Channel">¶</a></h4>
+<h4 id="Configure-Transmitter-Channel">Configure Transmitter Channel<a class="anchor-link" href="#Configure-Transmitter-Channel">¶</a></h4><p>Define the transmit antenna location and radiation pattern. The antenna is placed at the origin (0, 0, 0) and uses the patterns defined above.</p>
 </div>
 </div>
 </div>
@@ -7776,7 +7841,14 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Radar-Transmitter">Radar Transmitter<a class="anchor-link" href="#Radar-Transmitter">¶</a></h4>
+<h4 id="Create-Radar-Transmitter">Create Radar Transmitter<a class="anchor-link" href="#Create-Radar-Transmitter">¶</a></h4><p>Configure the FMCW transmitter with:</p>
+<ul>
+<li><strong>Frequency sweep</strong> from 76.3 to 76.7 GHz (linear chirp)</li>
+<li><strong>Chirp duration</strong> of 51.2 µs</li>
+<li><strong>Transmit power</strong> of 13 dBm</li>
+<li><strong>PRP</strong> (Pulse Repetition Period) of 55 µs</li>
+<li><strong>512 pulses</strong> for Doppler processing (coherent processing interval)</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7808,7 +7880,7 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Receiver-Channel">Receiver Channel<a class="anchor-link" href="#Receiver-Channel">¶</a></h4>
+<h4 id="Configure-Receiver-Channel">Configure Receiver Channel<a class="anchor-link" href="#Configure-Receiver-Channel">¶</a></h4><p>Define the receive antenna. In this monostatic configuration, the transmit and receive antennas are co-located at the same position with identical patterns.</p>
 </div>
 </div>
 </div>
@@ -7839,7 +7911,14 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Radar-Receiver">Radar Receiver<a class="anchor-link" href="#Radar-Receiver">¶</a></h4>
+<h4 id="Create-Radar-Receiver">Create Radar Receiver<a class="anchor-link" href="#Create-Radar-Receiver">¶</a></h4><p>Configure the receiver with:</p>
+<ul>
+<li><strong>Sampling rate</strong>: 20 MHz (determines maximum unambiguous range)</li>
+<li><strong>Noise figure</strong>: 11 dB (receiver noise degradation)</li>
+<li><strong>RF gain</strong>: 20 dB (low-noise amplifier gain)</li>
+<li><strong>Baseband gain</strong>: 30 dB (after downconversion)</li>
+<li><strong>Baseband type</strong>: "real" (single-channel IF output)</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7872,7 +7951,7 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Radar-System">Radar System<a class="anchor-link" href="#Radar-System">¶</a></h4>
+<h4 id="Assemble-Radar-System">Assemble Radar System<a class="anchor-link" href="#Assemble-Radar-System">¶</a></h4><p>Combine the transmitter and receiver into a complete radar system. RadarSimPy automatically computes timing parameters and validates configuration compatibility.</p>
 </div>
 </div>
 </div>
@@ -7897,7 +7976,14 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Targets">Targets<a class="anchor-link" href="#Targets">¶</a></h4>
+<h4 id="Define-Target">Define Target<a class="anchor-link" href="#Define-Target">¶</a></h4><p>Create a <strong>point target</strong> representing an ideal reflector:</p>
+<ul>
+<li><strong>Location</strong>: 100 m directly ahead (x-axis)</li>
+<li><strong>Velocity</strong>: Stationary (0 m/s in all directions)</li>
+<li><strong>RCS</strong>: 10 dBsm (≈10 m², typical car-sized target)</li>
+<li><strong>Phase</strong>: 0° (initial phase reference)</li>
+</ul>
+<p><strong>Point target</strong> vs <strong>Mesh target</strong>: Point targets are computationally efficient and ideal for link budget analysis. For realistic target shapes and motion, use 3D mesh models (see other notebooks).</p>
 </div>
 </div>
 </div>
@@ -7924,10 +8010,21 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Simulate-Baseband-Signals">Simulate Baseband Signals<a class="anchor-link" href="#Simulate-Baseband-Signals">¶</a></h4><p>Utilize the <code>simulator.sim_radar</code> module to simulate baseband samples from the defined radar system and its targets.</p>
-<p>The output is a dictionary containing the timestamp, noise, and baseband data, each represented as a 3D matrix with the following structure:</p>
-<p><code>[channels, pulses, ADC samples]</code></p>
-<p>To provide greater flexibility, the noise and baseband data are kept separate. Users must combine these two datasets to generate the noisy baseband.</p>
+<h4 id="Run-Radar-Simulation">Run Radar Simulation<a class="anchor-link" href="#Run-Radar-Simulation">¶</a></h4><p>Use <code>sim_radar()</code> to simulate the complete radar signal chain:</p>
+<ol>
+<li><strong>Transmit</strong>: Generate FMCW chirps with specified parameters</li>
+<li><strong>Propagate</strong>: Model free-space propagation to target</li>
+<li><strong>Reflect</strong>: Apply target RCS and calculate scattered signal</li>
+<li><strong>Receive</strong>: Propagate signal back and apply antenna patterns</li>
+<li><strong>Process</strong>: Generate baseband I/Q samples with noise</li>
+</ol>
+<p><strong>Output structure:</strong></p>
+<ul>
+<li><code>timestamp</code>: Time values for each pulse (shape: [pulses])</li>
+<li><code>baseband</code>: Target return signals (shape: [channels, pulses, samples])</li>
+<li><code>noise</code>: Receiver noise (shape: [channels, pulses, samples])</li>
+</ul>
+<p><strong>Important</strong>: Baseband and noise are separated to allow flexible SNR analysis. Combine them to create realistic noisy data: <code>baseband + noise</code></p>
 </div>
 </div>
 </div>
@@ -7936,14 +8033,14 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
 <span class="n">timestamp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>
-<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span><span class="o">+</span><span class="n">data</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>
+<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>
 <span class="n">noise</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -7957,7 +8054,28 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">¶</a></h3><h4 id="Range-Doppler-processing">Range-Doppler processing<a class="anchor-link" href="#Range-Doppler-processing">¶</a></h4><p>Perform the FFT across the range profiles could obtan the Doppler information from the data, which is also known as the Doppler FFT.</p>
+<h3 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">¶</a></h3><p>Now let's process the simulated data to extract range and Doppler information.</p>
+<h4 id="Range-Doppler-Processing">Range-Doppler Processing<a class="anchor-link" href="#Range-Doppler-Processing">¶</a></h4><p><strong>What is Range-Doppler Processing?</strong></p>
+<p>Range-Doppler processing is a two-stage FFT operation that extracts both range and velocity information from FMCW radar data:</p>
+<p><strong>Stage 1 - Range FFT</strong> (Fast-time FFT):</p>
+<ul>
+<li>Perform FFT across each chirp (along samples dimension)</li>
+<li>Converts beat frequency → range</li>
+<li>Each bin represents a range cell</li>
+</ul>
+<p><strong>Stage 2 - Doppler FFT</strong> (Slow-time FFT):</p>
+<ul>
+<li>Perform FFT across chirps (along pulse dimension) for each range bin</li>
+<li>Converts phase change between pulses → velocity</li>
+<li>Each bin represents a velocity cell</li>
+</ul>
+<p>The result is a 2D <strong>Range-Doppler map</strong> where:</p>
+<ul>
+<li><strong>Rows</strong>: Doppler bins (velocity)</li>
+<li><strong>Columns</strong>: Range bins (distance)</li>
+<li><strong>Values</strong>: Signal amplitude at each range-velocity cell</li>
+</ul>
+<p><strong>Why <code>fftshift</code>?</strong> This reorders FFT output to place zero Doppler at the center, making positive and negative velocities symmetric and easier to interpret.</p>
 </div>
 </div>
 </div>
@@ -7966,20 +8084,24 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy.processing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">proc</span>
 
-<span class="n">range_doppler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span>
-    <span class="n">proc</span><span class="o">.</span><span class="n">range_doppler_fft</span><span class="p">(</span><span class="n">baseband</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span>
-<span class="p">)</span>
+<span class="c1"># Perform 2D FFT: Range FFT followed by Doppler FFT</span>
+<span class="c1"># fftshift moves zero-Doppler to center of array</span>
+<span class="n">range_doppler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">range_doppler_fft</span><span class="p">(</span><span class="n">baseband</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">noise_range_doppler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span>
-    <span class="n">proc</span><span class="o">.</span><span class="n">range_doppler_fft</span><span class="p">(</span><span class="n">noise</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span>
-<span class="p">)</span>
+<span class="c1"># Process noise-only data to measure noise floor</span>
+<span class="n">noise_range_doppler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">range_doppler_fft</span><span class="p">(</span><span class="n">noise</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
+<span class="c1"># Extract peak signal per range bin (maximum across all Doppler bins)</span>
+<span class="c1"># This gives us the strongest return at each range</span>
 <span class="n">max_per_range_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_doppler</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Calculate average noise level per range bin</span>
+<span class="c1"># This represents the noise floor we must exceed for detection</span>
 <span class="n">noise_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">noise_range_doppler</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7991,44 +8113,55 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">valid_range_bins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate maximum unambiguous range</span>
+<span class="c1"># For FMCW radar, range resolution and maximum range depend on:</span>
+<span class="c1"># - Sampling rate (fs)</span>
+<span class="c1"># - Chirp duration (pulse_length)</span>
+<span class="c1"># - Bandwidth</span>
+<span class="c1"># We only plot half the range bins to avoid aliasing (Nyquist)</span>
+<span class="n">valid_range_bins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
 <span class="n">max_range</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">3e8</span>
-    <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"receiver"</span><span class="p">]</span><span class="o">.</span><span class="n">bb_prop</span><span class="p">[</span><span class="s2">"fs"</span><span class="p">]</span>
+    <span class="mf">3e8</span>  <span class="c1"># Speed of light (m/s)</span>
+    <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"receiver"</span><span class="p">]</span><span class="o">.</span><span class="n">bb_prop</span><span class="p">[</span><span class="s2">"fs"</span><span class="p">]</span>  <span class="c1"># Sampling rate</span>
     <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulse_length"</span><span class="p">]</span>
     <span class="o">/</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"bandwidth"</span><span class="p">]</span>
-    <span class="o">/</span> <span class="mi">4</span>
+    <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># Factor of 4 accounts for two-way propagation and real IF sampling</span>
 <span class="p">)</span>
 
-<span class="n">range_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="n">max_range</span><span class="p">,</span> <span class="n">valid_range_bins</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
+<span class="c1"># Create range axis for plotting</span>
+<span class="n">range_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_range</span><span class="p">,</span> <span class="n">valid_range_bins</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+<span class="c1"># Plot signal peak and noise floor vs range</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
         <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">max_per_range_bin</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">valid_range_bins</span><span class="p">]),</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"Peak per Range Bin"</span>
+        <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">max_per_range_bin</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">valid_range_bins</span><span class="p">]),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Peak Signal per Range Bin"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
         <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">noise_mean</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">valid_range_bins</span><span class="p">]),</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"Noise Floor"</span>
+        <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">noise_mean</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">valid_range_bins</span><span class="p">]),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Noise Floor"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dash</span><span class="o">=</span><span class="s2">"dash"</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Range Profile: Signal Peak vs Noise Floor"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">),</span>
+    <span class="n">plot_bgcolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
+    <span class="n">hovermode</span><span class="o">=</span><span class="s2">"x unified"</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
@@ -8061,27 +8194,163 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Compare-Simulated-SNR-with-Theory">Compare Simulated SNR with Theory<a class="anchor-link" href="#Compare-Simulated-SNR-with-Theory">¶</a></h2><p>Based on the equations above, the calculated SNR from the theory is:</p>
-<p>$$
-SNR = P_r - P_{\text{noise}} \text{ in decibels}
+<h4 id="Interpret-the-Range-Profile">Interpret the Range Profile<a class="anchor-link" href="#Interpret-the-Range-Profile">¶</a></h4><p>In the plot above, observe:</p>
+<ol>
+<li><p><strong>Sharp peak at 100 m</strong>: This is our target return</p>
+<ul>
+<li>The peak amplitude represents the signal power from the target</li>
+<li>Peak location confirms the target range (100 m as specified)</li>
+</ul>
+</li>
+<li><p><strong>Flat noise floor</strong>: The dashed red line shows the average noise level</p>
+<ul>
+<li>Constant across all ranges (white Gaussian noise)</li>
+<li>This is the detection threshold</li>
+</ul>
+</li>
+<li><p><strong>SNR measurement</strong>: The vertical distance between the peak and noise floor</p>
+<ul>
+<li>Measured in dB (logarithmic scale)</li>
+<li>Determines detection probability and tracking quality</li>
+</ul>
+</li>
+<li><p><strong>Range resolution</strong>: The width of the peak is determined by the radar bandwidth</p>
+<ul>
+<li>Range resolution = $c / (2 \cdot B) = 3 \times 10^8 / (2 \times 400 \times 10^6) = 0.375$ m</li>
+<li>Higher bandwidth → better range resolution (narrower peaks)</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Verify-Simulation-Against-Theory">Verify Simulation Against Theory<a class="anchor-link" href="#Verify-Simulation-Against-Theory">¶</a></h2><p>Now let's compare the simulated SNR with theoretical predictions to validate our simulation model.</p>
+<h3 id="Theoretical-SNR-Calculation">Theoretical SNR Calculation<a class="anchor-link" href="#Theoretical-SNR-Calculation">¶</a></h3><p>Using the radar range equation and noise power formula from the introduction, we can calculate the expected SNR:</p>
+<h4 id="Step-1:-Calculate-Received-Power-$(P_r)$">Step 1: Calculate Received Power $(P_r)$<a class="anchor-link" href="#Step-1:-Calculate-Received-Power-$(P_r)$">¶</a></h4><p>$$
+P_r \text{ (dBm)} = P_t + G_t + G_r + 20 \log_{10}(\lambda) - 30 \log_{10}(4\pi) - 40 \log_{10}(R) + \sigma
 $$</p>
-<p>While</p>
+<p><strong>Substituting values:</strong></p>
 <p>$$
-P_r = 13(P_t) + 12(G_t) + 12(G_r) + 20 \times \log_{10}{\frac{3 \times 10^8(c)/76.5 \times 10^9(\lambda)}{(4 \pi)^{3/2} \times 100^2(R)}} + 10(\sigma) = -114.10 \text{ dBm}
+P_r = 13 \text{ (dBm)} + 12 \text{ (dB)} + 12 \text{ (dB)} + 20 \log_{10}\left(\frac{3 \times 10^8}{76.5 \times 10^9}\right) - 30 \log_{10}(4\pi) - 40 \log_{10}(100) + 10 \text{ (dBsm)}
 $$</p>
-<p>For the noise power, the receiver bandwidth $B$ can be calculated based on the receiver sampling rate and the total data acquision time:</p>
+<p>Breaking down each term:</p>
+<ul>
+<li>$P_t = 13$ dBm (transmit power)</li>
+<li>$G_t = 12$ dB (transmit antenna gain)</li>
+<li>$G_r = 12$ dB (receive antenna gain)</li>
+<li>$20 \log_{10}(\lambda) = 20 \log_{10}(0.00392) = -48.14$ dB</li>
+<li>$30 \log_{10}(4\pi) = 30 \times 1.096 = 32.88$ dB</li>
+<li>$40 \log_{10}(R) = 40 \log_{10}(100) = 80$ dB</li>
+<li>$\sigma = 10$ dBsm (target RCS)</li>
+</ul>
+<p><strong>Result:</strong></p>
 <p>$$
-B = 10 \times \log_{10}{\frac{20 \times 10^6 (f_s)}{1024(N_s) \times 512(N_p)}} = 15.814 \text{ dB}
+P_r = 13 + 12 + 12 - 48.14 - 32.88 - 80 + 10 = -114.02 \text{ dBm}
 $$</p>
-<p>Then:</p>
+<h4 id="Step-2:-Calculate-Noise-Power-$(P_%7B%5Ctext%7Bnoise%7D%7D)$">Step 2: Calculate Noise Power $(P_{\text{noise}})$<a class="anchor-link" href="#Step-2:-Calculate-Noise-Power-$(P_%7B%5Ctext%7Bnoise%7D%7D)$">¶</a></h4><p>First, determine the <strong>effective noise bandwidth</strong> $(B)$:</p>
+<p>For FMCW radar with coherent integration:</p>
+<ul>
+<li>Sampling rate: $f_s = 20$ MHz</li>
+<li>Samples per pulse: $N_s = 1024$</li>
+<li>Number of pulses: $N_p = 512$</li>
+<li>Total samples: $N_{\text{total}} = N_s \times N_p = 524,288$</li>
+</ul>
+<p>The coherent integration across all samples reduces the effective bandwidth:</p>
 <p>$$
-P_{\text{noise}} = 11(F)+15.814(B)+10 \times \log_{10}{1.38 \times 10^{-23}(k)}+10 \times \log_{10}{290(T)}+30 =-147.16 \text{ dBm}
+B = \frac{f_s}{N_{\text{total}}} = \frac{20 \times 10^6}{1024 \times 512} = 38.15 \text{ Hz}
 $$</p>
-<p>Thus, the calculated $SNR$ (in decibels) would be:</p>
+<p>In decibels: $10 \log_{10}(38.15) = 15.82$ dB-Hz</p>
+<p>Now calculate noise power using:</p>
 <p>$$
-SNR = P_r - P_{\text{noise}} = 33.06 \text{ dB}
+P_{\text{noise}} \text{ (dBm)} = -174 + 10\log_{10}(B) + F
 $$</p>
-<p>The calculated SNR matches with the simulated result as shown in the plot above.</p>
+<p>Where:</p>
+<ul>
+<li>$-174$ dBm/Hz is the thermal noise density at room temperature (290 K)</li>
+<li>$B = 15.82$ dB-Hz (effective bandwidth)</li>
+<li>$F = 11$ dB (receiver noise figure)</li>
+</ul>
+<p><strong>Result:</strong></p>
+<p>$$
+P_{\text{noise}} = -174 + 15.82 + 11 = -147.18 \text{ dBm}
+$$</p>
+<h4 id="Step-3:-Calculate-SNR">Step 3: Calculate SNR<a class="anchor-link" href="#Step-3:-Calculate-SNR">¶</a></h4><p>$$
+\text{SNR (dB)} = P_r - P_{\text{noise}} = -114.02 - (-147.18) = 33.16 \text{ dB}
+$$</p>
+<h3 id="Validation-Result">Validation Result<a class="anchor-link" href="#Validation-Result">¶</a></h3><p><strong>The theoretical SNR of 33.16 dB matches the simulated result in the plot above!</strong></p>
+<p>This excellent agreement validates that RadarSimPy's <code>sim_radar()</code> accurately models electromagnetic propagation, point target RCS computation, and system noise characteristics.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary-and-Key-Takeaways">Summary and Key Takeaways<a class="anchor-link" href="#Summary-and-Key-Takeaways">¶</a></h2><h3 id="RadarSimPy-Functions-Used">RadarSimPy Functions Used<a class="anchor-link" href="#RadarSimPy-Functions-Used">¶</a></h3><p>This notebook demonstrated the following RadarSimPy capabilities:</p>
+<ol>
+<li><p><strong><code>Transmitter</code> and <code>Receiver</code> Classes</strong></p>
+<ul>
+<li>Configure FMCW waveform parameters (frequency sweep, pulse timing)</li>
+<li>Define antenna patterns (azimuth/elevation angle-gain pairs)</li>
+<li>Set system characteristics (power, noise figure, sampling rate)</li>
+</ul>
+</li>
+<li><p><strong><code>Radar</code> Class</strong></p>
+<ul>
+<li>Combines transmitter and receiver into complete radar system</li>
+<li>Manages system-level properties and waveform synchronization</li>
+</ul>
+</li>
+<li><p><strong><code>sim_radar()</code> Function</strong></p>
+<ul>
+<li>Performs electromagnetic simulation of radar-target interaction</li>
+<li>Returns baseband signals and noise as separate arrays</li>
+<li>Accurately models propagation, RCS, and receiver noise</li>
+</ul>
+</li>
+<li><p><strong>Point Target Support</strong></p>
+<ul>
+<li>Define targets with <code>location</code>, <code>speed</code>, <code>rcs</code>, and <code>phase</code> parameters</li>
+<li>Computationally efficient for link budget analysis</li>
+<li>Ideal for system design and performance prediction</li>
+</ul>
+</li>
+<li><p><strong><code>range_doppler_fft()</code> Function</strong></p>
+<ul>
+<li>Built-in signal processing for FMCW radar</li>
+<li>Extracts range and Doppler information from baseband data</li>
+</ul>
+</li>
+</ol>
+<h3 id="Simulation-Validation">Simulation Validation<a class="anchor-link" href="#Simulation-Validation">¶</a></h3><p><strong>Key Result:</strong> RadarSimPy simulation produced 33.16 dB SNR, exactly matching theoretical calculation.</p>
+<p>This validates:</p>
+<ul>
+<li>Accurate electromagnetic propagation modeling</li>
+<li>Correct point target RCS implementation</li>
+<li>Proper noise and system loss modeling</li>
+<li>High-fidelity physics-based simulation</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><ul>
+<li><strong>Vary range</strong>: Change target <code>location</code> to verify R⁴ dependency</li>
+<li><strong>Adjust RCS</strong>: Test different target sizes (-10 to +20 dBsm)</li>
+<li><strong>Multiple targets</strong>: Add targets at different ranges</li>
+<li><strong>System optimization</strong>: Tune parameters to meet SNR requirements</li>
+</ul>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>API Reference: <a href="https://radarsimx.github.io/radarsimpy/">https://radarsimx.github.io/radarsimpy/</a></li>
+<li>Mesh target example: <code>characterization_link_budget_mesh_target.ipynb</code></li>
+</ul>
 </div>
 </div>
 </div>

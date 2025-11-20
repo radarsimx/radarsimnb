@@ -7546,9 +7546,171 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Receiver-Operating-Characteristic-(ROC)">Receiver Operating Characteristic (ROC)<a class="anchor-link" href="#Receiver-Operating-Characteristic-(ROC)">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>The Receiver Operating Characteristic (ROC) curve is a valuable tool for assessing and visualizing the performance of binary classification models or systems. It provides insights into the trade-offs between sensitivity and specificity and helps in selecting appropriate operating points based on the application's requirements.</p>
-<p><a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> provides a suite of tools for analyzing receiver operational characteristics. Here, we present an example to illustrate the utilization of these analysis tools.</p>
-<h2 id="Calculate-$P_d$-from-$SNR$-and-$P_%7Bfa%7D$">Calculate $P_d$ from $SNR$ and $P_{fa}$<a class="anchor-link" href="#Calculate-$P_d$-from-$SNR$-and-$P_%7Bfa%7D$">¶</a></h2><h3 id="Swerling-3-targets-without-integration">Swerling 3 targets without integration<a class="anchor-link" href="#Swerling-3-targets-without-integration">¶</a></h3>
+<h1 id="Receiver-Operating-Characteristic-(ROC)-Analysis-for-Radar-Systems">Receiver Operating Characteristic (ROC) Analysis for Radar Systems<a class="anchor-link" href="#Receiver-Operating-Characteristic-(ROC)-Analysis-for-Radar-Systems">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates how to use RadarSimPy's ROC analysis tools to characterize radar detection performance. You'll learn how to:</p>
+<ul>
+<li>Understand the fundamental concepts of radar detection theory</li>
+<li>Calculate probability of detection $(P_d)$ for given SNR and false alarm rate $(P_{fa})$</li>
+<li>Determine required SNR for target detection specifications</li>
+<li>Compare different target fluctuation models (Swerling cases)</li>
+<li>Analyze the impact of non-coherent integration on detection performance</li>
+<li>Use RadarSimPy's ROC analysis tools for system design</li>
+</ul>
+<p><strong>What is ROC Analysis?</strong></p>
+<p>Receiver Operating Characteristic (ROC) analysis is essential for radar system design and performance prediction. It quantifies the trade-off between:</p>
+<ul>
+<li><strong>Detection probability</strong> $(P_d)$: Likelihood of correctly detecting a target when present</li>
+<li><strong>False alarm probability</strong> $(P_{fa})$: Likelihood of incorrectly declaring a target when absent</li>
+</ul>
+<p>ROC curves help radar engineers:</p>
+<ul>
+<li>Set detection thresholds for specific operational requirements</li>
+<li>Predict system performance under different conditions</li>
+<li>Compare different radar configurations</li>
+<li>Design systems to meet detection specifications</li>
+</ul>
+<h3 id="Key-Concepts">Key Concepts<a class="anchor-link" href="#Key-Concepts">¶</a></h3><p><strong>Detection Theory Fundamentals:</strong></p>
+<p>In radar detection, we test two hypotheses:</p>
+<ul>
+<li><strong>$H_0$ (Null hypothesis)</strong>: No target present (noise only)</li>
+<li><strong>$H_1$ (Alternative hypothesis)</strong>: Target present (signal + noise)</li>
+</ul>
+<p><strong>Performance Metrics:</strong></p>
+<ol>
+<li><p><strong>Probability of Detection</strong> $(P_d)$:</p>
+<ul>
+<li>Probability that the detector correctly identifies a target</li>
+<li>Also called "sensitivity" or "true positive rate"</li>
+<li>Higher is better (ideally close to 1)</li>
+</ul>
+</li>
+<li><p><strong>Probability of False Alarm</strong> $(P_{fa})$:</p>
+<ul>
+<li>Probability that the detector incorrectly declares a target</li>
+<li>Also called "false positive rate"</li>
+<li>Lower is better (typically $10^{-4}$ to $10^{-6}$)</li>
+</ul>
+</li>
+<li><p><strong>Signal-to-Noise Ratio (SNR)</strong>:</p>
+<ul>
+<li>Ratio of signal power to noise power</li>
+<li>Fundamental parameter determining detection performance</li>
+<li>Measured in dB: $SNR_{dB} = 10\log_{10}(SNR_{linear})$</li>
+</ul>
+</li>
+</ol>
+<p><strong>The ROC Curve:</strong></p>
+<p>An ROC curve plots $P_d$ versus $P_{fa}$ for various detection thresholds. For radar, we often fix $P_{fa}$ and examine how $P_d$ varies with SNR.</p>
+<p><strong>Swerling Target Models:</strong></p>
+<p>Real targets don't have constant RCS—they fluctuate due to:</p>
+<ul>
+<li>Aspect angle changes</li>
+<li>Target rotation</li>
+<li>Multipath effects</li>
+<li>Component scattering interference</li>
+</ul>
+<p>The <strong>Swerling models</strong> characterize RCS fluctuation statistics:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Description</th>
+<th>Fluctuation Rate</th>
+<th>Distribution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Swerling 1</strong></td>
+<td>Complex target, slow fluctuation</td>
+<td>Scan-to-scan</td>
+<td>Exponential (Rayleigh amplitude)</td>
+</tr>
+<tr>
+<td><strong>Swerling 2</strong></td>
+<td>Complex target, fast fluctuation</td>
+<td>Pulse-to-pulse</td>
+<td>Exponential (Rayleigh amplitude)</td>
+</tr>
+<tr>
+<td><strong>Swerling 3</strong></td>
+<td>Single dominant scatterer, slow</td>
+<td>Scan-to-scan</td>
+<td>Chi-squared with 4 DOF</td>
+</tr>
+<tr>
+<td><strong>Swerling 4</strong></td>
+<td>Single dominant scatterer, fast</td>
+<td>Pulse-to-pulse</td>
+<td>Chi-squared with 4 DOF</td>
+</tr>
+<tr>
+<td><strong>Swerling 5 (or 0)</strong> (Non-fluctuating)</td>
+<td>Constant RCS</td>
+<td>No fluctuation</td>
+<td>Deterministic</td>
+</tr>
+<tr>
+<td><strong>Coherent</strong></td>
+<td>Ideal coherent integration</td>
+<td>N/A</td>
+<td>Assumes perfect coherence</td>
+</tr>
+<tr>
+<td><strong>Real</strong></td>
+<td>Real signal with noise</td>
+<td>N/A</td>
+<td>Based on actual distributions</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Integration Gain:</strong></p>
+<p>Combining multiple observations improves detection:</p>
+<ul>
+<li><strong>Coherent integration</strong>: Adds signals in-phase (requires phase coherence)<ul>
+<li>Gain = $N$ (linear) or $10\log_{10}(N)$ dB</li>
+</ul>
+</li>
+<li><strong>Non-coherent integration</strong>: Adds signal envelopes or powers<ul>
+<li>Gain &lt; $N$ due to loss of phase information</li>
+<li>Used when phase coherence cannot be maintained</li>
+</ul>
+</li>
+</ul>
+<p><strong>Practical Example:</strong></p>
+<p>For an automotive radar detecting a car at 100m:</p>
+<ul>
+<li>Required $P_d = 0.9$ (90% detection probability)</li>
+<li>Acceptable $P_{fa} = 10^{-5}$ (one false alarm per 100,000 samples)</li>
+<li>Target type: Swerling 1 (complex vehicle, scan-to-scan fluctuation)</li>
+<li>Integration: N = 10 pulses</li>
+</ul>
+<p>This notebook shows how to calculate the required SNR for these specifications.</p>
+<h2 id="Calculate-$P_d$-from-SNR-and-$P_%7Bfa%7D$">Calculate $P_d$ from SNR and $P_{fa}$<a class="anchor-link" href="#Calculate-$P_d$-from-SNR-and-$P_%7Bfa%7D$">¶</a></h2><p>Given SNR and false alarm probability, we can predict detection performance.</p>
+<h3 id="Example-1:-Swerling-3-Targets-(Moderate-Fluctuation)">Example 1: Swerling 3 Targets (Moderate Fluctuation)<a class="anchor-link" href="#Example-1:-Swerling-3-Targets-(Moderate-Fluctuation)">¶</a></h3><p><strong>Scenario:</strong></p>
+<ul>
+<li>Target type: Swerling 3 (single dominant scatterer, slow fluctuation)</li>
+<li>Integration samples: N = 64</li>
+<li>False alarm rates: $P_{fa} = 10^{-4}$ and $10^{-5}$</li>
+<li>SNR range: -10 to 10 dB</li>
+</ul>
+<p>This represents a target with one strong reflector and several weak ones, with RCS changing scan-to-scan.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="Calculate-Detection-Probability">Calculate Detection Probability<a class="anchor-link" href="#Calculate-Detection-Probability">¶</a></h4><p>Use <code>roc_pd()</code> to calculate probability of detection for:</p>
+<ul>
+<li>Multiple false alarm rates (array of $P_{fa}$ values)</li>
+<li>Range of SNR values (-10 to 10 dB)</li>
+<li>N = 64 non-coherent integration samples</li>
+<li>Swerling 3 target model</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7630,7 +7792,14 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Swerling-3-targets-with-20-channel-non-coherent-integration">Swerling 3 targets with 20-channel non-coherent integration<a class="anchor-link" href="#Swerling-3-targets-with-20-channel-non-coherent-integration">¶</a></h3>
+<h3 id="Example-2:-Effect-of-Integration-(N-=-20-vs-N-=-64)">Example 2: Effect of Integration (N = 20 vs N = 64)<a class="anchor-link" href="#Example-2:-Effect-of-Integration-(N-=-20-vs-N-=-64)">¶</a></h3><p>Now let's reduce the integration samples from 64 to 20 and observe the impact on detection performance.</p>
+<p><strong>Expected behavior:</strong></p>
+<ul>
+<li>Fewer integration samples → less integration gain</li>
+<li>Lower SNR improvement → detection curves shift right</li>
+<li>Need higher SNR to achieve same $P_d$</li>
+</ul>
+<p>This demonstrates the <strong>integration gain trade-off</strong>: More samples improve detection but increase processing time and limit maximum unambiguous Doppler.</p>
 </div>
 </div>
 </div>
@@ -7702,7 +7871,29 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Different-target-types">Different target types<a class="anchor-link" href="#Different-target-types">¶</a></h3>
+<h4 id="Comparing-Integration-Performance">Comparing Integration Performance<a class="anchor-link" href="#Comparing-Integration-Performance">¶</a></h4><ul>
+<li><strong>More integration (N=64)</strong>: Better detection, but longer observation time</li>
+<li><strong>Less integration (N=20)</strong>: Faster updates, but need stronger signals</li>
+<li><strong>Trade-off</strong>: Detection performance vs. update rate and Doppler ambiguity</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Example-3:-Comparing-All-Swerling-Models">Example 3: Comparing All Swerling Models<a class="anchor-link" href="#Example-3:-Comparing-All-Swerling-Models">¶</a></h3><p>Now let's compare all target fluctuation models to understand their relative performance characteristics.</p>
+<p><strong>Test parameters:</strong></p>
+<ul>
+<li>False alarm rate: $P_{fa} = 10^{-6}$ (very low false alarms)</li>
+<li>Integration samples: N = 5 (minimal integration)</li>
+<li>SNR range: -10 to 30 dB (wide range)</li>
+</ul>
+<p>This comparison reveals how target fluctuation statistics affect detection difficulty.</p>
 </div>
 </div>
 </div>
@@ -7783,7 +7974,16 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Calculate-minimal-required-$SNR$-from-$P_d$-and-$P_%7Bfa%7D$">Calculate minimal required $SNR$ from $P_d$ and $P_{fa}$<a class="anchor-link" href="#Calculate-minimal-required-$SNR$-from-$P_d$-and-$P_%7Bfa%7D$">¶</a></h2>
+<h2 id="Calculate-Required-SNR-from-$P_d$-and-$P_%7Bfa%7D$">Calculate Required SNR from $P_d$ and $P_{fa}$<a class="anchor-link" href="#Calculate-Required-SNR-from-$P_d$-and-$P_%7Bfa%7D$">¶</a></h2><p>Now we flip the problem: <strong>Given detection requirements, what SNR do we need?</strong></p>
+<p>This is the inverse calculation—critical for radar system design. Instead of predicting $P_d$ from SNR, we determine the minimum SNR needed to meet detection specifications.</p>
+<h3 id="Example-4:-SNR-Requirements-for-Various-Detection-Probabilities">Example 4: SNR Requirements for Various Detection Probabilities<a class="anchor-link" href="#Example-4:-SNR-Requirements-for-Various-Detection-Probabilities">¶</a></h3><p><strong>Scenario:</strong></p>
+<ul>
+<li>Fixed false alarm rate: $P_{fa} = 10^{-5}$</li>
+<li>Variable detection probability: $P_d = 0.1$ to $0.9$</li>
+<li>Integration samples: N = 10</li>
+<li>Compare all Swerling models</li>
+</ul>
+<p><strong>Use case:</strong> Determine SNR budget for radar link analysis given detection requirements.</p>
 </div>
 </div>
 </div>
@@ -7866,7 +8066,16 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Generate-a-look-up-table">Generate a look-up table<a class="anchor-link" href="#Generate-a-look-up-table">¶</a></h2>
+<h2 id="Generate-SNR-Lookup-Table-(Optional)">Generate SNR Lookup Table (Optional)<a class="anchor-link" href="#Generate-SNR-Lookup-Table-(Optional)">¶</a></h2><p>The commented code below demonstrates how to generate a lookup table of SNR requirements for different numbers of integration samples.</p>
+<p><strong>Purpose:</strong></p>
+<ul>
+<li>Pre-compute SNR values for N = 1 to 256 integration samples</li>
+<li>Fixed detection probability ($P_d = 0.5$) and false alarm rate ($P_{fa} = 10^{-4}$)</li>
+<li>Useful for real-time applications requiring fast SNR lookups</li>
+<li>Can be loaded and interpolated instead of calling <code>roc_snr()</code> repeatedly</li>
+</ul>
+<p><strong>Usage:</strong>
+Uncomment the code to generate <code>snr.csv</code> with columns for each Swerling model.</p>
 </div>
 </div>
 </div>
@@ -7907,6 +8116,127 @@ a.anchor-link {
 <span class="c1"># np.savetxt("../data/snr.csv", mat, delimiter=",")</span>
 </pre></div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary-and-Key-Takeaways">Summary and Key Takeaways<a class="anchor-link" href="#Summary-and-Key-Takeaways">¶</a></h2><h3 id="What-You-Learned">What You Learned<a class="anchor-link" href="#What-You-Learned">¶</a></h3><p>In this notebook, you learned:</p>
+<ol>
+<li><p><strong>ROC Analysis Fundamentals</strong>:</p>
+<ul>
+<li>Detection probability $(P_d)$ and false alarm probability $(P_{fa})$</li>
+<li>Relationship between SNR, $P_d$, and $P_{fa}$</li>
+<li>How ROC curves characterize detector performance</li>
+</ul>
+</li>
+<li><p><strong>Swerling Target Models</strong>:</p>
+<ul>
+<li>Five models representing different target fluctuation characteristics</li>
+<li>Performance differences based on RCS statistics</li>
+<li>How to choose appropriate models for system design</li>
+</ul>
+</li>
+<li><p><strong>Integration Effects</strong>:</p>
+<ul>
+<li>Non-coherent integration gain vs. number of samples</li>
+<li>Trade-offs between detection performance and update rate</li>
+<li>Diminishing returns with excessive integration</li>
+</ul>
+</li>
+<li><p><strong>RadarSimPy ROC Tools</strong>:</p>
+<ul>
+<li><code>roc_pd()</code>: Calculate detection probability from SNR</li>
+<li><code>roc_snr()</code>: Calculate required SNR from detection requirements</li>
+<li>How to use these tools for system design and analysis</li>
+</ul>
+</li>
+</ol>
+<h3 id="Practical-Applications">Practical Applications<a class="anchor-link" href="#Practical-Applications">¶</a></h3><p><strong>Radar System Design:</strong></p>
+<ul>
+<li>Define operational requirements ($P_d$, $P_{fa}$)</li>
+<li>Select appropriate target model (conservative or realistic)</li>
+<li>Calculate SNR budget using <code>roc_snr()</code></li>
+<li>Design link budget to meet SNR requirements</li>
+</ul>
+<p><strong>Performance Prediction:</strong></p>
+<ul>
+<li>Estimate detection range for different target types</li>
+<li>Predict system performance under various conditions</li>
+<li>Compare alternative system configurations</li>
+<li>Validate design against requirements</li>
+</ul>
+<p><strong>Trade-off Analysis:</strong></p>
+<ul>
+<li>Detection performance vs. false alarm rate</li>
+<li>Integration gain vs. update rate</li>
+<li>SNR requirements vs. system complexity</li>
+<li>Cost vs. performance optimization</li>
+</ul>
+<h3 id="Design-Guidelines">Design Guidelines<a class="anchor-link" href="#Design-Guidelines">¶</a></h3><p><strong>Choosing False Alarm Rate:</strong></p>
+<ul>
+<li><strong>$P_{fa} = 10^{-3}$</strong>: High false alarm rate, not typically used</li>
+<li><strong>$P_{fa} = 10^{-4}$ to $10^{-5}$</strong>: Common for tracking radars</li>
+<li><strong>$P_{fa} = 10^{-6}$ to $10^{-8}$</strong>: Low false alarms for critical applications</li>
+</ul>
+<p><strong>Choosing Detection Probability:</strong></p>
+<ul>
+<li><strong>$P_d = 0.5$</strong>: Marginal detection, not reliable</li>
+<li><strong>$P_d = 0.9$</strong>: Standard requirement for most applications</li>
+<li><strong>$P_d = 0.99$</strong>: High reliability for safety-critical systems</li>
+</ul>
+<p><strong>Target Model Selection:</strong></p>
+<ul>
+<li><strong>Swerling 1</strong>: Worst case (ships, aircraft with deep fades)</li>
+<li><strong>Swerling 2</strong>: Complex targets with fast fluctuation</li>
+<li><strong>Swerling 3/4</strong>: Most realistic for automotive/aerospace</li>
+<li><strong>Swerling 5</strong>: Best case (simple, constant RCS targets)</li>
+</ul>
+<p><strong>Integration Strategy:</strong></p>
+<ul>
+<li>More samples → Better detection, longer processing time</li>
+<li>Typical range: N = 8 to 64 for most applications</li>
+<li>Balance detection gain with Doppler ambiguity</li>
+<li>Consider computational complexity</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
+<ol>
+<li><p><strong>Vary integration samples</strong>: Test N = 1, 10, 50, 100, 200</p>
+<ul>
+<li>Observe integration gain curve</li>
+<li>Find optimal N for your application</li>
+</ul>
+</li>
+<li><p><strong>Different $P_{fa}$ requirements</strong>: Try $10^{-3}$, $10^{-6}$, $10^{-9}$</p>
+<ul>
+<li>See how strict false alarm requirements affect SNR</li>
+<li>Understand the $P_{fa}$ vs. SNR trade-off</li>
+</ul>
+</li>
+<li><p><strong>Compare models for specific $P_d$</strong>: Fix $P_d = 0.95$</p>
+<ul>
+<li>Calculate SNR for each Swerling model</li>
+<li>Quantify worst-case vs. best-case differences</li>
+</ul>
+</li>
+<li><p><strong>Create design curves</strong>: Generate $P_d$ vs. SNR for your system</p>
+<ul>
+<li>Multiple $P_{fa}$ values on one plot</li>
+<li>Use for system specification documentation</li>
+</ul>
+</li>
+</ol>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>Swerling Models Reference: Radar detection theory literature</li>
+<li>ROC Tool API: <a href="https://radarsimx.github.io/radarsimpy/tools.html">https://radarsimx.github.io/radarsimpy/tools.html</a></li>
+<li>Detection Theory: Probability of detection in radar systems</li>
+</ul>
 </div>
 </div>
 </div>

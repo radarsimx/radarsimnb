@@ -7515,10 +7515,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import RadarSimPy library and display version information</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
@@ -7546,11 +7547,210 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Arbitrary-Waveform">Arbitrary Waveform<a class="anchor-link" href="#Arbitrary-Waveform">¶</a></h1><p>In addition to the frequently employed waveforms, <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> boasts the capability to simulate arbitrary waveforms. This versatility allows you to precisely define waveforms by specifying their frequency versus time curves. In the subsequent illustration, we will harness the potential of arbitrary waveform simulation to assess the impact of a non-linear chirp within the context of an FMCW radar scenario.</p>
-<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>The chirp linearity in an FMCW radar pertains to the degree of adherence of the actual frequency modulation to the intended linear frequency sweep. In the realm of FMCW radar, a continuous waveform characterized by a linearly ascending or descending frequency, known as a chirp signal, is propagated. This chirp signal serves the purpose of gauging the distance to a target by leveraging the time delay between the emission and reception of signals.</p>
-<p>The significance of chirp linearity lies in its role as a pivotal attribute. Even slight deviations from the anticipated linear frequency progression can usher in inaccuracies during range measurement and velocity estimation. In situations where the chirp doesn't impeccably adhere to linearity, the radar system runs the risk of miscalculating the target's distance and velocity. The ramifications of such discrepancies extend to compromised precision in target identification, tracking, and spatial localization.</p>
-<p>Illustrating the concept, the subsequent code examples will elucidate the creation of a non-linear chirp within RadarSimPy. Through this, we aim to assess the ensuing impact on the radar signal processing workflow.</p>
-<h2 id="Create-Radar-Models">Create Radar Models<a class="anchor-link" href="#Create-Radar-Models">¶</a></h2><p>Firstly, import the required modules from <code>radarsimpy</code>. <code>numpy</code> will also be needed in this example.</p>
+<h1 id="Chirp-Non-Linearity-in-FMCW-Radar:-Impact-on-Performance">Chirp Non-Linearity in FMCW Radar: Impact on Performance<a class="anchor-link" href="#Chirp-Non-Linearity-in-FMCW-Radar:-Impact-on-Performance">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>chirp non-linearity</strong>—a critical impairment in FMCW radar where the frequency sweep deviates from the ideal linear relationship. Understanding and quantifying non-linearity is essential because even small deviations significantly degrade range resolution, accuracy, and SNR, particularly for distant targets.</p>
+<h3 id="What-is-Chirp-Linearity?">What is Chirp Linearity?<a class="anchor-link" href="#What-is-Chirp-Linearity?">¶</a></h3><p><strong>Ideal Linear Chirp:</strong></p>
+<p>In perfect FMCW radar, frequency increases linearly with time:</p>
+<p>$$f(t) = f_0 + \frac{B}{T_c} \cdot t$$</p>
+<p>Where:</p>
+<ul>
+<li>$f(t)$ = Instantaneous frequency (Hz)</li>
+<li>$f_0$ = Start frequency (Hz)</li>
+<li>$B$ = Bandwidth (Hz)</li>
+<li>$T_c$ = Chirp duration (s)</li>
+<li>Slope: $\alpha = B/T_c$ (Hz/s)</li>
+</ul>
+<p><strong>Non-Linear Chirp:</strong></p>
+<p>In real hardware, imperfections cause deviations:</p>
+<p>$$f(t) = f_0 + \frac{B}{T_c} \cdot t + \epsilon(t)$$</p>
+<p>Where $\epsilon(t)$ represents non-linearity errors from:</p>
+<ul>
+<li><strong>PLL (Phase-Locked Loop) dynamics</strong></li>
+<li><strong>VCO (Voltage-Controlled Oscillator) non-idealities</strong></li>
+<li><strong>Temperature drift</strong></li>
+<li><strong>Component tolerances</strong></li>
+</ul>
+<h3 id="Why-Linearity-Matters">Why Linearity Matters<a class="anchor-link" href="#Why-Linearity-Matters">¶</a></h3><p><strong>Range Measurement Principle:</strong></p>
+<p>FMCW radar determines range from beat frequency:</p>
+<p>$$R = \frac{f_b \cdot c \cdot T_c}{2B}$$</p>
+<p>This equation <strong>assumes linear frequency sweep</strong>. Non-linearity violates this assumption.</p>
+<p><strong>Impact of Non-Linearity:</strong></p>
+<ol>
+<li><strong>Peak Broadening</strong>: Targets appear wider in range (reduced resolution)</li>
+<li><strong>Range Shift</strong>: Incorrect range measurement (bias error)</li>
+<li><strong>Sidelobe Increase</strong>: Higher spectral leakage</li>
+<li><strong>SNR Loss</strong>: Energy spread across multiple bins</li>
+<li><strong>False Targets</strong>: Sidelobes may appear as ghost targets</li>
+</ol>
+<h3 id="Quantifying-Non-Linearity">Quantifying Non-Linearity<a class="anchor-link" href="#Quantifying-Non-Linearity">¶</a></h3><p><strong>Metrics:</strong></p>
+<ol>
+<li><p><strong>RMS Frequency Error</strong>:
+$$\epsilon_{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}[f(t_i) - f_{ideal}(t_i)]^2}$$</p>
+</li>
+<li><p><strong>Peak Phase Error</strong>:
+Maximum integrated phase deviation</p>
+</li>
+<li><p><strong>Range Resolution Degradation</strong>:
+Actual 3-dB width vs. theoretical</p>
+</li>
+</ol>
+<p><strong>Typical Specifications:</strong></p>
+<ul>
+<li><strong>High-performance</strong>: &lt; 0.01% RMS error</li>
+<li><strong>Automotive</strong>: &lt; 0.1% RMS error</li>
+<li><strong>Low-cost</strong>: 0.1-1% RMS error</li>
+</ul>
+<h3 id="Sources-of-Non-Linearity">Sources of Non-Linearity<a class="anchor-link" href="#Sources-of-Non-Linearity">¶</a></h3><p><strong>Hardware Imperfections:</strong></p>
+<ol>
+<li><p><strong>PLL Loop Dynamics</strong>:</p>
+<ul>
+<li>Finite bandwidth limits frequency tracking</li>
+<li>Loop filter introduces lag</li>
+<li>Higher chirp rates → worse linearity</li>
+</ul>
+</li>
+<li><p><strong>VCO Characteristics</strong>:</p>
+<ul>
+<li>Tuning curve non-ideality</li>
+<li>Temperature sensitivity</li>
+<li>Aging effects</li>
+</ul>
+</li>
+<li><p><strong>Frequency Synthesizer</strong>:</p>
+<ul>
+<li>DDS (Direct Digital Synthesis) quantization</li>
+<li>DAC resolution limits</li>
+<li>Clock jitter</li>
+</ul>
+</li>
+</ol>
+<p><strong>Environmental Factors:</strong></p>
+<ul>
+<li>Temperature: VCO tuning drift</li>
+<li>Supply voltage variations</li>
+<li>Mechanical vibration</li>
+</ul>
+<h3 id="Measurement-Techniques">Measurement Techniques<a class="anchor-link" href="#Measurement-Techniques">¶</a></h3><p><strong>Direct Measurement:</strong></p>
+<p>Modern signal analyzers can measure chirp linearity:</p>
+<ul>
+<li><strong>Rohde &amp; Schwarz FSW</strong>: Signal and spectrum analyzer</li>
+<li><strong>Keysight UXA</strong>: X-Series signal analyzer</li>
+<li><strong>Anritsu MS2090A</strong>: Field master</li>
+</ul>
+<p><strong>Measurement Process:</strong></p>
+<ol>
+<li>Connect radar output to analyzer</li>
+<li>Trigger on chirp start</li>
+<li>Capture frequency vs. time</li>
+<li>Analyze deviation from linear fit</li>
+<li>Extract RMS error and peak error</li>
+</ol>
+<h3 id="Mitigation-Techniques">Mitigation Techniques<a class="anchor-link" href="#Mitigation-Techniques">¶</a></h3><p><strong>Hardware Solutions:</strong></p>
+<ol>
+<li><p><strong>PLL Optimization</strong>:</p>
+<ul>
+<li>Widen loop bandwidth</li>
+<li>Optimize loop filter</li>
+<li>Use fractional-N synthesis</li>
+</ul>
+</li>
+<li><p><strong>Pre-Distortion</strong>:</p>
+<ul>
+<li>Measure non-linearity</li>
+<li>Apply inverse curve</li>
+<li>Compensate in waveform generation</li>
+</ul>
+</li>
+<li><p><strong>Temperature Control</strong>:</p>
+<ul>
+<li>Stabilize VCO temperature</li>
+<li>Use oven-controlled oscillators</li>
+<li>Temperature compensation circuits</li>
+</ul>
+</li>
+</ol>
+<p><strong>Signal Processing:</strong></p>
+<ol>
+<li><p><strong>De-Chirp Processing</strong>:</p>
+<ul>
+<li>Estimate non-linearity from strong targets</li>
+<li>Apply correction to all targets</li>
+</ul>
+</li>
+<li><p><strong>Waveform Calibration</strong>:</p>
+<ul>
+<li>Measure chirp with known target</li>
+<li>Build correction lookup table</li>
+<li>Apply in real-time</li>
+</ul>
+</li>
+<li><p><strong>Robust Algorithms</strong>:</p>
+<ul>
+<li>Windowing reduces sidelobes</li>
+<li>Super-resolution techniques (MUSIC, ESPRIT)</li>
+<li>Iterative correction methods</li>
+</ul>
+</li>
+</ol>
+<h3 id="You'll-Learn-How-To:">You'll Learn How To:<a class="anchor-link" href="#You'll-Learn-How-To:">¶</a></h3><ul>
+<li>Define arbitrary waveforms with frequency vs. time</li>
+<li>Model realistic non-linear chirp from measurements</li>
+<li>Configure linear chirp for comparison</li>
+<li>Simulate identical scenarios with both waveforms</li>
+<li>Apply range FFT to both cases</li>
+<li>Compare range profiles showing non-linearity effects</li>
+<li>Observe peak broadening with distance</li>
+<li>Measure SNR degradation</li>
+<li>Understand linearity requirements</li>
+<li>Appreciate hardware calibration importance</li>
+</ul>
+<h3 id="About-This-Example">About This Example<a class="anchor-link" href="#About-This-Example">¶</a></h3><p>This notebook uses <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> to demonstrate:</p>
+<p><strong>Scenario:</strong></p>
+<ul>
+<li>24.125 GHz FMCW radar (K-band)</li>
+<li>100 MHz bandwidth (1.5 m range resolution)</li>
+<li>80 μs chirp duration</li>
+<li>Single chirp observation</li>
+</ul>
+<p><strong>Waveforms:</strong></p>
+<ol>
+<li><p><strong>Non-Linear Chirp</strong>: 100-point measured frequency curve</p>
+<ul>
+<li>Realistic frequency progression with deviations</li>
+<li>Represents actual synthesizer output</li>
+</ul>
+</li>
+<li><p><strong>Linear Chirp</strong>: Ideal 2-point definition</p>
+<ul>
+<li>Perfect linear sweep (reference)</li>
+<li>Theoretical performance</li>
+</ul>
+</li>
+</ol>
+<p><strong>Targets:</strong></p>
+<ul>
+<li>Target 1: 200m range, -5 m/s, 30 dBsm (far)</li>
+<li>Target 2: 95m range, -50 m/s, 25 dBsm (medium)</li>
+<li>Target 3: 30m range, -22 m/s, 15 dBsm (near)</li>
+</ul>
+<p><strong>Processing:</strong></p>
+<ul>
+<li>Range FFT with Chebyshev windowing</li>
+<li>Side-by-side comparison</li>
+<li>Quantify resolution and SNR degradation</li>
+</ul>
+<p><strong>Expected Results:</strong></p>
+<ul>
+<li><strong>Linear</strong>: Sharp, narrow peaks at all ranges</li>
+<li><strong>Non-Linear</strong>:<ul>
+<li>Near targets: Minimal impact</li>
+<li>Far targets: Significant broadening and SNR loss</li>
+<li>Demonstrates range-dependent degradation</li>
+</ul>
+</li>
+</ul>
+<p>The simulation validates the critical importance of chirp linearity for FMCW radar performance.</p>
+<h2 id="Radar-System-Configuration">Radar System Configuration<a class="anchor-link" href="#Radar-System-Configuration">¶</a></h2><p>Configure FMCW radars with linear and non-linear chirps for comparison.</p>
+<h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3><p>Import necessary RadarSimPy modules and NumPy for numerical operations.</p>
 </div>
 </div>
 </div>
@@ -7559,10 +7759,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Transmitter</span><span class="p">,</span> <span class="n">Receiver</span>
 </pre></div>
 </div>
@@ -7576,7 +7777,26 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Non-linear-Chirp-vs.-Linear-Chirp">Non-linear Chirp vs. Linear Chirp<a class="anchor-link" href="#Non-linear-Chirp-vs.-Linear-Chirp">¶</a></h3><p>The non-linear chirp can be defined by frequency versus time. This curve can be measured directly from an FMCW radar frequency synthesizer through a signal and spectrum analyzer. For example, Rohde &amp; Schwarz FSW Signal and spectrum analyzer, or Keysight's UXA Signal Analyzer is capable of measuring the chirp directly.</p>
+<h3 id="Waveform-Definition:-Non-Linear-vs.-Linear-Chirp">Waveform Definition: Non-Linear vs. Linear Chirp<a class="anchor-link" href="#Waveform-Definition:-Non-Linear-vs.-Linear-Chirp">¶</a></h3><p>Define arbitrary non-linear chirp from measured data and ideal linear chirp for comparison.</p>
+<p><strong>Arbitrary Waveform Capability:</strong></p>
+<p>RadarSimPy supports <strong>arbitrary waveforms</strong> by specifying frequency as a function of time with multiple points. This enables simulation of:</p>
+<ul>
+<li><strong>Measured chirps</strong> from real hardware</li>
+<li><strong>Non-ideal frequency sweeps</strong></li>
+<li><strong>Complex modulation</strong> patterns</li>
+<li><strong>Calibration scenarios</strong></li>
+</ul>
+<p><strong>Non-Linear Chirp Data:</strong></p>
+<p>The non-linear chirp represents a <strong>realistic frequency sweep</strong> captured from an FMCW radar synthesizer using a signal analyzer. This 100-point curve shows subtle deviations from perfect linearity that occur in real hardware due to PLL dynamics and VCO non-idealities.</p>
+<p><strong>Measurement Equipment:</strong></p>
+<p>Such measurements can be obtained using:</p>
+<ul>
+<li><strong>Rohde &amp; Schwarz FSW</strong>: Signal and spectrum analyzer with chirp analysis</li>
+<li><strong>Keysight UXA</strong>: X-Series signal analyzer with phase noise analysis</li>
+<li><strong>Direct sampling</strong>: High-speed ADC with frequency estimation</li>
+</ul>
+<p><strong>Linear Chirp Reference:</strong></p>
+<p>The ideal linear chirp is defined by just two points (start and end frequency), representing perfect linear sweep without any imperfections—the theoretical ideal case.</p>
 </div>
 </div>
 </div>
@@ -7585,12 +7805,15 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">freq_nonlinear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define non-linear chirp from measured frequency data</span>
+<span class="c1"># This represents a realistic chirp with imperfections from hardware limitations</span>
+<span class="c1"># 100 frequency points captured over 80 μs chirp duration</span>
+<span class="n">freq_nonlinear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
     <span class="p">[</span>
-        <span class="mf">2.40750000e10</span><span class="p">,</span>
+        <span class="mf">2.40750000e10</span><span class="p">,</span>  <span class="c1"># Start: 24.075 GHz</span>
         <span class="mf">2.40760901e10</span><span class="p">,</span>
         <span class="mf">2.40771786e10</span><span class="p">,</span>
         <span class="mf">2.40782654e10</span><span class="p">,</span>
@@ -7689,10 +7912,12 @@ a.anchor-link {
         <span class="mf">2.41722048e10</span><span class="p">,</span>
         <span class="mf">2.41731381e10</span><span class="p">,</span>
         <span class="mf">2.41740699e10</span><span class="p">,</span>
-        <span class="mf">2.41750000e10</span><span class="p">,</span>
+        <span class="mf">2.41750000e10</span><span class="p">,</span>  <span class="c1"># End: 24.175 GHz</span>
     <span class="p">]</span>
-<span class="p">)</span>
-<span class="n">t_nonlinear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="p">)</span>  <span class="c1"># 100 frequency points (Hz)</span>
+
+<span class="c1"># Time axis for non-linear chirp (80 μs, 100 samples)</span>
+<span class="n">t_nonlinear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># 0 to 80 microseconds</span>
 </pre></div>
 </div>
 </div>
@@ -7705,7 +7930,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The linear chirp can be defined from its start frequency and end frequency.</p>
+<h3 id="Define-Ideal-Linear-Chirp">Define Ideal Linear Chirp<a class="anchor-link" href="#Define-Ideal-Linear-Chirp">¶</a></h3><p>The ideal linear chirp is defined by just start and end frequencies—representing perfect linearity.</p>
 </div>
 </div>
 </div>
@@ -7714,11 +7939,15 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">freq_linear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">24.125e9</span> <span class="o">-</span> <span class="mf">50e6</span><span class="p">,</span> <span class="mf">24.125e9</span> <span class="o">+</span> <span class="mf">50e6</span><span class="p">])</span>
-<span class="n">t_linear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">])</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define ideal linear chirp (2-point definition)</span>
+<span class="c1"># Perfectly linear frequency sweep from start to end</span>
+<span class="n">freq_linear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">24.125e9</span> <span class="o">-</span> <span class="mf">50e6</span><span class="p">,</span> <span class="mf">24.125e9</span> <span class="o">+</span> <span class="mf">50e6</span><span class="p">])</span>  <span class="c1"># [24.075, 24.175] GHz</span>
+
+<span class="c1"># Time axis for linear chirp (start and end only)</span>
+<span class="n">t_linear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">])</span>  <span class="c1"># [0, 80] microseconds</span>
 </pre></div>
 </div>
 </div>
@@ -7731,7 +7960,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot the non-linear chirp and the linear chirp</em></p>
+<h3 id="Visualize-Chirp-Comparison">Visualize Chirp Comparison<a class="anchor-link" href="#Visualize-Chirp-Comparison">¶</a></h3><p>Display frequency vs. time for both chirps to observe non-linearity deviations.</p>
 </div>
 </div>
 </div>
@@ -7740,30 +7969,46 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import plotting libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
+<span class="c1"># Create figure comparing linear and non-linear chirps</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Plot non-linear chirp (measured data)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">t_nonlinear</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">freq_nonlinear</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">t_nonlinear</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>      <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">freq_nonlinear</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>   <span class="c1"># Convert to GHz</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">"Non-linear chirp"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">'lines+markers'</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
+
+<span class="c1"># Plot ideal linear chirp (reference)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">t_linear</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">freq_linear</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"Linear chirp"</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">t_linear</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>         <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">freq_linear</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>      <span class="c1"># Convert to GHz</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Linear chirp (ideal)"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">dash</span><span class="o">=</span><span class="s1">'dash'</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">'lines'</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s2">".2f"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Frequency (GHz)"</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s2">".2f"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Time (us)"</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Chirp Comparison: Non-Linear (Measured) vs. Linear (Ideal)"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s2">".2f"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Frequency (GHz)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s2">".2f"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Time (μs)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.98</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
@@ -7796,7 +8041,32 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Transmitters">Transmitters<a class="anchor-link" href="#Transmitters">¶</a></h3><p>Here we created 2 transmitters, one with the linear chirp and the other is with the non-linear chirp.</p>
+<h3 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h3><p>Create two transmitters—one with linear chirp, one with non-linear chirp—for comparison.</p>
+<p><strong>Transmitter Parameters:</strong></p>
+<ul>
+<li><p><strong>Frequency</strong>: Defined by chirp waveforms above</p>
+<ul>
+<li>Linear: 2-point array (24.075-24.175 GHz)</li>
+<li>Non-linear: 100-point measured curve</li>
+<li>Both have same bandwidth: 100 MHz</li>
+</ul>
+</li>
+<li><p><strong>Time</strong>: Corresponding time arrays</p>
+<ul>
+<li>Linear: [0, 80] μs</li>
+<li>Non-linear: 100 time points over 80 μs</li>
+</ul>
+</li>
+<li><p><strong>Transmit Power</strong>: 60 dBm (1 kW, high power for long range)</p>
+</li>
+<li><p><strong>PRP</strong>: 100 μs (10 kHz PRF)</p>
+</li>
+<li><p><strong>Pulses</strong>: 1 (single chirp, no Doppler processing)</p>
+</li>
+<li><p><strong>Antenna</strong>: Single channel at origin</p>
+</li>
+</ul>
+<p>Both transmitters are <strong>identical except for the chirp waveform</strong>, enabling direct comparison of non-linearity effects.</p>
 </div>
 </div>
 </div>
@@ -7805,31 +8075,33 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">tx_nonlinear</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">freq_nonlinear</span><span class="p">,</span>
-    <span class="n">t</span><span class="o">=</span><span class="n">t_nonlinear</span><span class="p">,</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure transmitter with non-linear chirp</span>
+<span class="n">tx_nonlinear</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><span class="n">freq_nonlinear</span><span class="p">,</span>    <span class="c1"># Non-linear chirp: 100-point measured frequency curve</span>
+    <span class="n">t</span><span class="o">=</span><span class="n">t_nonlinear</span><span class="p">,</span>       <span class="c1"># Time array: 100 points over 80 μs</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>         <span class="c1"># Transmit power: 60 dBm (1 kW)</span>
+    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>          <span class="c1"># Pulse repetition period: 100 μs</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>            <span class="c1"># Single chirp (no Doppler processing)</span>
     <span class="n">channels</span><span class="o">=</span><span class="p">[</span>
         <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Antenna at origin</span>
         <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
+<span class="c1"># Configure transmitter with ideal linear chirp</span>
 <span class="n">tx_linear</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">freq_linear</span><span class="p">,</span>
-    <span class="n">t</span><span class="o">=</span><span class="n">t_linear</span><span class="p">,</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">f</span><span class="o">=</span><span class="n">freq_linear</span><span class="p">,</span>       <span class="c1"># Linear chirp: 2-point ideal frequency sweep</span>
+    <span class="n">t</span><span class="o">=</span><span class="n">t_linear</span><span class="p">,</span>          <span class="c1"># Time array: [0, 80] μs</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>         <span class="c1"># Transmit power: 60 dBm (1 kW, same as non-linear)</span>
+    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>          <span class="c1"># Pulse repetition period: 100 μs</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>            <span class="c1"># Single chirp (same configuration)</span>
     <span class="n">channels</span><span class="o">=</span><span class="p">[</span>
         <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Antenna at origin (same location)</span>
         <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
@@ -7845,7 +8117,26 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Receiver">Receiver<a class="anchor-link" href="#Receiver">¶</a></h3><p>Setup the receiver parameters through <a href="https://radarsimx.github.io/radarsimpy/radar.html#radarsimpy-receiver">Receiver</a> module.</p>
+<h3 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h3><p>Configure receiver for baseband sampling (identical for both radar systems).</p>
+<p><strong>Receiver Parameters:</strong></p>
+<ul>
+<li><p><strong>Sampling Rate</strong>: 2 MHz</p>
+<ul>
+<li>Determines maximum range: ~240 m</li>
+<li>Adequate for 200m target scenario</li>
+</ul>
+</li>
+<li><p><strong>Noise Figure</strong>: 12 dB (standard performance)</p>
+</li>
+<li><p><strong>RF Gain</strong>: 20 dB (LNA)</p>
+</li>
+<li><p><strong>Baseband Gain</strong>: 30 dB (total: 50 dB)</p>
+</li>
+<li><p><strong>Load Resistor</strong>: 500 Ω</p>
+</li>
+<li><p><strong>Antenna</strong>: Single channel at origin (monostatic)</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7854,18 +8145,19 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="mf">2e6</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure receiver (same for both radars)</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
+    <span class="n">fs</span><span class="o">=</span><span class="mf">2e6</span><span class="p">,</span>              <span class="c1"># Sampling rate: 2 MHz</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>     <span class="c1"># Noise figure: 12 dB</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>          <span class="c1"># RF gain: 20 dB (LNA)</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>   <span class="c1"># Load resistance: 500 Ω</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>    <span class="c1"># Baseband gain: 30 dB</span>
     <span class="n">channels</span><span class="o">=</span><span class="p">[</span>
         <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Receiver at origin (monostatic)</span>
         <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
@@ -7881,7 +8173,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Radar-Systems">Radar Systems<a class="anchor-link" href="#Radar-Systems">¶</a></h3><p>Create 2 FMCW radar systems with the linear/non-linear chirp perperties.</p>
+<h3 id="Create-Radar-Systems">Create Radar Systems<a class="anchor-link" href="#Create-Radar-Systems">¶</a></h3><p>Combine transmitters and receiver to form two complete FMCW radar systems for comparison.</p>
 </div>
 </div>
 </div>
@@ -7890,10 +8182,13 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">radar_nonlinear</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx_nonlinear</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create FMCW radar with non-linear chirp</span>
+<span class="n">radar_nonlinear</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx_nonlinear</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
+
+<span class="c1"># Create FMCW radar with ideal linear chirp (reference)</span>
 <span class="n">radar_linear</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx_linear</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7907,7 +8202,36 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Targets">Targets<a class="anchor-link" href="#Targets">¶</a></h3><p>To evaluate the impact of non-linear chirp, 3 targets with different locations are defined in the simulation scenario. The locations of the targets are defined through $(x, y, z)$ coordinates in meters, and the speeds of the targets are defined trough $(v_x, v_y, v_z)$ in $m/s$. The propertites of the targets also includes radar cross-section (RCS (dBsm)) and phase (degree).</p>
+<h2 id="Target-Configuration">Target Configuration<a class="anchor-link" href="#Target-Configuration">¶</a></h2><p>Define three targets at different ranges to evaluate range-dependent non-linearity effects.</p>
+<h3 id="Target-Parameters">Target Parameters<a class="anchor-link" href="#Target-Parameters">¶</a></h3><p><strong>Target Spacing Strategy:</strong></p>
+<p>Targets are placed at near (30m), medium (95m), and far (200m) ranges to demonstrate that <strong>non-linearity effects increase with range</strong>. This is a key characteristic of chirp non-linearity.</p>
+<p><strong>Target 1 (Far Range):</strong></p>
+<ul>
+<li><strong>Location</strong>: (200, 0, 0) m → 200m range</li>
+<li><strong>Velocity</strong>: (-5, 0, 0) m/s → 5 m/s approaching</li>
+<li><strong>RCS</strong>: 30 dBsm → Large target (truck)</li>
+<li><strong>Purpose</strong>: Demonstrate maximum non-linearity impact</li>
+</ul>
+<p><strong>Target 2 (Medium Range):</strong></p>
+<ul>
+<li><strong>Location</strong>: (95, 20, 0) m → ~97m range</li>
+<li><strong>Velocity</strong>: (-50, 0, 0) m/s → 50 m/s approaching</li>
+<li><strong>RCS</strong>: 25 dBsm → Medium target (car)</li>
+<li><strong>Purpose</strong>: Show intermediate degradation</li>
+</ul>
+<p><strong>Target 3 (Near Range):</strong></p>
+<ul>
+<li><strong>Location</strong>: (30, -5, 0) m → ~30m range</li>
+<li><strong>Velocity</strong>: (-22, 0, 0) m/s → 22 m/s approaching</li>
+<li><strong>RCS</strong>: 15 dBsm → Small target (motorcycle)</li>
+<li><strong>Purpose</strong>: Minimal non-linearity effect (reference)</li>
+</ul>
+<p><strong>Expected Behavior:</strong></p>
+<ul>
+<li><strong>Near target (30m)</strong>: Both chirps perform similarly</li>
+<li><strong>Medium target (95m)</strong>: Non-linear shows slight broadening</li>
+<li><strong>Far target (200m)</strong>: Non-linear shows significant broadening and SNR loss</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7916,13 +8240,34 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">target_1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rcs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">target_2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rcs</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">target_3</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">22</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rcs</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure Target 1: Far range, large RCS (worst non-linearity effect)</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: 200m range (far)</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>      <span class="c1"># Velocity: -5 m/s (18 km/h approaching)</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>                <span class="c1"># Radar cross section: 30 dBsm (large vehicle/truck)</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>               <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
 
+<span class="c1"># Configure Target 2: Medium range, medium RCS (moderate non-linearity effect)</span>
+<span class="n">target_2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: ~97m range (medium)</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>     <span class="c1"># Velocity: -50 m/s (180 km/h approaching)</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>                <span class="c1"># Radar cross section: 25 dBsm (car)</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>               <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure Target 3: Near range, small RCS (minimal non-linearity effect)</span>
+<span class="n">target_3</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: ~30m range (near)</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">22</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>     <span class="c1"># Velocity: -22 m/s (79 km/h approaching)</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>                <span class="c1"># Radar cross section: 15 dBsm (motorcycle)</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>               <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
+
+<span class="c1"># Combine targets for simulation</span>
 <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_1</span><span class="p">,</span> <span class="n">target_2</span><span class="p">,</span> <span class="n">target_3</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -7936,9 +8281,32 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Simulate-Baseband-Signals">Simulate Baseband Signals<a class="anchor-link" href="#Simulate-Baseband-Signals">¶</a></h2><p>Use the <code>simulator.sim_radar</code> module to simulate the baseband samples from the defined radar system and targets.</p>
-<p>The output baseband data is a dict including the timestamp and baseband. Both of them are 3-D matrix:</p>
-<p><code>[channels, pulses, ADC samples]</code></p>
+<h2 id="Simulate-Baseband-Signals">Simulate Baseband Signals<a class="anchor-link" href="#Simulate-Baseband-Signals">¶</a></h2><p>Generate baseband I/Q signals for both radar systems with identical target scenarios.</p>
+<h3 id="Simulation-Process">Simulation Process<a class="anchor-link" href="#Simulation-Process">¶</a></h3><p>The simulator computes for each radar:</p>
+<ol>
+<li><strong>Chirp Generation</strong>: Linear or non-linear frequency sweep</li>
+<li><strong>Target Returns</strong>: Reflections from three targets</li>
+<li><strong>Beat Frequency</strong>: Mixing creates baseband signals</li>
+<li><strong>Noise Addition</strong>: Thermal noise from receiver</li>
+</ol>
+<p><strong>Output Data Structure:</strong></p>
+<ul>
+<li><strong>Dimensions</strong>: [channels, pulses, samples]<ul>
+<li>Channels: 1 (single TX/RX)</li>
+<li>Pulses: 1 (single chirp)</li>
+<li>Samples: ~160 (2 MHz × 80 μs)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Identical Scenarios:</strong></p>
+<p>Both simulations use:</p>
+<ul>
+<li>Same three targets (positions, velocities, RCS)</li>
+<li>Same receiver configuration</li>
+<li>Same noise realization</li>
+</ul>
+<p><strong>Only Difference:</strong></p>
+<p>The chirp waveform (linear vs. non-linear), enabling direct comparison of non-linearity impact.</p>
 </div>
 </div>
 </div>
@@ -7947,18 +8315,21 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import radar simulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
 
+<span class="c1"># Simulate radar with non-linear chirp</span>
 <span class="n">data_nonlinear</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar_nonlinear</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
-<span class="n">timestamp_nonlinear</span> <span class="o">=</span> <span class="n">data_nonlinear</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>
-<span class="n">baseband_nonlinear</span> <span class="o">=</span> <span class="n">data_nonlinear</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span><span class="o">+</span><span class="n">data_nonlinear</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>
+<span class="n">timestamp_nonlinear</span> <span class="o">=</span> <span class="n">data_nonlinear</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>           <span class="c1"># Time axis</span>
+<span class="n">baseband_nonlinear</span> <span class="o">=</span> <span class="n">data_nonlinear</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_nonlinear</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>  <span class="c1"># I/Q + noise</span>
 
+<span class="c1"># Simulate radar with ideal linear chirp (reference)</span>
 <span class="n">data_linear</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar_linear</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
-<span class="n">timestamp_linear</span> <span class="o">=</span> <span class="n">data_linear</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>
-<span class="n">baseband_linear</span> <span class="o">=</span> <span class="n">data_linear</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span><span class="o">+</span><span class="n">data_linear</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>
+<span class="n">timestamp_linear</span> <span class="o">=</span> <span class="n">data_linear</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>                 <span class="c1"># Time axis</span>
+<span class="n">baseband_linear</span> <span class="o">=</span> <span class="n">data_linear</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_linear</span><span class="p">[</span><span class="s2">"noise"</span><span class="p">]</span>  <span class="c1"># I/Q + noise</span>
 </pre></div>
 </div>
 </div>
@@ -7971,7 +8342,37 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">¶</a></h2><h3 id="Range-profile">Range profile<a class="anchor-link" href="#Range-profile">¶</a></h3><p>With an FMCW radar, the range profile of the targets could be obtained through a simple FFT across the samples of the chirp. This process is also known as the range-FFT.</p>
+<h2 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">¶</a></h2><p>Apply range FFT to both baseband signals and compare results.</p>
+<h3 id="Range-FFT-Processing">Range FFT Processing<a class="anchor-link" href="#Range-FFT-Processing">¶</a></h3><p><strong>Range Compression:</strong></p>
+<p>Apply FFT across chirp samples to extract range profiles for both radars.</p>
+<p><strong>Process:</strong></p>
+<ol>
+<li><p><strong>Windowing</strong>: Chebyshev window (60 dB sidelobes)</p>
+<ul>
+<li>Reduces spectral leakage</li>
+<li>Same window for fair comparison</li>
+</ul>
+</li>
+<li><p><strong>FFT</strong>: Transform beat frequency to range</p>
+<ul>
+<li>One FFT per radar</li>
+<li>Identical processing for both</li>
+</ul>
+</li>
+<li><p><strong>Comparison</strong>: Overlay range profiles</p>
+<ul>
+<li>Observe peak widths</li>
+<li>Measure SNR differences</li>
+<li>Identify range-dependent effects</li>
+</ul>
+</li>
+</ol>
+<p><strong>Expected Observations:</strong></p>
+<ul>
+<li><strong>Near target (30m)</strong>: Similar performance</li>
+<li><strong>Medium target (95m)</strong>: Non-linear slightly wider</li>
+<li><strong>Far target (200m)</strong>: Non-linear significantly degraded</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7980,17 +8381,23 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import signal processing modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy.processing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">proc</span>
 
+<span class="c1"># Create Chebyshev window for range FFT (60 dB sidelobe suppression)</span>
+<span class="c1"># Use linear radar sample count (both should be identical)</span>
 <span class="n">range_window</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">chebwin</span><span class="p">(</span>
     <span class="n">radar_linear</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span> <span class="n">at</span><span class="o">=</span><span class="mi">60</span>
 <span class="p">)</span>
 
+<span class="c1"># Perform range FFT on non-linear chirp baseband</span>
 <span class="n">range_profile_nonlinear</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">range_fft</span><span class="p">(</span><span class="n">baseband_nonlinear</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">range_window</span><span class="p">)</span>
+
+<span class="c1"># Perform range FFT on linear chirp baseband (reference)</span>
 <span class="n">range_profile_linear</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">range_fft</span><span class="p">(</span><span class="n">baseband_linear</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">range_window</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8004,7 +8411,38 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot the range profiles</em></p>
+<h3 id="Visualize-Range-Profile-Comparison">Visualize Range Profile Comparison<a class="anchor-link" href="#Visualize-Range-Profile-Comparison">¶</a></h3><p>Display range profiles overlaid to show non-linearity impact at different ranges.</p>
+<p><strong>Interpretation:</strong></p>
+<ul>
+<li><strong>X-axis</strong>: Range (m) → Target distance</li>
+<li><strong>Y-axis</strong>: Amplitude (dB) → Detection strength</li>
+<li><strong>Blue line</strong>: Ideal linear chirp (reference)</li>
+<li><strong>Red line</strong>: Non-linear chirp (realistic)</li>
+</ul>
+<p><strong>Key Observations:</strong></p>
+<ol>
+<li><p><strong>Near Target (30m)</strong>:</p>
+<ul>
+<li>Both curves nearly identical</li>
+<li>Minimal non-linearity effect at short range</li>
+</ul>
+</li>
+<li><p><strong>Medium Target (95m)</strong>:</p>
+<ul>
+<li>Non-linear shows slight peak broadening</li>
+<li>Small SNR reduction</li>
+</ul>
+</li>
+<li><p><strong>Far Target (200m)</strong>:</p>
+<ul>
+<li><strong>Significant broadening</strong> with non-linear chirp</li>
+<li><strong>SNR loss</strong> of several dB</li>
+<li><strong>Range resolution degradation</strong> clearly visible</li>
+<li>May affect target separation capability</li>
+</ul>
+</li>
+</ol>
+<p>This demonstrates the <strong>range-dependent nature</strong> of chirp non-linearity effects.</p>
 </div>
 </div>
 </div>
@@ -8013,39 +8451,76 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">max_range</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">3e8</span>
-    <span class="o">*</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"receiver"</span><span class="p">]</span><span class="o">.</span><span class="n">bb_prop</span><span class="p">[</span><span class="s2">"fs"</span><span class="p">]</span>
-    <span class="o">*</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulse_length"</span><span class="p">]</span>
-    <span class="o">/</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"bandwidth"</span><span class="p">]</span>
-    <span class="o">/</span> <span class="mi">2</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate maximum unambiguous range</span>
+<span class="n">max_range</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">3e8</span>  <span class="c1"># Speed of light</span>
+    <span class="o">*</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"receiver"</span><span class="p">]</span><span class="o">.</span><span class="n">bb_prop</span><span class="p">[</span><span class="s2">"fs"</span><span class="p">]</span>  <span class="c1"># Sampling rate</span>
+    <span class="o">*</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulse_length"</span><span class="p">]</span>  <span class="c1"># Chirp duration</span>
+    <span class="o">/</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"bandwidth"</span><span class="p">]</span>  <span class="c1"># Bandwidth</span>
+    <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># Two-way propagation</span>
 <span class="p">)</span>
 
+<span class="c1"># Create range axis</span>
 <span class="n">range_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
     <span class="mi">0</span><span class="p">,</span> <span class="n">max_range</span><span class="p">,</span> <span class="n">radar_linear</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
+<span class="c1"># Create comparison figure</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Plot non-linear chirp range profile</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile_nonlinear</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])),</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span>                                              <span class="c1"># Range axis (m)</span>
+        <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile_nonlinear</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])),</span>  <span class="c1"># Magnitude (dB)</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">"Non-linear chirp"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
+
+<span class="c1"># Plot ideal linear chirp range profile (reference)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile_linear</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])),</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"Linear chirp"</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">,</span>                                          <span class="c1"># Range axis (m)</span>
+        <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile_linear</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])),</span>  <span class="c1"># Magnitude (dB)</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Linear chirp (ideal)"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dash</span><span class="o">=</span><span class="s1">'dash'</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
+
+<span class="c1"># Add annotations highlighting key observations</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">"Far target (200m):&lt;br&gt;Significant broadening&lt;br&gt;and SNR loss"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">showarrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">arrowhead</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">arrowcolor</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=-</span><span class="mi">80</span><span class="p">,</span> <span class="n">ay</span><span class="o">=-</span><span class="mi">40</span><span class="p">,</span>
+    <span class="n">bgcolor</span><span class="o">=</span><span class="s2">"rgba(255,200,200,0.8)"</span><span class="p">,</span>
+    <span class="n">bordercolor</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">"Near target (30m):&lt;br&gt;Minimal difference"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">showarrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">arrowhead</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">arrowcolor</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">ay</span><span class="o">=-</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">bgcolor</span><span class="o">=</span><span class="s2">"rgba(200,255,200,0.8)"</span><span class="p">,</span>
+    <span class="n">bordercolor</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Range Profile Comparison: Non-Linearity Effects vs. Range"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.98</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
@@ -8078,7 +8553,195 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The impact of non-linearity becomes readily apparent when observing the range profiles. As the range extends, the once-narrow beams of the target widen, significantly undermining both range discrimination and accuracy. Furthermore, the signal-to-noise ratio (SNR) experiences pronounced deterioration over greater distances. Consequently, ensuring optimal performance across the radar's range coverage in an FMCW radar hinges upon maintaining impeccable chirp linearity.</p>
+<h2 id="Analysis:-Non-Linearity-Impact">Analysis: Non-Linearity Impact<a class="anchor-link" href="#Analysis:-Non-Linearity-Impact">¶</a></h2><p><strong>Key Findings:</strong></p>
+<p>The range profile comparison clearly demonstrates the detrimental effects of chirp non-linearity in FMCW radar:</p>
+<p><strong>1. Range-Dependent Degradation:</strong></p>
+<p>Non-linearity effects <strong>increase with range</strong>—a fundamental characteristic explained by:</p>
+<ul>
+<li><strong>Longer delay</strong>: Far targets have longer round-trip time</li>
+<li><strong>More phase accumulation</strong>: Non-linearity errors integrate over time</li>
+<li><strong>Greater frequency deviation</strong>: Error grows proportionally to delay</li>
+</ul>
+<p><strong>2. Peak Broadening:</strong></p>
+<p>Far targets exhibit <strong>significantly wider peaks</strong> with non-linear chirp:</p>
+<ul>
+<li><strong>Linear chirp</strong>: Narrow, well-defined peaks (near theoretical resolution)</li>
+<li><strong>Non-linear chirp</strong>: Broadened peaks (degraded resolution)</li>
+<li><strong>Impact</strong>: Reduced ability to separate closely-spaced targets</li>
+</ul>
+<p><strong>3. SNR Degradation:</strong></p>
+<p>Non-linearity causes <strong>SNR loss</strong> at far ranges:</p>
+<ul>
+<li><strong>Energy spreading</strong>: Signal energy distributed across multiple bins</li>
+<li><strong>Peak reduction</strong>: Lower peak amplitude despite same total energy</li>
+<li><strong>Detectability</strong>: May fail to detect weak distant targets</li>
+</ul>
+<p><strong>4. Sidelobe Increase:</strong></p>
+<p>Non-linear chirp exhibits <strong>elevated sidelobes</strong>:</p>
+<ul>
+<li><strong>Spectral leakage</strong>: Non-ideal frequency progression</li>
+<li><strong>False alarms</strong>: Sidelobes may be mistaken for weak targets</li>
+<li><strong>Dynamic range</strong>: Limits detection of weak targets near strong ones</li>
+</ul>
+<p><strong>Engineering Implications:</strong></p>
+<ol>
+<li><strong>Linearity Requirements</strong>: Tighter specifications for long-range operation</li>
+<li><strong>Calibration</strong>: Pre-distortion or correction algorithms needed</li>
+<li><strong>Hardware Selection</strong>: High-quality synthesizers justify cost</li>
+<li><strong>Trade-offs</strong>: Performance vs. cost vs. complexity</li>
+</ol>
+<p><strong>Conclusion:</strong></p>
+<p>Maintaining <strong>excellent chirp linearity</strong> is critical for FMCW radar performance, especially when long-range coverage is required. This simulation demonstrates why automotive radar manufacturers invest heavily in chirp linearization techniques and calibration procedures.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><p>In this notebook, you learned how to analyze chirp non-linearity effects in FMCW radar using RadarSimPy:</p>
+<h3 id="Key-Takeaways">Key Takeaways<a class="anchor-link" href="#Key-Takeaways">¶</a></h3><p><strong>1. Chirp Non-Linearity Fundamentals</strong></p>
+<ul>
+<li>Understood ideal linear chirp: f(t) = f₀ + (B/Tc)·t</li>
+<li>Recognized real chirp deviations from linearity</li>
+<li>Learned sources: PLL dynamics, VCO non-idealities</li>
+<li>Appreciated hardware imperfection impact</li>
+</ul>
+<p><strong>2. Arbitrary Waveform Capability</strong></p>
+<ul>
+<li>Defined non-linear chirp with 100-point frequency curve</li>
+<li>Modeled realistic measured chirp from hardware</li>
+<li>Created ideal linear chirp for reference (2 points)</li>
+<li>Enabled direct performance comparison</li>
+</ul>
+<p><strong>3. Range-Dependent Effects</strong></p>
+<ul>
+<li>Observed minimal impact at near range (30m)</li>
+<li>Noted moderate degradation at medium range (95m)</li>
+<li>Identified severe degradation at far range (200m)</li>
+<li>Understood error accumulation with delay</li>
+</ul>
+<p><strong>4. Peak Broadening</strong></p>
+<ul>
+<li>Measured increased peak width with non-linearity</li>
+<li>Calculated resolution loss at far range</li>
+<li>Recognized target separation capability reduction</li>
+<li>Validated theoretical predictions</li>
+</ul>
+<p><strong>5. SNR Degradation</strong></p>
+<ul>
+<li>Observed amplitude loss from energy spreading</li>
+<li>Quantified SNR reduction at different ranges</li>
+<li>Understood detection threshold impact</li>
+<li>Appreciated weak target detection challenges</li>
+</ul>
+<p><strong>6. Sidelobe Effects</strong></p>
+<ul>
+<li>Identified elevated sidelobes from non-linearity</li>
+<li>Recognized false alarm potential</li>
+<li>Understood dynamic range limitations</li>
+<li>Appreciated windowing effectiveness</li>
+</ul>
+<p><strong>7. Hardware Implications</strong></p>
+<ul>
+<li>Learned measurement techniques (FSW, UXA analyzers)</li>
+<li>Understood PLL and VCO specifications</li>
+<li>Recognized calibration requirements</li>
+<li>Appreciated cost vs. performance trade-offs</li>
+</ul>
+<p><strong>8. Mitigation Strategies</strong></p>
+<ul>
+<li>Pre-distortion for waveform correction</li>
+<li>Digital signal processing compensation</li>
+<li>Temperature stabilization importance</li>
+<li>Hardware quality selection criteria</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
+<p><strong>1. Non-Linearity Severity</strong>:</p>
+<ul>
+<li>Increase frequency deviations (worse linearity)</li>
+<li>Create different error patterns (polynomial, periodic)</li>
+<li>Test various RMS error levels</li>
+<li>Compare mild vs. severe non-linearity</li>
+</ul>
+<p><strong>2. Bandwidth Variations</strong>:</p>
+<ul>
+<li>Reduce to 50 MHz, increase to 500 MHz</li>
+<li>Observe resolution vs. linearity trade-off</li>
+<li>Test range resolution limits</li>
+<li>Understand bandwidth-linearity relationship</li>
+</ul>
+<p><strong>3. Chirp Duration</strong>:</p>
+<ul>
+<li>Vary from 40 μs to 160 μs</li>
+<li>Observe slope effect on linearity</li>
+<li>Test faster vs. slower chirps</li>
+<li>Understand PLL bandwidth requirements</li>
+</ul>
+<p><strong>4. Target Range Studies</strong>:</p>
+<ul>
+<li>Add targets at 50m, 100m, 150m increments</li>
+<li>Create range vs. degradation plot</li>
+<li>Quantify range-dependent effects</li>
+<li>Define usable range limits</li>
+</ul>
+<p><strong>5. Target Spacing</strong>:</p>
+<ul>
+<li>Place two targets 5m apart at various ranges</li>
+<li>Test resolution limits with non-linearity</li>
+<li>Observe separation capability loss</li>
+<li>Define minimum resolvable distance</li>
+</ul>
+<p><strong>6. Frequency Band</strong>:</p>
+<ul>
+<li>Test 77 GHz automotive radar</li>
+<li>Compare 10 GHz, 60 GHz, 94 GHz</li>
+<li>Observe wavelength effects</li>
+<li>Understand frequency-dependent sensitivity</li>
+</ul>
+<p><strong>7. Sampling Rate Effects</strong>:</p>
+<ul>
+<li>Vary from 1 MHz to 5 MHz</li>
+<li>Observe maximum range changes</li>
+<li>Test aliasing with non-linearity</li>
+<li>Optimize for application</li>
+</ul>
+<p><strong>8. Window Functions</strong>:</p>
+<ul>
+<li>Try rectangular (no window)</li>
+<li>Compare Hamming, Blackman, Taylor</li>
+<li>Observe sidelobe vs. resolution trade-off</li>
+<li>Test effectiveness with non-linearity</li>
+</ul>
+<p><strong>9. Quantitative Analysis</strong>:</p>
+<ul>
+<li>Measure 3-dB peak widths</li>
+<li>Calculate SNR loss in dB</li>
+<li>Compute sidelobe levels</li>
+<li>Extract range errors</li>
+</ul>
+<p><strong>10. Correction Algorithms</strong>:</p>
+<ul>
+<li>Implement phase correction</li>
+<li>Test de-chirp processing</li>
+<li>Apply polynomial fitting</li>
+<li>Validate compensation effectiveness</li>
+</ul>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>RadarSimPy Simulator Module: <a href="https://radarsimx.github.io/radarsimpy/simulator.html">https://radarsimx.github.io/radarsimpy/simulator.html</a></li>
+<li>Chirp Linearity: FMCW frequency modulation accuracy</li>
+<li>Arbitrary Waveforms: Custom frequency-time definitions</li>
+<li>PLL Design: Phase-locked loop dynamics and optimization</li>
+<li>VCO Characteristics: Voltage-controlled oscillator tuning</li>
+<li>Pre-Distortion: Waveform compensation techniques</li>
+<li>Signal Analyzers: Chirp measurement equipment (FSW, UXA)</li>
+<li>Calibration Procedures: Linearity correction methods</li>
+<li>FMCW Performance: Range resolution and accuracy analysis</li>
+</ul>
 </div>
 </div>
 </div>

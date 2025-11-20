@@ -7542,10 +7542,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import RadarSimPy library and display version information</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
@@ -7573,15 +7574,206 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Multi-Path-Effect">Multi-Path Effect<a class="anchor-link" href="#Multi-Path-Effect">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>Multipath effect in radar is a phenomenon where radar signals take multiple paths to reach the target and return to the receiver. This can occur when signals are reflected, scattered, or refracted by various objects or surfaces in the environment, resulting in multiple delayed echoes reaching the radar receiver. The multipath effect can have significant implications on radar performance and accuracy. Here's a brief introduction to this concept:</p>
-<p><strong>1. Reflection and Scattering:</strong> When radar signals encounter surfaces or objects, they can be reflected or scattered in different directions. Some of these reflected signals may return to the radar receiver, causing the radar to receive multiple echoes from different paths.</p>
-<p><strong>2. Delayed Echoes:</strong> Each path the signal takes introduces a time delay in the received signal. These time delays can vary based on the length of each path, leading to differences in the time it takes for the radar signal to return. As a result, the radar receives multiple echoes at different times.</p>
-<p><strong>3. Signal Distortion:</strong> Multipath effect can distort the received radar signal, making it challenging to accurately interpret and locate the target. The radar may perceive the target to be at a different location or with altered characteristics due to these multiple echoes.</p>
-<p><strong>4. Mitigation Techniques:</strong> Radar systems employ various techniques to mitigate the multipath effect. These include advanced signal processing algorithms, antenna design, and the use of multiple antennas to improve signal discrimination and reject unwanted echoes.</p>
-<p><strong>5. Impact on Accuracy:</strong> Understanding and compensating for the multipath effect is crucial for maintaining radar accuracy, especially in environments with reflective surfaces, clutter, or complex terrain. Failure to account for multipath can lead to false detections or reduced target tracking precision.</p>
-<p>In summary, the multipath effect in radar occurs when signals take multiple paths to reach the target and return to the receiver due to reflections and scattering. It introduces time delays and signal distortion, which can affect radar accuracy. Radar systems employ various techniques to mitigate this effect and ensure reliable target detection and tracking.</p>
-<p>In this example, we will employ <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a>'s ray tracing capabilities to demonstrate how vertical multipath effects from the ground can impact the received signal amplitude in an FMCW radar system.</p>
-<h2 id="Create-Radar-Model">Create Radar Model<a class="anchor-link" href="#Create-Radar-Model">¶</a></h2><p>Firstly, import the required modules from <code>radarsimpy</code>. <code>numpy</code> will also be needed in this example.</p>
+<h1 id="Multipath-Effect-in-Radar:-Ground-Reflection-Analysis">Multipath Effect in Radar: Ground Reflection Analysis<a class="anchor-link" href="#Multipath-Effect-in-Radar:-Ground-Reflection-Analysis">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>multipath propagation</strong>—a fundamental phenomenon in radar where signals reach the target and return via multiple paths due to reflections from surfaces like the ground. Understanding multipath is critical for accurate target detection, as it can cause constructive or destructive interference, leading to amplitude fluctuations known as <strong>multipath fading</strong>.</p>
+<h3 id="What-is-Multipath?">What is Multipath?<a class="anchor-link" href="#What-is-Multipath?">¶</a></h3><p><strong>Multipath</strong> occurs when radar signals propagate via multiple routes between transmitter, target, and receiver due to:</p>
+<ul>
+<li><strong>Ground reflections</strong> (most common)</li>
+<li><strong>Building/terrain reflections</strong></li>
+<li><strong>Atmospheric ducting</strong></li>
+<li><strong>Sea surface reflections</strong></li>
+</ul>
+<p>Each path has different:</p>
+<ul>
+<li><strong>Length</strong> → Phase shift</li>
+<li><strong>Amplitude</strong> → Path loss, reflection coefficient</li>
+<li><strong>Delay</strong> → Time of arrival</li>
+</ul>
+<h3 id="Multipath-Propagation-Paths">Multipath Propagation Paths<a class="anchor-link" href="#Multipath-Propagation-Paths">¶</a></h3><p><strong>In this scenario (vertical multipath from ground):</strong></p>
+<ol>
+<li><p><strong>Direct Path</strong>: TX → Target → RX</p>
+<ul>
+<li>Shortest path, no reflections</li>
+<li>Primary signal component</li>
+</ul>
+</li>
+<li><p><strong>Two-Bounce Path</strong>: TX → Ground → Target → Ground → RX</p>
+<ul>
+<li>Double ground reflection</li>
+<li>Longest path, most attenuation</li>
+</ul>
+</li>
+<li><p><strong>TX Ground Reflection</strong>: TX → Ground → Target → RX</p>
+<ul>
+<li>Transmit signal reflects off ground</li>
+<li>Intermediate path length</li>
+</ul>
+</li>
+<li><p><strong>RX Ground Reflection</strong>: TX → Target → Ground → RX</p>
+<ul>
+<li>Return signal reflects off ground</li>
+<li>Intermediate path length</li>
+</ul>
+</li>
+</ol>
+<h3 id="Interference-and-Multipath-Fading">Interference and Multipath Fading<a class="anchor-link" href="#Interference-and-Multipath-Fading">¶</a></h3><p><strong>Phase Relationship:</strong></p>
+<p>Each path introduces phase shift based on path length difference ΔL:</p>
+<p>$$\Delta\phi = \frac{2\pi \Delta L}{\lambda} = \frac{4\pi f_c \Delta L}{c}$$</p>
+<p>Where:</p>
+<ul>
+<li>$\Delta\phi$ = Phase difference (radians)</li>
+<li>$\Delta L$ = Path length difference (m)</li>
+<li>$\lambda$ = Wavelength (m)</li>
+<li>$f_c$ = Carrier frequency (Hz)</li>
+<li>$c$ = Speed of light (3×10⁸ m/s)</li>
+</ul>
+<p><strong>Interference Types:</strong></p>
+<ol>
+<li><p><strong>Constructive Interference</strong>: Δφ = 0°, 360°, 720°, ...</p>
+<ul>
+<li>Signals add in-phase</li>
+<li>Amplitude increase (up to +6 dB for equal paths)</li>
+<li>Occurs at specific ranges</li>
+</ul>
+</li>
+<li><p><strong>Destructive Interference</strong>: Δφ = 180°, 540°, 900°, ...</p>
+<ul>
+<li>Signals cancel (out-of-phase)</li>
+<li>Amplitude decrease (nulls possible)</li>
+<li>Occurs at intermediate ranges</li>
+</ul>
+</li>
+</ol>
+<p><strong>Multipath Fading Pattern:</strong></p>
+<p>As target range changes, the phase difference varies, creating a <strong>lobing pattern</strong> with alternating peaks and nulls in received amplitude.</p>
+<h3 id="Two-Ray-Ground-Reflection-Model">Two-Ray Ground Reflection Model<a class="anchor-link" href="#Two-Ray-Ground-Reflection-Model">¶</a></h3><p><strong>Simplified Model:</strong></p>
+<p>For radar at height $h_r$ and target at height $h_t$, separated by range $R$:</p>
+<p><strong>Path Difference:</strong></p>
+<p>$$\Delta L \approx \frac{2h_r h_t}{R}$$</p>
+<p>(For $R &gt;&gt; h_r, h_t$)</p>
+<p><strong>Null Positions:</strong></p>
+<p>Destructive interference (nulls) occur when:</p>
+<p>$$R_{null} = \frac{4h_r h_t}{\lambda(2n-1)}$$</p>
+<p>Where $n = 1, 2, 3, ...$</p>
+<p><strong>First Null:</strong></p>
+<p>$$R_{null,1} = \frac{4h_r h_t}{\lambda}$$</p>
+<h3 id="Ground-Reflection-Coefficient">Ground Reflection Coefficient<a class="anchor-link" href="#Ground-Reflection-Coefficient">¶</a></h3><p><strong>Fresnel Reflection:</strong></p>
+<p>Reflection from ground depends on:</p>
+<ul>
+<li><strong>Grazing angle</strong>: Angle between ray and ground</li>
+<li><strong>Polarization</strong>: Horizontal vs. vertical</li>
+<li><strong>Ground material</strong>: Permittivity ε_r, conductivity</li>
+</ul>
+<p><strong>Reflection Coefficient:</strong></p>
+<p>$$\Gamma = \frac{\sin\psi - \sqrt{\epsilon_r - \cos^2\psi}}{\sin\psi + \sqrt{\epsilon_r - \cos^2\psi}}$$</p>
+<p>Where:</p>
+<ul>
+<li>$\Gamma$ = Reflection coefficient</li>
+<li>$\psi$ = Grazing angle</li>
+<li>$\epsilon_r$ = Complex relative permittivity</li>
+</ul>
+<p><strong>For our scenario:</strong></p>
+<ul>
+<li>Ground: ε_r = 3.2 + 0.1j (typical asphalt/concrete)</li>
+<li>Low grazing angles → High reflection (Γ ≈ -1 for perfect conductor)</li>
+<li>Phase inversion: 180° phase shift on reflection</li>
+</ul>
+<h3 id="Impact-on-Radar-Performance">Impact on Radar Performance<a class="anchor-link" href="#Impact-on-Radar-Performance">¶</a></h3><p><strong>Positive Effects:</strong></p>
+<ol>
+<li><strong>Increased Detection Range</strong>: Constructive interference can boost SNR</li>
+<li><strong>Forward Scatter</strong>: Additional energy paths to target</li>
+<li><strong>Diversity</strong>: Multiple paths for tracking</li>
+</ol>
+<p><strong>Negative Effects:</strong></p>
+<ol>
+<li><strong>Amplitude Fluctuation</strong>: Fading makes detection inconsistent</li>
+<li><strong>False Alarms</strong>: Multipath returns may appear as separate targets</li>
+<li><strong>Tracking Errors</strong>: Angle and range measurement degradation</li>
+<li><strong>Null Zones</strong>: Blind ranges where detection fails</li>
+</ol>
+<h3 id="Mitigation-Techniques">Mitigation Techniques<a class="anchor-link" href="#Mitigation-Techniques">¶</a></h3><p><strong>System Design:</strong></p>
+<ol>
+<li><strong>Frequency Diversity</strong>: Use multiple frequencies to avoid nulls</li>
+<li><strong>Antenna Height</strong>: Optimize to shift nulls away from critical ranges</li>
+<li><strong>Polarization</strong>: Exploit polarization differences</li>
+<li><strong>Spatial Diversity</strong>: Multiple antennas at different heights</li>
+</ol>
+<p><strong>Signal Processing:</strong></p>
+<ol>
+<li><strong>Multipath Cancellation</strong>: Adaptive filtering</li>
+<li><strong>Space-Time Processing</strong>: Exploit temporal/spatial structure</li>
+<li><strong>Maximum Ratio Combining</strong>: Coherently combine paths</li>
+<li><strong>CFAR</strong>: Adaptive threshold accounts for fading</li>
+</ol>
+<h3 id="Applications-and-Considerations">Applications and Considerations<a class="anchor-link" href="#Applications-and-Considerations">¶</a></h3><p><strong>Automotive Radar:</strong></p>
+<ul>
+<li>Ground multipath significant at highway speeds</li>
+<li>Affects pedestrian detection (low targets)</li>
+<li>Requires robust processing algorithms</li>
+</ul>
+<p><strong>Aviation:</strong></p>
+<ul>
+<li>Runway surface reflections</li>
+<li>Affects height measurement</li>
+<li>Critical for landing systems</li>
+</ul>
+<p><strong>Coastal/Maritime:</strong></p>
+<ul>
+<li>Sea surface creates strong multipath</li>
+<li>Wave motion adds Doppler spread</li>
+<li>Challenging for surface vessel detection</li>
+</ul>
+<p><strong>Urban Environments:</strong></p>
+<ul>
+<li>Multiple reflection sources (buildings, vehicles)</li>
+<li>Complex multipath scenarios</li>
+<li>Requires 3D ray tracing</li>
+</ul>
+<h3 id="You'll-Learn-How-To:">You'll Learn How To:<a class="anchor-link" href="#You'll-Learn-How-To:">¶</a></h3><ul>
+<li>Configure 76.5 GHz FMCW radar for multipath analysis</li>
+<li>Model ground surface with complex permittivity</li>
+<li>Simulate corner reflector with and without ground plane</li>
+<li>Compare direct and multipath scenarios</li>
+<li>Apply range FFT to extract target amplitude</li>
+<li>Generate amplitude vs. range plots</li>
+<li>Observe multipath fading lobing pattern</li>
+<li>Identify constructive and destructive interference</li>
+<li>Understand phase-based amplitude variation</li>
+<li>Validate two-ray ground reflection model</li>
+</ul>
+<h3 id="About-This-Example">About This Example<a class="anchor-link" href="#About-This-Example">¶</a></h3><p>This notebook uses <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> to demonstrate:</p>
+<p><strong>Two Scenarios:</strong></p>
+<ol>
+<li><p><strong>With Ground Plane</strong>:</p>
+<ul>
+<li>Corner reflector + ground surface</li>
+<li>Multiple propagation paths</li>
+<li>Multipath interference effects</li>
+</ul>
+</li>
+<li><p><strong>Without Ground Plane</strong>:</p>
+<ul>
+<li>Corner reflector only (free space)</li>
+<li>Single direct path</li>
+<li>Reference for comparison</li>
+</ul>
+</li>
+</ol>
+<p><strong>Processing:</strong></p>
+<ul>
+<li>Move target from 300m to 10m (290 steps)</li>
+<li>Range FFT extracts peak amplitude at each position</li>
+<li>Plot amplitude vs. range showing multipath fading</li>
+</ul>
+<p><strong>Expected Results:</strong></p>
+<ul>
+<li>Free-space: Smooth 1/R² amplitude decay</li>
+<li>With ground: Oscillating pattern (lobing)</li>
+<li>Nulls and peaks from interference</li>
+<li>Validates multipath propagation theory</li>
+</ul>
+<p>The simulation demonstrates how ground reflections create amplitude fluctuations critical for understanding real-world radar performance.</p>
+<h2 id="Radar-System-Configuration">Radar System Configuration<a class="anchor-link" href="#Radar-System-Configuration">¶</a></h2><p>Configure a 76.5 GHz automotive FMCW radar for multipath analysis.</p>
+<h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3><p>Import necessary RadarSimPy modules and NumPy for numerical operations.</p>
 </div>
 </div>
 </div>
@@ -7590,10 +7782,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Transmitter</span><span class="p">,</span> <span class="n">Receiver</span>
 </pre></div>
 </div>
@@ -7607,66 +7800,45 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Transmitter">Transmitter<a class="anchor-link" href="#Transmitter">¶</a></h3><p>Setup the basic transmitter parameters through <a href="https://radarsimx.github.io/radarsimpy/radar.html#radarsimpy-transmitter">Transmitter</a> module.</p>
-<h4 id="Define-a-Radar-Transmitter">Define a Radar Transmitter<a class="anchor-link" href="#Define-a-Radar-Transmitter">¶</a></h4><p>As shown in the diagram below, <code>f</code> and <code>t</code> are used to define the waveform modulation. For a linear frequency-modulated continuous waveform (FMCW), it can be specified as <code>f = [fstart, fend]</code> and <code>t = [tstart, tend]</code>. If <code>t</code> is a single number <code>t = t0</code>, which is equivalent to <code>t = [0, t0]</code>. The bandwidth of the FMCW is <code>abs(fstart - fend)</code>. <code>prp</code> is the pulse repetition period, and <code>prp &gt;= (tend - tstart)</code>.</p>
-<pre><code>|                       prp
-|                  +-----------+
-|
-|            +---f[1]---&gt;  /            /            /
-|                         /            /            /
-|                        /            /            /
-|                       /            /            /
-|                      /            /            /     ...
-|                     /            /            /
-|                    /            /            /
-|                   /            /            /
-|      +---f[0]---&gt;/            /            /
-|
-|                  +-------+
-|                 t[0]    t[1]
-</code></pre>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">76.5e9</span> <span class="o">-</span> <span class="mf">80e6</span><span class="p">,</span> <span class="mf">76.5e9</span> <span class="o">+</span> <span class="mf">80e6</span><span class="p">],</span>
-    <span class="n">t</span><span class="o">=</span><span class="mf">20e-6</span><span class="p">,</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Receiver">Receiver<a class="anchor-link" href="#Receiver">¶</a></h3><p>Setup the receiver parameters through <a href="https://radarsimx.github.io/radarsimpy/radar.html#radarsimpy-receiver">Receiver</a> module.</p>
-<h4 id="Define-a-Radar-Receiver">Define a Radar Receiver<a class="anchor-link" href="#Define-a-Radar-Receiver">¶</a></h4><ul>
-<li><code>fs</code> – Sampling rate (sps)</li>
-<li><code>noise_figure</code> – Noise figure (dB)</li>
-<li><code>rf_gain</code> – Total RF gain (dB)</li>
-<li><code>load_resistor</code> – Load resistor to convert power to voltage (Ohm)</li>
-<li><code>baseband_gain</code> – Total baseband gain (dB)</li>
+<h3 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h3><p>Configure FMCW transmitter for automotive radar multipath study.</p>
+<h4 id="Define-FMCW-Radar-Transmitter">Define FMCW Radar Transmitter<a class="anchor-link" href="#Define-FMCW-Radar-Transmitter">¶</a></h4><p>Configure single-chirp radar for amplitude measurement at each target position.</p>
+<p><strong>Transmitter Parameters:</strong></p>
+<ul>
+<li><p><strong>Frequency Range</strong>: 76.42-76.58 GHz</p>
+<ul>
+<li>Center: 76.5 GHz (automotive W-band)</li>
+<li>Bandwidth: 160 MHz</li>
+<li>Range resolution: ΔR = c/(2B) = 0.94 m</li>
+</ul>
+</li>
+<li><p><strong>Chirp Duration</strong>: 20 μs</p>
+<ul>
+<li>Short chirp for quick measurement</li>
+</ul>
+</li>
+<li><p><strong>Transmit Power</strong>: 15 dBm (~32 mW)</p>
+<ul>
+<li>Typical automotive radar power</li>
+</ul>
+</li>
+<li><p><strong>Pulse Repetition Period</strong>: 100 μs</p>
+<ul>
+<li>Time between measurements</li>
+</ul>
+</li>
+<li><p><strong>Number of Pulses</strong>: 1</p>
+<ul>
+<li>Single chirp per frame (snapshot measurement)</li>
+<li>Target position updated between frames</li>
+</ul>
+</li>
+</ul>
+<p><strong>Measurement Strategy:</strong></p>
+<p>Rather than continuous observation, we use <strong>frame-based simulation</strong>:</p>
+<ul>
+<li>Each frame: 1 chirp at a specific target position</li>
+<li>290 frames: Target moves from 300m to 10m (1m steps)</li>
+<li>Captures amplitude vs. range profile</li>
 </ul>
 </div>
 </div>
@@ -7676,20 +7848,22 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define transmitter antenna location</span>
+<span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position at origin (ground level for analysis)</span>
 <span class="p">)</span>
 
-<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="mf">20e6</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>
+<span class="c1"># Configure FMCW transmitter</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">76.5e9</span> <span class="o">-</span> <span class="mf">80e6</span><span class="p">,</span> <span class="mf">76.5e9</span> <span class="o">+</span> <span class="mf">80e6</span><span class="p">],</span>  <span class="c1"># Frequency sweep: 76.42-76.58 GHz (160 MHz BW)</span>
+    <span class="n">t</span><span class="o">=</span><span class="mf">20e-6</span><span class="p">,</span>                            <span class="c1"># Chirp duration: 20 μs</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>                        <span class="c1"># Transmit power: 15 dBm</span>
+    <span class="n">prp</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>                         <span class="c1"># Pulse repetition period: 100 μs</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>                           <span class="c1"># Single chirp per frame</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>              <span class="c1"># Transmitter antenna configuration</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -7703,7 +7877,38 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Radar-System">Radar System<a class="anchor-link" href="#Radar-System">¶</a></h3><p>Use the defined transmitter and receiver to create the radar system.</p>
+<h3 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h3><p>Configure receiver for high-sensitivity amplitude measurement.</p>
+<h4 id="Define-Radar-Receiver">Define Radar Receiver<a class="anchor-link" href="#Define-Radar-Receiver">¶</a></h4><p>Set up receiver with high gain for detecting multipath variations.</p>
+<p><strong>Receiver Parameters:</strong></p>
+<ul>
+<li><p><strong>Sampling Rate</strong>: 20 MHz</p>
+<ul>
+<li>High sampling for accurate range measurement</li>
+<li>Maximum range: ~300 m</li>
+</ul>
+</li>
+<li><p><strong>Noise Figure</strong>: 8 dB</p>
+<ul>
+<li>Standard receiver performance</li>
+</ul>
+</li>
+<li><p><strong>RF Gain</strong>: 20 dB</p>
+<ul>
+<li>LNA amplification</li>
+</ul>
+</li>
+<li><p><strong>Load Resistor</strong>: 1000 Ω</p>
+<ul>
+<li>Higher impedance for voltage sensitivity</li>
+</ul>
+</li>
+<li><p><strong>Baseband Gain</strong>: 80 dB</p>
+<ul>
+<li>Very high gain for detecting amplitude variations</li>
+<li>Total gain: 100 dB (sensitive to fading)</li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7712,10 +7917,23 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">,</span> <span class="n">frame_time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">290</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define receiver antenna location</span>
+<span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Co-located with transmitter (monostatic)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure radar receiver</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
+    <span class="n">fs</span><span class="o">=</span><span class="mf">20e6</span><span class="p">,</span>             <span class="c1"># Sampling rate: 20 MHz</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>      <span class="c1"># Noise figure: 8 dB</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>          <span class="c1"># RF gain: 20 dB</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Load resistance: 1000 Ω (high impedance)</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>    <span class="c1"># Baseband gain: 80 dB (high sensitivity)</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>  <span class="c1"># Receiver antenna configuration</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7728,7 +7946,75 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Case-1:-A-corner-reflector-with-ground-surface">Case 1: A corner reflector with ground surface<a class="anchor-link" href="#Case-1:-A-corner-reflector-with-ground-surface">¶</a></h2>
+<h3 id="Create-Radar-System-with-Frame-Based-Simulation">Create Radar System with Frame-Based Simulation<a class="anchor-link" href="#Create-Radar-System-with-Frame-Based-Simulation">¶</a></h3><p>Combine transmitter and receiver with frame timing for sequential measurements.</p>
+<p><strong>Frame Timing:</strong></p>
+<p>The <code>frame_time</code> parameter defines when each measurement occurs:</p>
+<ul>
+<li><strong>Array</strong>: np.arange(0, 290, 1) → [0, 1, 2, ..., 289] seconds</li>
+<li><strong>290 frames</strong>: One measurement per second</li>
+<li><strong>Target motion</strong>: -1 m/s → moves 1m between frames</li>
+<li><strong>Coverage</strong>: 300m to 10m range (290 steps)</li>
+</ul>
+<p>This approach simulates a moving target by updating position between frames, allowing us to measure amplitude across different ranges and observe multipath interference patterns.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create complete radar system with frame-based measurement</span>
+<span class="c1"># frame_time: Array of times for each measurement [0, 1, 2, ..., 289] seconds</span>
+<span class="c1"># Target moves -1 m/s, so position updates 1m per frame</span>
+<span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">,</span> <span class="n">frame_time</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">290</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Case-1:-Corner-Reflector-with-Ground-Plane">Case 1: Corner Reflector with Ground Plane<a class="anchor-link" href="#Case-1:-Corner-Reflector-with-Ground-Plane">¶</a></h2><p>Simulate radar with both target and ground surface to demonstrate multipath effects.</p>
+<h3 id="Target-and-Ground-Configuration">Target and Ground Configuration<a class="anchor-link" href="#Target-and-Ground-Configuration">¶</a></h3><p><strong>Corner Reflector:</strong></p>
+<ul>
+<li><strong>Model</strong>: Trihedral corner reflector (high, stable RCS)</li>
+<li><strong>Initial Position</strong>: 300m range along x-axis</li>
+<li><strong>Velocity</strong>: -1 m/s (approaching radar)</li>
+<li><strong>Motion</strong>: Moves from 300m to 10m over 290 seconds</li>
+</ul>
+<p><strong>Ground Surface:</strong></p>
+<ul>
+<li><strong>Model</strong>: 400m × 400m flat surface</li>
+<li><strong>Position</strong>: -0.5m (slightly below radar, simulating ground)</li>
+<li><strong>Complex Permittivity</strong>: ε_r = 3.2 + 0.1j<ul>
+<li>Real part (3.2): Typical for asphalt/concrete</li>
+<li>Imaginary part (0.1j): Slight conductivity/loss</li>
+</ul>
+</li>
+<li><strong>skip_diffusion</strong>: True (specular reflection only)</li>
+</ul>
+<p><strong>Multipath Propagation:</strong></p>
+<p>Four primary paths contribute:</p>
+<ol>
+<li><strong>Direct</strong>: TX → Target → RX</li>
+<li><strong>Two-bounce</strong>: TX → Ground → Target → Ground → RX</li>
+<li><strong>TX reflection</strong>: TX → Ground → Target → RX</li>
+<li><strong>RX reflection</strong>: TX → Target → Ground → RX</li>
+</ol>
+<h3 id="Ray-Tracing-and-Processing">Ray Tracing and Processing<a class="anchor-link" href="#Ray-Tracing-and-Processing">¶</a></h3><ul>
+<li><strong>Density</strong>: 0.5 rays/wavelength² (adequate for flat surfaces)</li>
+<li><strong>Range FFT</strong>: Chebyshev window (60 dB sidelobe suppression)</li>
+<li><strong>Amplitude Extraction</strong>: Peak value per frame</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7737,34 +8023,52 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import simulation and processing modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy.processing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">proc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-
-<span class="n">target_1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span> <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)}</span>
-
-<span class="n">target_2</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/surface_400x400.stl"</span><span class="p">,</span>
-    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">),</span>
-    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"permittivity"</span><span class="p">:</span> <span class="mf">3.2</span> <span class="o">+</span> <span class="mf">0.1</span><span class="n">j</span><span class="p">,</span>
-    <span class="s2">"skip_diffusion"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1"># Configure corner reflector target (moving)</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span>  <span class="c1"># Trihedral corner reflector</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>      <span class="c1"># Initial position: 300m along x-axis</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>          <span class="c1"># Velocity: -1 m/s approaching</span>
 <span class="p">}</span>
+
+<span class="c1"># Configure ground surface</span>
+<span class="n">target_2</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/surface_400x400.stl"</span><span class="p">,</span>  <span class="c1"># 400m × 400m flat surface</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">),</span>                  <span class="c1"># Position: 0.5m below radar</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>                        <span class="c1"># Stationary</span>
+    <span class="s2">"permittivity"</span><span class="p">:</span> <span class="mf">3.2</span> <span class="o">+</span> <span class="mf">0.1</span><span class="n">j</span><span class="p">,</span>                <span class="c1"># Complex permittivity (asphalt/concrete)</span>
+    <span class="s2">"skip_diffusion"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>                    <span class="c1"># Specular reflection only</span>
+<span class="p">}</span>
+
+<span class="c1"># Combine targets for multipath scenario</span>
 <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_1</span><span class="p">,</span> <span class="n">target_2</span><span class="p">]</span>
 
+<span class="c1"># Start timing</span>
 <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>
 
+<span class="c1"># Simulate radar returns with multipath</span>
+<span class="c1"># density=0.5: Ray tracing density for surfaces</span>
+<span class="c1"># Simulates 290 frames (target moves 300m → 10m)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>  <span class="c1"># Complex I/Q samples</span>
+
+<span class="c1"># Apply range FFT to extract range profiles</span>
 <span class="n">range_window</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">chebwin</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span> <span class="n">at</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 <span class="n">range_profile</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">range_fft</span><span class="p">(</span><span class="n">baseband</span><span class="p">,</span> <span class="n">range_window</span><span class="p">)</span>
 
+<span class="c1"># Extract peak amplitude per frame (max across range bins)</span>
+<span class="c1"># Output: [290 frames, 1 channel] in dB</span>
 <span class="n">amp_multi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># End timing</span>
 <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Exec time:"</span><span class="p">,</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">)</span>
 </pre></div>
@@ -7792,7 +8096,23 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Case-2:-A-corner-reflector-without-ground-surface">Case 2: A corner reflector without ground surface<a class="anchor-link" href="#Case-2:-A-corner-reflector-without-ground-surface">¶</a></h2>
+<h2 id="Case-2:-Corner-Reflector-without-Ground-Plane-(Free-Space)">Case 2: Corner Reflector without Ground Plane (Free Space)<a class="anchor-link" href="#Case-2:-Corner-Reflector-without-Ground-Plane-(Free-Space)">¶</a></h2><p>Simulate radar with target only (no ground) as reference case for comparison.</p>
+<h3 id="Free-Space-Propagation">Free-Space Propagation<a class="anchor-link" href="#Free-Space-Propagation">¶</a></h3><p><strong>Corner Reflector:</strong></p>
+<ul>
+<li>Same configuration as Case 1</li>
+<li>Moves from 300m to 10m</li>
+</ul>
+<p><strong>No Ground Surface:</strong></p>
+<ul>
+<li>Only direct path: TX → Target → RX</li>
+<li>No multipath interference</li>
+<li>Clean reference signal</li>
+</ul>
+<p><strong>Expected Behavior:</strong></p>
+<p>Amplitude follows <strong>Radar Range Equation</strong>:</p>
+<p>$$P_r \propto \frac{1}{R^4}$$</p>
+<p>Or in dB: <strong>-40 dB per decade</strong> (smooth decay)</p>
+<p>This provides baseline for comparing with multipath case.</p>
 </div>
 </div>
 </div>
@@ -7801,19 +8121,29 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">target_1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span> <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)}</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure corner reflector target (same as Case 1)</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span>  <span class="c1"># Trihedral corner reflector</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>      <span class="c1"># Initial position: 300m</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>          <span class="c1"># Velocity: -1 m/s approaching</span>
+<span class="p">}</span>
 
+<span class="c1"># Only target, no ground surface</span>
 <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_1</span><span class="p">]</span>
 
+<span class="c1"># Simulate radar returns in free space (no multipath)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>
 
+<span class="c1"># Apply range FFT to extract range profiles</span>
 <span class="n">range_window</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">chebwin</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span> <span class="n">at</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 <span class="n">range_profile</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">range_fft</span><span class="p">(</span><span class="n">baseband</span><span class="p">,</span> <span class="n">range_window</span><span class="p">)</span>
 
+<span class="c1"># Extract peak amplitude per frame</span>
+<span class="c1"># Output: [290 frames, 1 channel] in dB</span>
 <span class="n">amp_single</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7827,14 +8157,49 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Results">Results<a class="anchor-link" href="#Results">¶</a></h2><p>Duo to the multi-path:</p>
+<h2 id="Results:-Multipath-Fading-Pattern">Results: Multipath Fading Pattern<a class="anchor-link" href="#Results:-Multipath-Fading-Pattern">¶</a></h2><p>Compare amplitude vs. range for both cases to visualize multipath interference effects.</p>
+<h3 id="Multipath-Propagation-Paths">Multipath Propagation Paths<a class="anchor-link" href="#Multipath-Propagation-Paths">¶</a></h3><p><strong>Four primary paths contribute to interference:</strong></p>
+<ol>
+<li><p><strong>Path 1 (Direct)</strong>: TX → Corner Reflector → RX</p>
 <ul>
-<li>Path 1: Tx -&gt; Corner reflecor -&gt; Rx</li>
-<li>Path 2: Tx -&gt; Ground -&gt; Corner reflecor -&gt; Ground -&gt; Rx</li>
-<li>Path 3: Tx -&gt; Ground -&gt; Corner reflecor -&gt; Rx</li>
-<li>Path 4: Tx -&gt; Corner reflecor -&gt; Ground -&gt; Rx</li>
+<li>Shortest path</li>
+<li>Strongest signal component</li>
+<li>Reference phase</li>
 </ul>
-<p>A fluctuation can be observed from the received target amplitude versus the target range.</p>
+</li>
+<li><p><strong>Path 2 (Two-Bounce)</strong>: TX → Ground → Corner Reflector → Ground → RX</p>
+<ul>
+<li>Longest path</li>
+<li>Most attenuation (two reflections)</li>
+<li>Largest phase shift</li>
+</ul>
+</li>
+<li><p><strong>Path 3 (TX Reflection)</strong>: TX → Ground → Corner Reflector → RX</p>
+<ul>
+<li>Intermediate path length</li>
+<li>One ground bounce (transmit side)</li>
+</ul>
+</li>
+<li><p><strong>Path 4 (RX Reflection)</strong>: TX → Corner Reflector → Ground → RX</p>
+<ul>
+<li>Intermediate path length</li>
+<li>One ground bounce (receive side)</li>
+</ul>
+</li>
+</ol>
+<h3 id="Interference-Pattern">Interference Pattern<a class="anchor-link" href="#Interference-Pattern">¶</a></h3><p><strong>Constructive and Destructive Interference:</strong></p>
+<p>As target range changes, path length differences vary, causing phase relationships to cycle through:</p>
+<ul>
+<li><strong>Constructive</strong>: Paths add in-phase → amplitude peaks</li>
+<li><strong>Destructive</strong>: Paths cancel → amplitude nulls</li>
+</ul>
+<p><strong>Observable Pattern:</strong></p>
+<ul>
+<li><strong>Free-space (blue)</strong>: Smooth 1/R⁴ decay</li>
+<li><strong>With ground (orange)</strong>: Oscillating "lobing" pattern superimposed on decay</li>
+<li><strong>Fluctuation amplitude</strong>: ±3 to 6 dB typical</li>
+<li><strong>Null depth</strong>: Can exceed 10-20 dB in deep fades</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7843,23 +8208,61 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import plotting libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
-<span class="n">t_range</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">290</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
+<span class="c1"># Create range axis (target position for each frame)</span>
+<span class="c1"># Target starts at 300m and moves to 10m (290 steps of -1m)</span>
+<span class="n">t_range</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">290</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>  <span class="c1"># [300, 299, 298, ..., 11, 10] meters</span>
 
+<span class="c1"># Create figure comparing both cases</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t_range</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">amp_multi</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">"CR with Ground"</span><span class="p">))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t_range</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">amp_single</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">"CR without Ground"</span><span class="p">))</span>
+<span class="c1"># Plot multipath case (with ground)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">t_range</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">amp_multi</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Corner Reflector with Ground"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'orange'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">'lines'</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 
+<span class="c1"># Plot free-space case (without ground)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">t_range</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">amp_single</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Corner Reflector without Ground (Free Space)"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dash</span><span class="o">=</span><span class="s1">'dash'</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">'lines'</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">"Multi-Path Effect"</span><span class="p">,</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Multipath Effect: Amplitude vs. Range (76.5 GHz)"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Received Amplitude (dB)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s1">'rgba(255,255,255,0.8)'</span><span class="p">),</span>
+    <span class="n">hovermode</span><span class="o">=</span><span class="s1">'x unified'</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Add annotation explaining the pattern</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">"Oscillations indicate&lt;br&gt;multipath interference"</span><span class="p">,</span>
+    <span class="n">xref</span><span class="o">=</span><span class="s2">"paper"</span><span class="p">,</span> <span class="n">yref</span><span class="o">=</span><span class="s2">"paper"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">showarrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">bgcolor</span><span class="o">=</span><span class="s2">"rgba(255,255,200,0.8)"</span><span class="p">,</span>
+    <span class="n">bordercolor</span><span class="o">=</span><span class="s2">"orange"</span><span class="p">,</span>
+    <span class="n">borderwidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
@@ -7882,6 +8285,156 @@ a.anchor-link {
 <div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
 <img alt="No description has been provided for this image" class="" src="data:image/jpeg;base64,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"/>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><p>In this notebook, you learned how to analyze multipath propagation and interference using RadarSimPy:</p>
+<h3 id="Key-Takeaways">Key Takeaways<a class="anchor-link" href="#Key-Takeaways">¶</a></h3><p><strong>1. Multipath Fundamentals</strong></p>
+<ul>
+<li>Understood multipath as multiple signal paths via reflections</li>
+<li>Learned about ground, building, and terrain reflections</li>
+<li>Recognized path length, amplitude, and delay differences</li>
+<li>Appreciated phase-based interference effects</li>
+</ul>
+<p><strong>2. Propagation Path Analysis</strong></p>
+<ul>
+<li>Identified four primary paths: direct, two-bounce, TX reflection, RX reflection</li>
+<li>Calculated path length differences: ΔL</li>
+<li>Computed phase differences: Δφ = 4πf_c ΔL/c</li>
+<li>Understood phase relationships at different ranges</li>
+</ul>
+<p><strong>3. Interference Mechanisms</strong></p>
+<ul>
+<li>Learned constructive interference (in-phase, amplitude peaks)</li>
+<li>Understood destructive interference (out-of-phase, nulls)</li>
+<li>Observed multipath fading lobing pattern</li>
+<li>Measured ±3 to 6 dB typical fluctuations</li>
+</ul>
+<p><strong>4. Two-Ray Ground Reflection Model</strong></p>
+<ul>
+<li>Applied simplified model: ΔL ≈ 2h_r h_t / R</li>
+<li>Calculated null positions: R_null = 4h_r h_t / λ(2n-1)</li>
+<li>Validated theoretical predictions with simulation</li>
+<li>Understood grazing angle effects</li>
+</ul>
+<p><strong>5. Ground Surface Modeling</strong></p>
+<ul>
+<li>Configured complex permittivity: ε_r = 3.2 + 0.1j</li>
+<li>Understood real part (dielectric constant)</li>
+<li>Recognized imaginary part (conductivity/loss)</li>
+<li>Applied specular reflection (skip_diffusion=True)</li>
+</ul>
+<p><strong>6. Frame-Based Simulation</strong></p>
+<ul>
+<li>Used frame_time for sequential measurements</li>
+<li>Updated target position between frames (-1 m/s)</li>
+<li>Captured amplitude at 290 range positions (300m to 10m)</li>
+<li>Built complete amplitude vs. range profile</li>
+</ul>
+<p><strong>7. Comparison Analysis</strong></p>
+<ul>
+<li>Simulated free-space reference (smooth 1/R⁴ decay)</li>
+<li>Observed multipath oscillations with ground plane</li>
+<li>Identified peaks from constructive interference</li>
+<li>Located nulls from destructive interference</li>
+</ul>
+<p><strong>8. Practical Implications</strong></p>
+<ul>
+<li>Recognized amplitude fluctuations impact detection</li>
+<li>Understood null zones create blind ranges</li>
+<li>Appreciated need for multipath mitigation</li>
+<li>Connected to real-world radar performance issues</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
+<p><strong>1. Frequency Variations</strong>:</p>
+<ul>
+<li>Test different frequencies: 10 GHz, 24 GHz, 94 GHz</li>
+<li>Observe wavelength effect on lobing period</li>
+<li>Calculate null spacing: inversely proportional to f_c</li>
+<li>Compare multipath sensitivity across bands</li>
+</ul>
+<p><strong>2. Antenna Height Studies</strong>:</p>
+<ul>
+<li>Vary radar height: 0.5m, 1m, 2m, 5m</li>
+<li>Observe null position changes: R_null ∝ h</li>
+<li>Test height optimization strategies</li>
+<li>Understand elevation pattern effects</li>
+</ul>
+<p><strong>3. Ground Material Properties</strong>:</p>
+<ul>
+<li>Change permittivity: 2+0j (dry soil), 10+1j (wet ground), 80+4j (water)</li>
+<li>Observe reflection coefficient variations</li>
+<li>Test different grazing angles</li>
+<li>Understand material-dependent multipath</li>
+</ul>
+<p><strong>4. Range Extent Modifications</strong>:</p>
+<ul>
+<li>Extend to 500m or 1000m range</li>
+<li>Observe more lobing cycles</li>
+<li>Test long-range multipath effects</li>
+<li>Validate two-ray model limits</li>
+</ul>
+<p><strong>5. Target Height Variations</strong>:</p>
+<ul>
+<li>Elevate corner reflector: 0.5m, 1m, 2m above ground</li>
+<li>Observe null spacing changes</li>
+<li>Test low vs. high target scenarios</li>
+<li>Understand height impact on path differences</li>
+</ul>
+<p><strong>6. Bandwidth Effects</strong>:</p>
+<ul>
+<li>Increase to 500 MHz, 1 GHz, 4 GHz</li>
+<li>Improve range resolution</li>
+<li>Test multipath path separation</li>
+<li>Understand wideband vs. narrowband</li>
+</ul>
+<p><strong>7. Polarization Studies</strong>:</p>
+<ul>
+<li>Configure different polarizations (H-pol, V-pol)</li>
+<li>Observe polarization-dependent reflection</li>
+<li>Test Brewster angle effects</li>
+<li>Understand polarization diversity benefits</li>
+</ul>
+<p><strong>8. Multiple Reflectors</strong>:</p>
+<ul>
+<li>Add second ground plane (walls, buildings)</li>
+<li>Create more complex multipath scenarios</li>
+<li>Test 3D ray tracing capabilities</li>
+<li>Simulate urban canyon effects</li>
+</ul>
+<p><strong>9. Moving Target Effects</strong>:</p>
+<ul>
+<li>Vary target velocity: -2 m/s, -5 m/s, -10 m/s</li>
+<li>Observe Doppler combined with multipath</li>
+<li>Test dynamic fading rate</li>
+<li>Understand temporal correlation</li>
+</ul>
+<p><strong>10. Mitigation Techniques</strong>:</p>
+<ul>
+<li>Implement frequency diversity (multiple chirps)</li>
+<li>Test spatial diversity (multiple antenna heights)</li>
+<li>Apply signal processing (averaging, filtering)</li>
+<li>Compare mitigation effectiveness</li>
+</ul>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>RadarSimPy Simulator Module: <a href="https://radarsimx.github.io/radarsimpy/simulator.html">https://radarsimx.github.io/radarsimpy/simulator.html</a></li>
+<li>Multipath Propagation: Theory and models</li>
+<li>Two-Ray Ground Reflection: Path loss and fading</li>
+<li>Fresnel Reflection: Ground reflection coefficients</li>
+<li>Interference Patterns: Constructive and destructive</li>
+<li>Multipath Mitigation: Diversity and processing techniques</li>
+<li>Automotive Radar: Ground multipath in ADAS</li>
+<li>Radar Range Equation: Free-space vs. multipath propagation</li>
+<li>Complex Permittivity: Dielectric properties of materials</li>
+</ul>
 </div>
 </div>
 </div>

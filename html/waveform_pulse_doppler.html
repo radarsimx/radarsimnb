@@ -7515,105 +7515,13 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Receiver</span><span class="p">,</span> <span class="n">Transmitter</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import RadarSimPy library and display version information</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
 
-<span class="n">antenna_gain</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># dBi</span>
-
-<span class="n">az_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">az_pattern</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_angle</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">500</span><span class="p">)</span> <span class="o">+</span> <span class="n">antenna_gain</span>
-
-<span class="n">el_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">el_pattern</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">el_angle</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">**</span> <span class="mi">400</span><span class="p">)</span> <span class="o">+</span> <span class="n">antenna_gain</span>
-
-<span class="n">light_speed</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span>
-
-<span class="n">max_range</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1"># Maximum unambiguous range</span>
-<span class="n">range_res</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Required range resolution</span>
-<span class="n">pulse_bw</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">range_res</span><span class="p">)</span>  <span class="c1"># Pulse bandwidth</span>
-<span class="n">pulse_width</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">pulse_bw</span>  <span class="c1"># Pulse width</span>
-<span class="n">prf</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">max_range</span><span class="p">)</span>  <span class="c1"># Pulse repetition frequency</span>
-<span class="n">prp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span>
-<span class="n">fs</span> <span class="o">=</span> <span class="mf">6e6</span>  <span class="c1"># Sampling rate 6 msps</span>
-<span class="n">fc</span> <span class="o">=</span> <span class="mf">10e9</span>  <span class="c1"># Carrier frequency</span>
-<span class="n">num_pulse</span> <span class="o">=</span> <span class="mi">1</span>
-
-<span class="n">total_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">prp</span> <span class="o">*</span> <span class="n">num_pulse</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
-<span class="n">sample_per_pulse</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_samples</span> <span class="o">/</span> <span class="n">num_pulse</span><span class="p">)</span>
-
-<span class="n">mod_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_samples</span><span class="p">)</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Time series of the modulation</span>
-<span class="n">amp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mod_t</span><span class="p">)</span>  <span class="c1"># Amplitude of the modulation</span>
-<span class="n">amp</span><span class="p">[</span><span class="n">mod_t</span> <span class="o">&lt;=</span> <span class="n">pulse_width</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Create a rectangular pulse</span>
-
-<span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="n">azimuth_angle</span><span class="o">=</span><span class="n">az_angle</span><span class="p">,</span>
-    <span class="n">azimuth_pattern</span><span class="o">=</span><span class="n">az_pattern</span><span class="p">,</span>
-    <span class="n">elevation_angle</span><span class="o">=</span><span class="n">el_angle</span><span class="p">,</span>
-    <span class="n">elevation_pattern</span><span class="o">=</span><span class="n">el_pattern</span><span class="p">,</span>
-    <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span>
-    <span class="n">mod_t</span><span class="o">=</span><span class="n">mod_t</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">fc</span><span class="p">,</span>
-    <span class="n">t</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span><span class="p">,</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">67</span><span class="p">,</span>  <span class="c1"># dBm</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="n">num_pulse</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>
-<span class="p">)</span>
-
-<span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="n">azimuth_angle</span><span class="o">=</span><span class="n">az_angle</span><span class="p">,</span>
-    <span class="n">azimuth_pattern</span><span class="o">=</span><span class="n">az_pattern</span><span class="p">,</span>
-    <span class="n">elevation_angle</span><span class="o">=</span><span class="n">el_angle</span><span class="p">,</span>
-    <span class="n">elevation_pattern</span><span class="o">=</span><span class="n">el_pattern</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>
-<span class="p">)</span>
-
-<span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
-
-<span class="c1"># target = dict(location=(1000, 0, 0), speed=(150, 0, 0), rcs=10, phase=0)</span>
-
-<span class="n">target</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span>
-    <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">,</span>
-    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="p">}</span>
-
-<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">timestamp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>
-<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>  <span class="c1"># noise is left out on purpose</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
-    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:],</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])),</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"Phase"</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Phase (rad)"</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -7628,39 +7536,987 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Pulse-Doppler-Radar:-Long-Range-Detection-with-Doppler-Processing">Pulse-Doppler Radar: Long-Range Detection with Doppler Processing<a class="anchor-link" href="#Pulse-Doppler-Radar:-Long-Range-Detection-with-Doppler-Processing">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>Pulse-Doppler radar</strong>—a sophisticated radar technique that combines pulsed transmission with coherent Doppler processing to achieve long-range detection while measuring target velocity. Pulse-Doppler is widely used in air surveillance, military applications, and weather radar where long range and velocity measurement are both critical.</p>
+<h3 id="What-is-Pulse-Doppler-Radar?">What is Pulse-Doppler Radar?<a class="anchor-link" href="#What-is-Pulse-Doppler-Radar?">¶</a></h3><p><strong>Basic Concept:</strong></p>
+<p>Pulse-Doppler radar transmits short <strong>high-power pulses</strong> and processes the <strong>Doppler shift</strong> across multiple pulses to extract both range and velocity information. It combines:</p>
+<ul>
+<li><strong>Pulsed radar</strong>: High peak power for long range</li>
+<li><strong>Doppler processing</strong>: Velocity measurement and clutter rejection</li>
+</ul>
+<p><strong>Key Characteristics:</strong></p>
+<ol>
+<li><strong>High peak power</strong>: Enables long-range detection (hundreds of km)</li>
+<li><strong>Low duty cycle</strong>: Short pulses with long listening periods</li>
+<li><strong>Coherent processing</strong>: Phase-coherent across pulses</li>
+<li><strong>Doppler filtering</strong>: Separates targets by velocity</li>
+<li><strong>MTI capability</strong>: Moving Target Indication (clutter rejection)</li>
+</ol>
+<h3 id="Pulse-Doppler-Principles">Pulse-Doppler Principles<a class="anchor-link" href="#Pulse-Doppler-Principles">¶</a></h3><p><strong>Range Measurement:</strong></p>
+<p>Range is determined from the <strong>time delay</strong> of the pulse echo:</p>
+<p>$$R = \frac{c \cdot \tau}{2}$$</p>
+<p>Where:</p>
+<ul>
+<li>$R$ = Range (m)</li>
+<li>$c$ = Speed of light (3×10⁸ m/s)</li>
+<li>$\tau$ = Round-trip time delay (s)</li>
+</ul>
+<p><strong>Range Resolution:</strong></p>
+<p>The ability to separate two targets in range depends on pulse width:</p>
+<p>$$\Delta R = \frac{c \cdot T_p}{2}$$</p>
+<p>Where $T_p$ is the pulse duration.</p>
+<p><strong>Maximum Unambiguous Range:</strong></p>
+<p>Limited by the pulse repetition frequency (PRF):</p>
+<p>$$R_{max} = \frac{c}{2 \cdot PRF} = \frac{c \cdot PRP}{2}$$</p>
+<p>Where PRP = Pulse Repetition Period.</p>
+<h3 id="Doppler-Processing">Doppler Processing<a class="anchor-link" href="#Doppler-Processing">¶</a></h3><p><strong>Doppler Shift:</strong></p>
+<p>A moving target causes a frequency shift:</p>
+<p>$$f_d = \frac{2v_r f_c}{c}$$</p>
+<p>Where:</p>
+<ul>
+<li>$f_d$ = Doppler frequency (Hz)</li>
+<li>$v_r$ = Radial velocity (m/s)</li>
+<li>$f_c$ = Carrier frequency (Hz)</li>
+</ul>
+<p><strong>Coherent Pulse Train:</strong></p>
+<p>By transmitting multiple phase-coherent pulses and processing the returns, the radar creates a <strong>Doppler filter bank</strong> that separates targets by velocity.</p>
+<p><strong>Velocity Resolution:</strong></p>
+<p>$$\Delta v = \frac{c}{2f_c N \cdot PRP}$$</p>
+<p>Where $N$ = Number of pulses.</p>
+<h3 id="Pulse-Doppler-Modes">Pulse-Doppler Modes<a class="anchor-link" href="#Pulse-Doppler-Modes">¶</a></h3><p><strong>High PRF Mode:</strong></p>
+<ul>
+<li>PRF &gt; 2 × Doppler frequency</li>
+<li>Long maximum velocity</li>
+<li>Range ambiguous (multiple trip returns)</li>
+<li>Good for fast-moving targets</li>
+</ul>
+<p><strong>Medium PRF Mode:</strong></p>
+<ul>
+<li>Compromise between range and velocity</li>
+<li>Some range ambiguity</li>
+<li>Some velocity ambiguity</li>
+<li>Most versatile</li>
+</ul>
+<p><strong>Low PRF Mode:</strong></p>
+<ul>
+<li>PRF &lt;&lt; Doppler frequency</li>
+<li>Long unambiguous range</li>
+<li>Velocity ambiguous</li>
+<li>Traditional MTI radar</li>
+</ul>
+<h3 id="Advantages-of-Pulse-Doppler">Advantages of Pulse-Doppler<a class="anchor-link" href="#Advantages-of-Pulse-Doppler">¶</a></h3><p><strong>1. Long Range:</strong></p>
+<ul>
+<li>High peak power (kW to MW)</li>
+<li>Low duty cycle allows cooling</li>
+<li>Pulse compression possible</li>
+<li>Ranges: 10-500 km typical</li>
+</ul>
+<p><strong>2. Doppler Filtering:</strong></p>
+<ul>
+<li>Separate targets by velocity</li>
+<li>Reject stationary clutter (ground, rain)</li>
+<li>Detect moving targets in clutter</li>
+<li>Measure target velocity</li>
+</ul>
+<p><strong>3. High Sensitivity:</strong></p>
+<ul>
+<li>Coherent integration across pulses</li>
+<li>Processing gain: 10×log₁₀(N) dB</li>
+<li>Effective clutter cancellation</li>
+<li>Low noise figure receivers</li>
+</ul>
+<p><strong>4. Target Discrimination:</strong></p>
+<ul>
+<li>Velocity information aids identification</li>
+<li>Friend vs. foe determination</li>
+<li>Weather vs. aircraft separation</li>
+<li>Multiple target tracking</li>
+</ul>
+<h3 id="Moving-Target-Indication-(MTI)">Moving Target Indication (MTI)<a class="anchor-link" href="#Moving-Target-Indication-(MTI)">¶</a></h3><p><strong>Clutter Problem:</strong></p>
+<p>Ground clutter and weather returns can be millions of times stronger than aircraft echoes. Pulse-Doppler solves this through <strong>Doppler filtering</strong>.</p>
+<p><strong>MTI Processing:</strong></p>
+<ul>
+<li><strong>Stationary clutter</strong>: Zero Doppler (DC component)</li>
+<li><strong>Moving targets</strong>: Non-zero Doppler</li>
+<li><strong>High-pass filter</strong>: Removes DC, passes moving targets</li>
+<li><strong>Improvement factor</strong>: 30-60 dB clutter rejection</li>
+</ul>
+<h3 id="Pulse-Compression">Pulse Compression<a class="anchor-link" href="#Pulse-Compression">¶</a></h3><p><strong>Concept:</strong></p>
+<p>Transmit a <strong>long, coded pulse</strong> for energy, then compress it to a <strong>short pulse</strong> for resolution:</p>
+<p>$$\text{Range Resolution} = \frac{c}{2B}$$</p>
+<p>Where $B$ is the bandwidth (independent of pulse length).</p>
+<p><strong>Techniques:</strong></p>
+<ul>
+<li>Linear FM chirp (most common)</li>
+<li>Phase coding (Barker, polyphase)</li>
+<li>Frequency hopping</li>
+</ul>
+<p><strong>Advantage:</strong></p>
+<p>Long pulse (high energy, long range) with short pulse resolution.</p>
+<h3 id="Applications">Applications<a class="anchor-link" href="#Applications">¶</a></h3><p><strong>Air Defense:</strong></p>
+<ul>
+<li>Fighter aircraft radar</li>
+<li>Surface-to-air missile guidance</li>
+<li>Air traffic control</li>
+<li>Airport surveillance</li>
+</ul>
+<p><strong>Weather Radar:</strong></p>
+<ul>
+<li>Doppler weather radar</li>
+<li>Wind velocity measurement</li>
+<li>Storm tracking</li>
+<li>Aviation weather</li>
+</ul>
+<p><strong>Space Surveillance:</strong></p>
+<ul>
+<li>Satellite tracking</li>
+<li>Space debris detection</li>
+<li>Ballistic missile warning</li>
+<li>Ionospheric research</li>
+</ul>
+<p><strong>Military:</strong></p>
+<ul>
+<li>Airborne early warning (AWACS)</li>
+<li>Ground surveillance</li>
+<li>Naval fire control</li>
+<li>Missile seekers</li>
+</ul>
+<h3 id="Waveform-Parameters">Waveform Parameters<a class="anchor-link" href="#Waveform-Parameters">¶</a></h3><p><strong>This Example:</strong></p>
+<ul>
+<li><strong>Carrier Frequency</strong>: 10 GHz (X-band)</li>
+<li><strong>Maximum Range</strong>: 5000 m (5 km)</li>
+<li><strong>Range Resolution</strong>: 500 m</li>
+<li><strong>Pulse Width</strong>: ~3.33 μs</li>
+<li><strong>PRF</strong>: 30 kHz</li>
+<li><strong>PRP</strong>: ~33.3 μs</li>
+<li><strong>Peak Power</strong>: 5 MW (67 dBm)</li>
+<li><strong>Sampling Rate</strong>: 6 MHz</li>
+</ul>
+<h3 id="You'll-Learn-How-To:">You'll Learn How To:<a class="anchor-link" href="#You'll-Learn-How-To:">¶</a></h3><ul>
+<li>Configure pulse-Doppler radar with proper waveform parameters</li>
+<li>Calculate pulse width from range resolution requirements</li>
+<li>Determine PRF from maximum unambiguous range</li>
+<li>Set up high-power pulsed transmission (67 dBm = 5 MW)</li>
+<li>Define rectangular pulse modulation envelope</li>
+<li>Configure directional antenna patterns</li>
+<li>Model complex 3D target using STL mesh (corner reflector)</li>
+<li>Simulate realistic radar returns with mesh density</li>
+<li>Extract Doppler phase from baseband signal</li>
+<li>Visualize phase evolution showing target motion</li>
+<li>Understand range-Doppler ambiguity relationships</li>
+<li>Appreciate pulse-Doppler advantages for long-range detection</li>
+</ul>
+<h3 id="About-This-Example">About This Example<a class="anchor-link" href="#About-This-Example">¶</a></h3><p>This notebook uses <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> to demonstrate:</p>
+<p><strong>Radar Configuration:</strong></p>
+<ul>
+<li>10 GHz X-band pulse-Doppler radar</li>
+<li>5 MW peak power (high-power pulsed)</li>
+<li>Directional antenna (cosine pattern)</li>
+<li>Single pulse for simplicity</li>
+</ul>
+<p><strong>Target:</strong></p>
+<ul>
+<li>Corner reflector (STL 3D mesh model)</li>
+<li>Range: 2000 m</li>
+<li>Velocity: 150 m/s approaching</li>
+<li>Realistic scattering from mesh</li>
+</ul>
+<p><strong>Processing:</strong></p>
+<ul>
+<li>Baseband I/Q signal capture</li>
+<li>Phase extraction for Doppler analysis</li>
+<li>Time-domain visualization</li>
+</ul>
+<p><strong>Expected Results:</strong></p>
+<ul>
+<li>Phase progression showing Doppler shift</li>
+<li>Clean target return at 2000m range</li>
+<li>Demonstrates pulse-Doppler concept</li>
+</ul>
+<p>The simulation provides insight into pulse-Doppler radar operation and the relationship between waveform parameters and radar performance.</p>
+<h2 id="Radar-System-Configuration">Radar System Configuration<a class="anchor-link" href="#Radar-System-Configuration">¶</a></h2><p>Configure pulse-Doppler radar with appropriate waveform parameters for long-range detection.</p>
+<h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3><p>Import necessary modules for radar simulation and visualization.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
-    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:],</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"Angle"</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Angle (rad)"</span><span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">),</span>
-    <span class="n">template</span><span class="o">=</span><span class="s2">"plotly_dark"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Receiver</span><span class="p">,</span> <span class="n">Transmitter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Antenna-Pattern-Definition">Antenna Pattern Definition<a class="anchor-link" href="#Antenna-Pattern-Definition">¶</a></h3><p>Define directional antenna radiation patterns for transmit and receive.</p>
+<p><strong>Antenna Characteristics:</strong></p>
+<ul>
+<li><strong>Gain</strong>: 20 dBi (high-gain directional antenna)</li>
+<li><strong>Azimuth Pattern</strong>: cos⁵⁰⁰ taper (very narrow beam)</li>
+<li><strong>Elevation Pattern</strong>: cos⁴⁰⁰ taper (narrow beam)</li>
+<li><strong>Angular Coverage</strong>: ±20° (pencil beam)</li>
+</ul>
+<p><strong>Purpose:</strong></p>
+<p>High-gain antennas provide:</p>
+<ol>
+<li><strong>Long range</strong>: More power on target</li>
+<li><strong>Directionality</strong>: Know target azimuth/elevation</li>
+<li><strong>Low sidelobes</strong>: Reduced clutter pickup</li>
+<li><strong>Spatial filtering</strong>: Angular discrimination</li>
+</ol>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define antenna gain and angular coverage</span>
+<span class="n">antenna_gain</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># dBi - High-gain directional antenna</span>
+
+<span class="c1"># Speed of light constant</span>
+<span class="n">light_speed</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span>  <span class="c1"># 299,792,458 m/s</span>
+
+<span class="c1">### Azimuth Pattern (Horizontal Plane) ###</span>
+
+<span class="c1"># Define azimuth angle array: -20° to +20° in 1° steps</span>
+<span class="n">az_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># 41 points</span>
+
+<span class="c1"># Azimuth pattern: cos^500 taper with 20 dBi gain</span>
+<span class="c1"># Very narrow beamwidth (~2° @ -3dB) with low sidelobes</span>
+<span class="n">az_pattern</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_angle</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">500</span><span class="p">)</span> <span class="o">+</span> <span class="n">antenna_gain</span>  <span class="c1"># dB</span>
+
+<span class="c1">### Elevation Pattern (Vertical Plane) ###</span>
+
+<span class="c1"># Define elevation angle array: -20° to +20° in 1° steps</span>
+<span class="n">el_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># 41 points</span>
+
+<span class="c1"># Elevation pattern: cos^400 taper with 20 dBi gain</span>
+<span class="c1"># Narrow beamwidth (~2.5° @ -3dB)</span>
+<span class="n">el_pattern</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">el_angle</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">**</span> <span class="mi">400</span><span class="p">)</span> <span class="o">+</span> <span class="n">antenna_gain</span>  <span class="c1"># dB</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Waveform-Parameter-Calculation">Waveform Parameter Calculation<a class="anchor-link" href="#Waveform-Parameter-Calculation">¶</a></h3><p>Calculate pulse-Doppler waveform parameters based on performance requirements.</p>
+<p><strong>Design Requirements:</strong></p>
+<ol>
+<li><strong>Maximum Unambiguous Range</strong>: 5000 m (5 km)</li>
+<li><strong>Range Resolution</strong>: 500 m</li>
+</ol>
+<p><strong>Parameter Derivation:</strong></p>
+<p>From these requirements, we calculate:</p>
+<p><strong>1. Pulse Bandwidth:</strong></p>
+<p>$$B = \frac{c}{2 \Delta R} = \frac{3 \times 10^8}{2 \times 500} = 300 \text{ kHz}$$</p>
+<p><strong>2. Pulse Width:</strong></p>
+<p>$$T_p = \frac{1}{B} = \frac{1}{300,000} \approx 3.33 \text{ μs}$$</p>
+<p><strong>3. Pulse Repetition Frequency (PRF):</strong></p>
+<p>$$PRF = \frac{c}{2R_{max}} = \frac{3 \times 10^8}{2 \times 5000} = 30 \text{ kHz}$$</p>
+<p><strong>4. Pulse Repetition Period (PRP):</strong></p>
+<p>$$PRP = \frac{1}{PRF} = \frac{1}{30,000} \approx 33.3 \text{ μs}$$</p>
+<p><strong>5. Duty Cycle:</strong></p>
+<p>$$\text{Duty Cycle} = \frac{T_p}{PRP} = \frac{3.33}{33.3} = 10\%$$</p>
+<p>This is a typical low duty cycle for pulsed radar, allowing high peak power with reasonable average power.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">### Calculate Pulse-Doppler Waveform Parameters ###</span>
+
+<span class="c1"># Performance Requirements</span>
+<span class="n">max_range</span> <span class="o">=</span> <span class="mi">5000</span>        <span class="c1"># Maximum unambiguous range: 5000 m (5 km)</span>
+<span class="n">range_res</span> <span class="o">=</span> <span class="mi">500</span>         <span class="c1"># Required range resolution: 500 m</span>
+
+<span class="c1"># Derived Waveform Parameters</span>
+<span class="n">pulse_bw</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">range_res</span><span class="p">)</span>  <span class="c1"># Pulse bandwidth: c/(2*ΔR) = 300 kHz</span>
+<span class="n">pulse_width</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">pulse_bw</span>                <span class="c1"># Pulse width: 1/B ≈ 3.33 μs</span>
+<span class="n">prf</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">max_range</span><span class="p">)</span>       <span class="c1"># PRF: c/(2*R_max) = 30 kHz</span>
+<span class="n">prp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span>                             <span class="c1"># PRP: 1/PRF ≈ 33.3 μs</span>
+
+<span class="c1"># Radar Parameters</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mf">6e6</span>                <span class="c1"># Sampling rate: 6 MHz (&gt; 2 × pulse_bw for Nyquist)</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="mf">10e9</span>               <span class="c1"># Carrier frequency: 10 GHz (X-band)</span>
+<span class="n">num_pulse</span> <span class="o">=</span> <span class="mi">1</span>           <span class="c1"># Number of pulses: 1 (single pulse for this example)</span>
+
+<span class="c1"># Calculate sample counts</span>
+<span class="n">total_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">prp</span> <span class="o">*</span> <span class="n">num_pulse</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>    <span class="c1"># Total samples in observation</span>
+<span class="n">sample_per_pulse</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_samples</span> <span class="o">/</span> <span class="n">num_pulse</span><span class="p">)</span>  <span class="c1"># Samples per pulse</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pulse-Doppler Waveform Parameters:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Pulse Width: </span><span class="si">{</span><span class="n">pulse_width</span><span class="o">*</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> μs"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Pulse Bandwidth: </span><span class="si">{</span><span class="n">pulse_bw</span><span class="o">/</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> kHz"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PRF: </span><span class="si">{</span><span class="n">prf</span><span class="o">/</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> kHz"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PRP: </span><span class="si">{</span><span class="n">prp</span><span class="o">*</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> μs"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Duty Cycle: </span><span class="si">{</span><span class="p">(</span><span class="n">pulse_width</span><span class="o">/</span><span class="n">prp</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Samples per Pulse: </span><span class="si">{</span><span class="n">sample_per_pulse</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Pulse-Envelope-Generation">Pulse Envelope Generation<a class="anchor-link" href="#Pulse-Envelope-Generation">¶</a></h3><p>Create rectangular pulse modulation envelope for the transmitter.</p>
+<p><strong>Pulse Modulation:</strong></p>
+<p>The amplitude modulation array defines the pulse shape:</p>
+<ul>
+<li><strong>Pulse-on</strong> (0 to pulse_width): Amplitude = 1</li>
+<li><strong>Pulse-off</strong> (after pulse_width): Amplitude = 0</li>
+</ul>
+<p><strong>Time Array:</strong></p>
+<p>The modulation time array <code>mod_t</code> spans the entire PRP with sampling at <code>fs</code>, defining when the pulse is transmitted within each repetition period.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">### Create Rectangular Pulse Envelope ###</span>
+
+<span class="c1"># Create time array for modulation (spans entire PRP)</span>
+<span class="n">mod_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_samples</span><span class="p">)</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Time vector (seconds)</span>
+
+<span class="c1"># Initialize amplitude modulation array (all zeros initially)</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mod_t</span><span class="p">)</span>
+
+<span class="c1"># Set pulse-on period: amplitude = 1 for duration of pulse_width</span>
+<span class="n">amp</span><span class="p">[</span><span class="n">mod_t</span> <span class="o">&lt;=</span> <span class="n">pulse_width</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Rectangular pulse</span>
+
+<span class="c1"># Result: Pulse is ON for first ~3.33 μs, then OFF for remaining ~30 μs</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h3><p>Configure high-power pulsed transmitter with directional antenna pattern.</p>
+<p><strong>Transmitter Parameters:</strong></p>
+<ul>
+<li><strong>Carrier Frequency</strong>: 10 GHz (X-band)</li>
+<li><strong>Pulse Duration</strong>: 1/PRF ≈ 33.3 μs (PRP)</li>
+<li><strong>Transmit Power</strong>: 67 dBm = 5 MW peak power<ul>
+<li>High peak power typical for long-range pulse-Doppler</li>
+<li>Average power: 5 MW × 10% duty = 500 kW</li>
+</ul>
+</li>
+<li><strong>Number of Pulses</strong>: 1 (single pulse for demonstration)</li>
+<li><strong>Modulation</strong>: Rectangular pulse envelope (amp, mod_t)</li>
+<li><strong>Antenna Pattern</strong>: Directional with 20 dBi gain</li>
+</ul>
+<p><strong>High Peak Power:</strong></p>
+<p>Pulse-Doppler radars use very high peak power (MW range) to achieve long detection ranges, but the low duty cycle keeps average power manageable.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define transmitter channel with antenna pattern and pulse modulation</span>
+<span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>              <span class="c1"># Antenna position at origin</span>
+    <span class="n">azimuth_angle</span><span class="o">=</span><span class="n">az_angle</span><span class="p">,</span>          <span class="c1"># Azimuth angles array</span>
+    <span class="n">azimuth_pattern</span><span class="o">=</span><span class="n">az_pattern</span><span class="p">,</span>      <span class="c1"># Azimuth gain pattern (dB)</span>
+    <span class="n">elevation_angle</span><span class="o">=</span><span class="n">el_angle</span><span class="p">,</span>        <span class="c1"># Elevation angles array</span>
+    <span class="n">elevation_pattern</span><span class="o">=</span><span class="n">el_pattern</span><span class="p">,</span>    <span class="c1"># Elevation gain pattern (dB)</span>
+    <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span>                         <span class="c1"># Pulse amplitude modulation</span>
+    <span class="n">mod_t</span><span class="o">=</span><span class="n">mod_t</span><span class="p">,</span>                     <span class="c1"># Modulation time array</span>
+<span class="p">)</span>
+
+<span class="c1"># Create pulse-Doppler transmitter</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><span class="n">fc</span><span class="p">,</span>                <span class="c1"># Carrier frequency: 10 GHz</span>
+    <span class="n">t</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span><span class="p">,</span>           <span class="c1"># Pulse duration: PRP ≈ 33.3 μs</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">67</span><span class="p">,</span>         <span class="c1"># Transmit power: 67 dBm = 5 MW (very high peak power!)</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="n">num_pulse</span><span class="p">,</span>    <span class="c1"># Number of pulses: 1</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>  <span class="c1"># Transmitter antenna configuration</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h3><p>Configure receiver for baseband sampling and signal conditioning.</p>
+<p><strong>Receiver Parameters:</strong></p>
+<ul>
+<li><p><strong>Sampling Rate</strong>: 6 MHz</p>
+<ul>
+<li>Exceeds Nyquist for 300 kHz bandwidth</li>
+<li>Captures pulse envelope clearly</li>
+</ul>
+</li>
+<li><p><strong>Noise Figure</strong>: 12 dB (standard performance)</p>
+</li>
+<li><p><strong>RF Gain</strong>: 20 dB (LNA amplification)</p>
+</li>
+<li><p><strong>Baseband Gain</strong>: 30 dB (total gain: 50 dB)</p>
+</li>
+<li><p><strong>Load Resistor</strong>: 500 Ω</p>
+</li>
+<li><p><strong>Antenna Pattern</strong>: Same directional pattern as transmitter (monostatic)</p>
+</li>
+</ul>
+<p><strong>Monostatic Configuration:</strong></p>
+<p>TX and RX share the same location and antenna pattern, typical for most radar systems.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define receiver channel with same antenna pattern</span>
+<span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>              <span class="c1"># Receiver position at origin (monostatic)</span>
+    <span class="n">azimuth_angle</span><span class="o">=</span><span class="n">az_angle</span><span class="p">,</span>          <span class="c1"># Same azimuth pattern as TX</span>
+    <span class="n">azimuth_pattern</span><span class="o">=</span><span class="n">az_pattern</span><span class="p">,</span>      <span class="c1"># Same azimuth gain</span>
+    <span class="n">elevation_angle</span><span class="o">=</span><span class="n">el_angle</span><span class="p">,</span>        <span class="c1"># Same elevation pattern</span>
+    <span class="n">elevation_pattern</span><span class="o">=</span><span class="n">el_pattern</span><span class="p">,</span>    <span class="c1"># Same elevation gain</span>
+<span class="p">)</span>
+
+<span class="c1"># Create pulse-Doppler receiver</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
+    <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>               <span class="c1"># Sampling rate: 6 MHz</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>     <span class="c1"># Noise figure: 12 dB</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>          <span class="c1"># RF gain: 20 dB</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>   <span class="c1"># Load resistance: 500 Ω</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>    <span class="c1"># Baseband gain: 30 dB</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>  <span class="c1"># Receiver antenna configuration</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Create-Radar-System">Create Radar System<a class="anchor-link" href="#Create-Radar-System">¶</a></h3><p>Combine transmitter and receiver to form the complete pulse-Doppler radar.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create complete pulse-Doppler radar system</span>
+<span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Target-Configuration">Target Configuration<a class="anchor-link" href="#Target-Configuration">¶</a></h2><p>Define a realistic 3D target using STL mesh model for accurate scattering simulation.</p>
+<h3 id="3D-Mesh-Target">3D Mesh Target<a class="anchor-link" href="#3D-Mesh-Target">¶</a></h3><p><strong>Corner Reflector Model:</strong></p>
+<p>Instead of a simple point target, this example uses a <strong>corner reflector</strong> defined by an STL (STereoLithography) mesh file. This provides:</p>
+<ol>
+<li><strong>Realistic Scattering</strong>: Accurate radar cross-section based on geometry</li>
+<li><strong>Angular Dependence</strong>: RCS varies with aspect angle</li>
+<li><strong>Multiple Scattering</strong>: Interactions between surfaces</li>
+<li><strong>Physical Accuracy</strong>: Real-world target representation</li>
+</ol>
+<p><strong>Target Parameters:</strong></p>
+<ul>
+<li><strong>Model</strong>: <code>cr.stl</code> (corner reflector geometry)</li>
+<li><strong>Units</strong>: meters</li>
+<li><strong>Location</strong>: (2000, 0, 0) m → 2 km range</li>
+<li><strong>Velocity</strong>: (150, 0, 0) m/s → 150 m/s approaching (540 km/h)<ul>
+<li>Very high velocity (supersonic: Mach 0.44)</li>
+<li>Creates significant Doppler shift</li>
+</ul>
+</li>
+</ul>
+<p><strong>Mesh Density:</strong></p>
+<p>The <code>density=0.5</code> parameter controls mesh sampling:</p>
+<ul>
+<li>Higher density: More accurate but slower</li>
+<li>Lower density: Faster but less accurate</li>
+<li>0.5 provides good balance</li>
+</ul>
+<p><strong>High Velocity:</strong></p>
+<p>150 m/s creates large Doppler shift:</p>
+<p>$$f_d = \frac{2 \times 150 \times 10 \times 10^9}{3 \times 10^8} = 10 \text{ kHz}$$</p>
+<p>This Doppler shift will be visible in the phase progression.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define 3D mesh target (corner reflector)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/cr.stl"</span><span class="p">,</span>  <span class="c1"># Path to STL mesh file (corner reflector)</span>
+    <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">,</span>                   <span class="c1"># Model units: meters</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>      <span class="c1"># Position: 2000m range, on-axis</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>          <span class="c1"># Velocity: 150 m/s approaching (very fast!)</span>
+<span class="p">}</span>
+
+<span class="c1"># Alternative: Simple point target (commented out)</span>
+<span class="c1"># target = dict(location=(1000, 0, 0), speed=(150, 0, 0), rcs=10, phase=0)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Simulate-Baseband-Signals">Simulate Baseband Signals<a class="anchor-link" href="#Simulate-Baseband-Signals">¶</a></h2><p>Generate pulse-Doppler radar baseband signals with realistic 3D target scattering.</p>
+<h3 id="Simulation-Process">Simulation Process<a class="anchor-link" href="#Simulation-Process">¶</a></h3><p>The simulator performs:</p>
+<ol>
+<li><strong>Mesh Loading</strong>: Read STL file and sample surface points</li>
+<li><strong>Ray Tracing</strong>: Calculate propagation paths to/from each mesh point</li>
+<li><strong>Scattering</strong>: Compute reflected signal from each surface element</li>
+<li><strong>Doppler</strong>: Apply frequency shift from target motion</li>
+<li><strong>Integration</strong>: Sum contributions from all mesh points</li>
+<li><strong>Baseband</strong>: Down-convert to complex I/Q signal</li>
+</ol>
+<p><strong>Simulation Parameters:</strong></p>
+<ul>
+<li><code>density=0.5</code>: Mesh sampling density (balance accuracy vs. speed)</li>
+<li><code>debug=False</code>: Suppress debug output for clean execution</li>
+</ul>
+<p><strong>Output:</strong></p>
+<ul>
+<li><strong>timestamp</strong>: Time array for each sample [1, 1, samples]</li>
+<li><strong>baseband</strong>: Complex I/Q signal [1, 1, samples]<ul>
+<li>Note: Noise intentionally omitted for clear Doppler visualization</li>
+</ul>
+</li>
+</ul>
+<p><strong>No Noise:</strong></p>
+<p>For this demonstration, receiver noise is NOT added to clearly show the Doppler phase progression. In practice, noise would be present.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Simulate pulse-Doppler radar with 3D mesh target</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span>
+    <span class="n">radar</span><span class="p">,</span>           <span class="c1"># Pulse-Doppler radar configuration</span>
+    <span class="p">[</span><span class="n">target</span><span class="p">],</span>        <span class="c1"># List of targets (corner reflector mesh)</span>
+    <span class="n">density</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>     <span class="c1"># Mesh sampling density (0.5 = medium)</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span>      <span class="c1"># Suppress debug output</span>
+<span class="p">)</span>
+
+<span class="c1"># Extract simulation results</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>  <span class="c1"># Time array [1, 1, samples]</span>
+<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>    <span class="c1"># Complex I/Q (noise omitted intentionally) [1, 1, samples]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Simulation complete:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Baseband shape: </span><span class="si">{</span><span class="n">baseband</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Duration: </span><span class="si">{</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> μs"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Samples: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p">:])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Signal-Analysis">Signal Analysis<a class="anchor-link" href="#Signal-Analysis">¶</a></h2><p>Extract and visualize Doppler information from the pulse-Doppler return.</p>
+<h3 id="Phase-Extraction">Phase Extraction<a class="anchor-link" href="#Phase-Extraction">¶</a></h3><p><strong>Doppler Phase:</strong></p>
+<p>For a moving target, the phase of the baseband signal evolves linearly with time:</p>
+<p>$$\phi(t) = 2\pi f_d t = \frac{4\pi v_r f_c}{c} t$$</p>
+<p>Where:</p>
+<ul>
+<li>$\phi(t)$ = Phase (radians)</li>
+<li>$f_d$ = Doppler frequency (Hz)</li>
+<li>$v_r$ = Radial velocity (m/s)</li>
+<li>$f_c$ = Carrier frequency (Hz)</li>
+</ul>
+<p><strong>For This Example:</strong></p>
+<ul>
+<li>Velocity: $v_r = 150$ m/s (approaching, so negative Doppler)</li>
+<li>Carrier: $f_c = 10$ GHz</li>
+<li>Doppler frequency: $f_d = \frac{2 \times 150 \times 10^{10}}{3 \times 10^8} = 10$ kHz</li>
+</ul>
+<p><strong>Phase Evolution:</strong></p>
+<p>Over the ~33 μs observation:</p>
+<ul>
+<li>Phase change: $\Delta\phi = 2\pi \times 10,000 \times 33 \times 10^{-6} \approx 2.07$ radians ≈ 119°</li>
+</ul>
+<p><strong>Extraction Method:</strong></p>
+<p>Phase is extracted using <code>arctan2(I, Q)</code> which properly handles all quadrants.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Visualize-Phase-Evolution">Visualize Phase Evolution<a class="anchor-link" href="#Visualize-Phase-Evolution">¶</a></h3><p>Display phase progression showing Doppler shift from target motion.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Extract phase from complex baseband signal</span>
+<span class="c1"># arctan2(I, Q) provides phase in range [-π, +π]</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]))</span>
+
+<span class="c1"># Create figure for phase visualization</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Plot phase vs. time</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>  <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span>                      <span class="c1"># Phase in radians</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Doppler Phase"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'purple'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">'lines'</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Phase Evolution: Doppler Shift from 150 m/s Target Motion"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Phase (radians)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (μs)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Add annotation explaining Doppler</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Doppler frequency ≈ 10 kHz&lt;br&gt;Phase slope ∝ target velocity"</span><span class="p">,</span>
+    <span class="n">xref</span><span class="o">=</span><span class="s2">"paper"</span><span class="p">,</span> <span class="n">yref</span><span class="o">=</span><span class="s2">"paper"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">showarrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">bgcolor</span><span class="o">=</span><span class="s2">"rgba(255,255,200,0.8)"</span><span class="p">,</span>
+    <span class="n">bordercolor</span><span class="o">=</span><span class="s2">"purple"</span><span class="p">,</span>
+    <span class="n">borderwidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># uncomment this to display interactive plot</span>
+<span class="c1"># fig.show()</span>
+
+<span class="c1"># display static image to reduce size on radarsimx.com</span>
+<span class="n">img_bytes</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">img_bytes</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Visualize-In-Phase-Component">Visualize In-Phase Component<a class="anchor-link" href="#Visualize-In-Phase-Component">¶</a></h3><p>Display the in-phase (I) component of the baseband signal showing the pulse return.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create figure for in-phase (I) component</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Plot I component vs. time</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>      <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>    <span class="c1"># Real part (I component)</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"I (In-phase)"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">'lines'</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Baseband In-Phase (I) Component: Pulse Return from Target"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (V)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (μs)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">),</span>
+    <span class="n">template</span><span class="o">=</span><span class="s2">"plotly_dark"</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># uncomment this to display interactive plot</span>
+<span class="c1"># fig.show()</span>
+
+<span class="c1"># display static image to reduce size on radarsimx.com</span>
+<span class="n">img_bytes</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">img_bytes</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><p>In this notebook, you learned how to implement and analyze pulse-Doppler radar using RadarSimPy:</p>
+<h3 id="Key-Takeaways">Key Takeaways<a class="anchor-link" href="#Key-Takeaways">¶</a></h3><p><strong>1. Pulse-Doppler Principles</strong></p>
+<ul>
+<li>Understood high-power pulsed transmission for long range</li>
+<li>Learned Doppler processing for velocity measurement</li>
+<li>Recognized range-time delay relationship: R = cτ/2</li>
+<li>Appreciated coherent integration advantages</li>
+</ul>
+<p><strong>2. Waveform Design</strong></p>
+<ul>
+<li>Calculated pulse width from range resolution: Tp = c/(2ΔR)</li>
+<li>Determined PRF from maximum range: PRF = c/(2Rmax)</li>
+<li>Understood duty cycle: ~10% typical for pulsed radar</li>
+<li>Balanced range and resolution requirements</li>
+</ul>
+<p><strong>3. High Peak Power</strong></p>
+<ul>
+<li>Configured 67 dBm (5 MW) transmit power</li>
+<li>Understood peak vs. average power trade-off</li>
+<li>Recognized long-range capability from high power</li>
+<li>Appreciated cooling benefits of low duty cycle</li>
+</ul>
+<p><strong>4. Directional Antenna</strong></p>
+<ul>
+<li>Defined narrow pencil beam patterns (cos⁵⁰⁰, cos⁴⁰⁰)</li>
+<li>Achieved 20 dBi gain for long range</li>
+<li>Understood spatial filtering benefits</li>
+<li>Configured monostatic geometry</li>
+</ul>
+<p><strong>5. 3D Mesh Target</strong></p>
+<ul>
+<li>Modeled realistic corner reflector using STL mesh</li>
+<li>Simulated accurate radar cross-section</li>
+<li>Captured angular scattering effects</li>
+<li>Achieved physical accuracy beyond point targets</li>
+</ul>
+<p><strong>6. Doppler Detection</strong></p>
+<ul>
+<li>Extracted phase from complex I/Q signal</li>
+<li>Observed linear phase progression from velocity</li>
+<li>Calculated 10 kHz Doppler from 150 m/s motion</li>
+<li>Validated Doppler formula: fd = 2vfₒ/c</li>
+</ul>
+<p><strong>7. Range-Doppler Ambiguity</strong></p>
+<ul>
+<li>Understood maximum unambiguous range: Rmax = c/(2×PRF)</li>
+<li>Recognized PRF selection trade-offs</li>
+<li>Appreciated high/medium/low PRF modes</li>
+<li>Understood velocity ambiguity considerations</li>
+</ul>
+<p><strong>8. Pulse-Doppler Advantages</strong></p>
+<ul>
+<li>Long range from high peak power (hundreds of km)</li>
+<li>Doppler filtering for clutter rejection (MTI)</li>
+<li>Velocity measurement capability</li>
+<li>Target discrimination through Doppler</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
+<p><strong>1. Range Requirements</strong>:</p>
+<ul>
+<li>Vary max_range: 10 km, 50 km, 200 km</li>
+<li>Observe PRF changes</li>
+<li>Test range-velocity ambiguity</li>
+<li>Understand PRF selection</li>
+</ul>
+<p><strong>2. Range Resolution</strong>:</p>
+<ul>
+<li>Change range_res: 100m, 1000m, 5000m</li>
+<li>Observe pulse width changes</li>
+<li>Test bandwidth-resolution relationship</li>
+<li>Balance resolution vs. energy</li>
+</ul>
+<p><strong>3. Target Velocity</strong>:</p>
+<ul>
+<li>Vary speed: 50 m/s, 300 m/s, 500 m/s</li>
+<li>Observe Doppler frequency changes</li>
+<li>Test velocity ambiguity limits</li>
+<li>Validate Doppler formula</li>
+</ul>
+<p><strong>4. Target Range</strong>:</p>
+<ul>
+<li>Place target at 500m, 1000m, 4000m</li>
+<li>Observe return delay</li>
+<li>Test maximum range limits</li>
+<li>Understand propagation loss</li>
+</ul>
+<p><strong>5. Carrier Frequency</strong>:</p>
+<ul>
+<li>Test 3 GHz, 35 GHz, 77 GHz</li>
+<li>Observe Doppler sensitivity: fd ∝ fₒ</li>
+<li>Compare wavelength effects</li>
+<li>Understand frequency selection</li>
+</ul>
+<p><strong>6. Peak Power</strong>:</p>
+<ul>
+<li>Vary tx_power: 50 dBm, 70 dBm, 80 dBm</li>
+<li>Observe detection range changes</li>
+<li>Test SNR improvements</li>
+<li>Understand power-range relationship</li>
+</ul>
+<p><strong>7. PRF Modes</strong>:</p>
+<ul>
+<li>High PRF: 100 kHz (range ambiguous)</li>
+<li>Medium PRF: 30 kHz (current)</li>
+<li>Low PRF: 1 kHz (velocity ambiguous)</li>
+<li>Compare mode trade-offs</li>
+</ul>
+<p><strong>8. Number of Pulses</strong>:</p>
+<ul>
+<li>Increase to 32, 64, 128 pulses</li>
+<li>Perform Doppler FFT across pulses</li>
+<li>Observe coherent integration gain</li>
+<li>Generate range-Doppler map</li>
+</ul>
+<p><strong>9. Antenna Beamwidth</strong>:</p>
+<ul>
+<li>Wider beam: cos¹⁰⁰ (reduce exponent)</li>
+<li>Narrower beam: cos¹⁰⁰⁰ (increase exponent)</li>
+<li>Observe gain-beamwidth trade-off</li>
+<li>Test coverage vs. resolution</li>
+</ul>
+<p><strong>10. Pulse Compression</strong>:</p>
+<ul>
+<li>Implement linear FM chirp</li>
+<li>Add phase coding</li>
+<li>Test compression gain</li>
+<li>Achieve long pulse with short resolution</li>
+</ul>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>RadarSimPy Simulator Module: <a href="https://radarsimx.github.io/radarsimpy/simulator.html">https://radarsimx.github.io/radarsimpy/simulator.html</a></li>
+<li>Pulse-Doppler Radar: Pulsed waveform with Doppler processing</li>
+<li>Doppler Effect: Frequency shift from relative motion</li>
+<li>MTI Radar: Moving Target Indication and clutter rejection</li>
+<li>PRF Selection: Range-velocity ambiguity trade-offs</li>
+<li>Pulse Compression: Achieving range resolution with long pulses</li>
+<li>3D Target Modeling: STL mesh for realistic scattering</li>
+<li>Air Surveillance: Long-range detection applications</li>
+<li>Coherent Integration: Processing gain from multiple pulses</li>
+</ul>
 </div>
 </div>
 </div>

@@ -7515,10 +7515,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import RadarSimPy library and display version information</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
@@ -7546,11 +7547,172 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="FMCW-Radar-Interference">FMCW Radar Interference<a class="anchor-link" href="#FMCW-Radar-Interference">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>The interference in automotive radar systems refers to the presence of extraneous signals or electromagnetic disturbances that can disrupt the accurate operation of the radar sensors. These disruptions can arise from various sources such as other radar systems, electronic devices, or natural environmental factors. Interference can lead to false readings, degraded performance, and potentially hazardous situations if not effectively managed. Automotive radar interference mitigation strategies involve techniques like frequency selection, signal processing algorithms, and advanced sensor design to ensure reliable and safe radar functionality in complex and dynamic driving environments.</p>
-<p>Through the utilization of <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a>, individuals gain the capability to proficiently configure diverse waveform profiles tailored to specific radar systems. This empowers them to meticulously explore the intricate interactions between these waveforms, a pivotal process that significantly contributes to advancing interference mitigation algorithms.</p>
-<p>In this illustrative example, we will showcase the process of configuring an interference radar within the simulation environment. Subsequently, we will delve into the exploration of its consequential impact on the baseband samples of a victim radar.</p>
-<h2 id="Setup-Interference-Radar">Setup Interference Radar<a class="anchor-link" href="#Setup-Interference-Radar">¶</a></h2><p>The interference radar has up chirps, with incremental frequency offset for each chirp. The chirp repetition time is 11e-6 s.
-The interfernce radar is located at (30, 0, 0) m and facing towards <code>-x</code> direction.</p>
+<h1 id="FMCW-Radar-Mutual-Interference:-Victim-and-Interferer-Analysis">FMCW Radar Mutual Interference: Victim and Interferer Analysis<a class="anchor-link" href="#FMCW-Radar-Mutual-Interference:-Victim-and-Interferer-Analysis">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>radar-to-radar interference</strong>—a critical challenge in automotive radar where multiple nearby vehicles operate similar radar systems simultaneously. With the proliferation of ADAS (Advanced Driver Assistance Systems) and autonomous vehicles, understanding and mitigating mutual interference is essential for reliable radar operation.</p>
+<h3 id="Radar-Interference-Challenge">Radar Interference Challenge<a class="anchor-link" href="#Radar-Interference-Challenge">¶</a></h3><p><strong>The Problem:</strong></p>
+<p>As automotive radar adoption increases, multiple radars operating in the same frequency band (76-81 GHz) create a congested electromagnetic environment. When radars from different vehicles "see" each other, interference corrupts target detection and tracking.</p>
+<p><strong>Interference Scenario:</strong></p>
+<ul>
+<li><strong>Victim Radar</strong>: The radar experiencing interference (our radar system)</li>
+<li><strong>Interfering Radar</strong>: Another radar system causing interference (nearby vehicle)</li>
+<li><strong>Collision</strong>: When both radars transmit/receive simultaneously in overlapping frequency bands</li>
+</ul>
+<h3 id="Types-of-Radar-Interference">Types of Radar Interference<a class="anchor-link" href="#Types-of-Radar-Interference">¶</a></h3><p><strong>1. In-Band Interference:</strong></p>
+<ul>
+<li>Same frequency band (76-81 GHz automotive)</li>
+<li>Direct frequency overlap</li>
+<li>Most severe impact</li>
+</ul>
+<p><strong>2. Mutual FMCW Interference:</strong></p>
+<ul>
+<li>Both radars using FMCW modulation</li>
+<li>Chirp collisions create beat frequencies</li>
+<li>Appears as false targets or noise</li>
+</ul>
+<p><strong>3. Temporal Characteristics:</strong></p>
+<ul>
+<li><strong>Continuous</strong>: Interferer always present</li>
+<li><strong>Intermittent</strong>: Sporadic collisions (most common)</li>
+<li><strong>Synchronized</strong>: Worst case (rarely occurs naturally)</li>
+</ul>
+<h3 id="Interference-Mechanisms">Interference Mechanisms<a class="anchor-link" href="#Interference-Mechanisms">¶</a></h3><p><strong>FMCW Interference Physics:</strong></p>
+<p>When victim radar receives interferer's signal:</p>
+<ol>
+<li><strong>Direct Reception</strong>: Victim RX picks up interferer TX</li>
+<li><strong>Beat Frequency</strong>: Mixing creates baseband interference</li>
+<li><strong>Range Ambiguity</strong>: Interference appears at false ranges</li>
+<li><strong>SNR Degradation</strong>: Reduces detection capability</li>
+<li><strong>False Alarms</strong>: Interference mistaken for targets</li>
+</ol>
+<p><strong>Interference Power:</strong></p>
+<p>$$P_{int} = P_t G_t G_r \left(\frac{\lambda}{4\pi R}\right)^2$$</p>
+<p>Where:</p>
+<ul>
+<li>$P_{int}$ = Received interference power</li>
+<li>$P_t$ = Interferer transmit power</li>
+<li>$G_t, G_r$ = Interferer and victim antenna gains</li>
+<li>$\lambda$ = Wavelength</li>
+<li>$R$ = Distance between radars</li>
+</ul>
+<p><strong>Critical Factor:</strong></p>
+<p>Radar-to-radar interference is often <strong>much stronger</strong> than target returns because interferer directly illuminates victim (no 1/R⁴ loss, only 1/R²).</p>
+<h3 id="Interference-Patterns">Interference Patterns<a class="anchor-link" href="#Interference-Patterns">¶</a></h3><p><strong>Time-Domain Characteristics:</strong></p>
+<ol>
+<li><strong>Chirp Overlap</strong>: Interference only when chirps collide temporally</li>
+<li><strong>Periodic Disruption</strong>: Pattern repeats with PRF relationship</li>
+<li><strong>Amplitude Spikes</strong>: Sudden baseband distortion during collision</li>
+<li><strong>Phase Noise</strong>: Random phase from unsynchronized interferer</li>
+</ol>
+<p><strong>Frequency-Domain Effects:</strong></p>
+<ol>
+<li><strong>False Peaks</strong>: Appear at beat frequencies</li>
+<li><strong>Noise Floor Rise</strong>: Reduced sensitivity</li>
+<li><strong>Sidelobe Increase</strong>: Spectral contamination</li>
+<li><strong>Target Masking</strong>: Real targets obscured</li>
+</ol>
+<h3 id="Interference-Parameters">Interference Parameters<a class="anchor-link" href="#Interference-Parameters">¶</a></h3><p><strong>Victim Radar (Our System):</strong></p>
+<ul>
+<li>Down-chirp: 60.6 → 60.4 GHz</li>
+<li>4 chirps with frequency diversity (90 MHz steps)</li>
+<li>PRP: 20 μs, Pulse width: 16 μs</li>
+<li>Located at origin, facing +X</li>
+</ul>
+<p><strong>Interfering Radar (Other Vehicle):</strong></p>
+<ul>
+<li>Up-chirp: 60.4 → 60.6 GHz (opposite slope)</li>
+<li>8 chirps with frequency diversity (70 MHz steps)</li>
+<li>PRP: 11 μs, Pulse width: 8 μs</li>
+<li>Located at (30, 0, 0) m, facing -X (towards victim)</li>
+</ul>
+<p><strong>Key Differences:</strong></p>
+<ul>
+<li><strong>Opposite chirp direction</strong>: Down vs. up</li>
+<li><strong>Different PRF</strong>: 50 kHz vs. 91 kHz</li>
+<li><strong>Different pulse count</strong>: 4 vs. 8</li>
+<li><strong>Frequency diversity</strong>: Both use frequency hopping (mitigation attempt)</li>
+</ul>
+<h3 id="Mitigation-Strategies">Mitigation Strategies<a class="anchor-link" href="#Mitigation-Strategies">¶</a></h3><p><strong>Time Domain:</strong></p>
+<ol>
+<li><strong>Random PRP</strong>: Avoid synchronization</li>
+<li><strong>Short Pulses</strong>: Reduce collision probability</li>
+<li><strong>Burst Timing</strong>: Coordinate transmission times</li>
+</ol>
+<p><strong>Frequency Domain:</strong></p>
+<ol>
+<li><strong>Frequency Hopping</strong>: Change carrier per chirp (used in this example)</li>
+<li><strong>Wide Bandwidth</strong>: Spread interference energy</li>
+<li><strong>Band Segmentation</strong>: Divide 76-81 GHz into channels</li>
+</ol>
+<p><strong>Spatial Domain:</strong></p>
+<ol>
+<li><strong>Beam Steering</strong>: Point away from interferer</li>
+<li><strong>Polarization Diversity</strong>: Orthogonal polarizations</li>
+<li><strong>Antenna Pattern</strong>: Null steering</li>
+</ol>
+<p><strong>Signal Processing:</strong></p>
+<ol>
+<li><strong>Interference Detection</strong>: Identify corrupted samples</li>
+<li><strong>Blanking</strong>: Zero out interference periods</li>
+<li><strong>Subtraction</strong>: Estimate and remove interference</li>
+<li><strong>Robust Algorithms</strong>: CFAR with interference rejection</li>
+<li><strong>Deep Learning</strong>: Neural networks for classification</li>
+</ol>
+<h3 id="Automotive-Radar-Context">Automotive Radar Context<a class="anchor-link" href="#Automotive-Radar-Context">¶</a></h3><p><strong>Typical Scenarios:</strong></p>
+<ol>
+<li><strong>Highway</strong>: Multiple vehicles with forward-facing radar</li>
+<li><strong>Intersection</strong>: Radars from different directions</li>
+<li><strong>Parking</strong>: Dense radar environment</li>
+<li><strong>Convoy</strong>: Following vehicles with similar systems</li>
+</ol>
+<p><strong>Frequency Allocation:</strong></p>
+<ul>
+<li><strong>76-77 GHz</strong>: Long-range radar (LRR)</li>
+<li><strong>77-81 GHz</strong>: Short/medium-range radar (SRR/MRR)</li>
+<li><strong>Shared Band</strong>: Interference inevitable</li>
+</ul>
+<p><strong>Industry Response:</strong></p>
+<ul>
+<li>IEEE, ETSI standards for coexistence</li>
+<li>Interference mitigation mandatory for certification</li>
+<li>Ongoing research in robust waveforms</li>
+</ul>
+<h3 id="You'll-Learn-How-To:">You'll Learn How To:<a class="anchor-link" href="#You'll-Learn-How-To:">¶</a></h3><ul>
+<li>Configure interfering FMCW radar (8-chirp up-chirp)</li>
+<li>Set up victim FMCW radar (4-chirp down-chirp)</li>
+<li>Implement frequency diversity (frequency hopping)</li>
+<li>Position radars in interference geometry</li>
+<li>Simulate mutual interference scenario</li>
+<li>Separate clean and interfered baseband signals</li>
+<li>Visualize chirp timing and frequency overlap</li>
+<li>Identify interference corruption in time domain</li>
+<li>Analyze interference patterns in baseband</li>
+<li>Understand interference mitigation challenges</li>
+</ul>
+<h3 id="About-This-Example">About This Example<a class="anchor-link" href="#About-This-Example">¶</a></h3><p>This notebook uses <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> to demonstrate:</p>
+<p><strong>Scenario:</strong></p>
+<ul>
+<li>Two automotive radars at 60.5 GHz (W-band)</li>
+<li>Radars 30m apart, facing each other</li>
+<li>Both use frequency diversity (hopping)</li>
+<li>Two targets: 30m and 20m from victim</li>
+</ul>
+<p><strong>Processing:</strong></p>
+<ul>
+<li>Simulate victim radar with interference</li>
+<li>Extract clean baseband (no interference)</li>
+<li>Extract interference component separately</li>
+<li>Combine to show total corrupted signal</li>
+<li>Visualize chirp timing and baseband contamination</li>
+</ul>
+<p><strong>Expected Results:</strong></p>
+<ul>
+<li>Intermittent baseband corruption during chirp overlaps</li>
+<li>Clean periods when chirps don't collide</li>
+<li>Frequency hopping partially mitigates but doesn't eliminate interference</li>
+<li>Demonstrates need for robust signal processing</li>
+</ul>
+<p>The simulation provides realistic radar interference for developing and testing mitigation algorithms.</p>
+<h2 id="Interfering-Radar-Configuration">Interfering Radar Configuration<a class="anchor-link" href="#Interfering-Radar-Configuration">¶</a></h2><p>Configure the interfering radar that will cause interference to the victim radar.</p>
+<h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3><p>Import necessary RadarSimPy modules and NumPy for numerical operations.</p>
 </div>
 </div>
 </div>
@@ -7559,37 +7721,53 @@ The interfernce radar is located at (30, 0, 0) m and facing towards <code>-x</co
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Transmitter</span><span class="p">,</span> <span class="n">Receiver</span>
 
+<span class="c1">### Interfering Radar Configuration ###</span>
 
-<span class="n">f_offset_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="mf">70e6</span>
+<span class="c1"># Frequency offsets for frequency diversity (8 chirps)</span>
+<span class="c1"># Each chirp hops to different frequency band (70 MHz steps)</span>
+<span class="n">f_offset_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="mf">70e6</span>  <span class="c1"># [0, 70, 140, ..., 490] MHz</span>
+
+<span class="c1"># Configure interfering radar transmitter</span>
 <span class="n">int_tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">60.4e9</span><span class="p">,</span> <span class="mf">60.6e9</span><span class="p">],</span>
-    <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">8e-6</span><span class="p">],</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">11e-6</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">f_offset</span><span class="o">=</span><span class="n">f_offset_int</span><span class="p">,</span>
+    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">60.4e9</span><span class="p">,</span> <span class="mf">60.6e9</span><span class="p">],</span>     <span class="c1"># Frequency sweep: 60.4-60.6 GHz (200 MHz BW, up-chirp)</span>
+    <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">8e-6</span><span class="p">],</span>            <span class="c1"># Chirp duration: 0-8 μs</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>            <span class="c1"># Transmit power: 15 dBm (~32 mW)</span>
+    <span class="n">prp</span><span class="o">=</span><span class="mf">11e-6</span><span class="p">,</span>              <span class="c1"># Pulse repetition period: 11 μs (90.9 kHz PRF)</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>               <span class="c1"># Number of chirps: 8</span>
+    <span class="n">f_offset</span><span class="o">=</span><span class="n">f_offset_int</span><span class="p">,</span>  <span class="c1"># Frequency diversity: different carrier per chirp</span>
     <span class="n">channels</span><span class="o">=</span><span class="p">[</span>
-        <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">pulse_phs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Antenna position: 0.1m offset in Y</span>
+            <span class="n">pulse_phs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># Phase coding per chirp</span>
+        <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
+<span class="c1"># Configure interfering radar receiver</span>
 <span class="n">int_rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="mf">20e6</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))],</span>
+    <span class="n">fs</span><span class="o">=</span><span class="mf">20e6</span><span class="p">,</span>             <span class="c1"># Sampling rate: 20 MHz</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>      <span class="c1"># Noise figure: 8 dB</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>          <span class="c1"># RF gain: 20 dB</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>   <span class="c1"># Load resistance: 500 Ω</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>    <span class="c1"># Baseband gain: 30 dB</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))],</span>  <span class="c1"># Receiver antenna</span>
 <span class="p">)</span>
 
+<span class="c1"># Create interfering radar system</span>
+<span class="c1"># Location: (30, 0, 0) m → 30m from victim</span>
+<span class="c1"># Rotation: (180, 0, 0) deg → Facing -X direction (towards victim)</span>
 <span class="n">int_radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span>
-    <span class="n">transmitter</span><span class="o">=</span><span class="n">int_tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">int_rx</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rotation</span><span class="o">=</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">transmitter</span><span class="o">=</span><span class="n">int_tx</span><span class="p">,</span> 
+    <span class="n">receiver</span><span class="o">=</span><span class="n">int_rx</span><span class="p">,</span> 
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>    <span class="c1"># Position: 30m along X-axis</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>    <span class="c1"># Orientation: 180° yaw (facing victim)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -7603,9 +7781,20 @@ The interfernce radar is located at (30, 0, 0) m and facing towards <code>-x</co
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Setup-Victim-Radar">Setup Victim Radar<a class="anchor-link" href="#Setup-Victim-Radar">¶</a></h2><p>The victim radar has down chirps, with incremental frequency offset for each chirp. The chirp repetition time is 40e-6 s.
-The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> direction.</p>
-<p>Add the interference radar into the victim radar by setting <code>interf</code>.</p>
+<h2 id="Victim-Radar-Configuration">Victim Radar Configuration<a class="anchor-link" href="#Victim-Radar-Configuration">¶</a></h2><p>Configure the victim radar that will experience interference from the interfering radar.</p>
+<h3 id="Victim-Radar-Parameters">Victim Radar Parameters<a class="anchor-link" href="#Victim-Radar-Parameters">¶</a></h3><p><strong>Key Differences from Interferer:</strong></p>
+<ul>
+<li><strong>Chirp Direction</strong>: Down-chirp (60.6 → 60.4 GHz) vs. up-chirp</li>
+<li><strong>Pulse Width</strong>: 16 μs vs. 8 μs (longer)</li>
+<li><strong>PRF</strong>: 50 kHz vs. 90.9 kHz (slower)</li>
+<li><strong>Pulse Count</strong>: 4 vs. 8 (fewer chirps)</li>
+<li><strong>Frequency Hop</strong>: 90 MHz steps vs. 70 MHz steps</li>
+<li><strong>Power</strong>: 25 dBm vs. 15 dBm (higher)</li>
+</ul>
+<p><strong>Interference Integration:</strong></p>
+<p>The <code>interf</code> parameter in the simulation links the interfering radar to the victim radar, enabling realistic mutual interference modeling.</p>
+<p><strong>Frequency Diversity:</strong></p>
+<p>Both radars use frequency hopping to reduce interference probability. However, with overlapping bands (60.4-60.6 GHz), collisions are inevitable when chirps overlap temporally.</p>
 </div>
 </div>
 </div>
@@ -7614,29 +7803,44 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">f_offset_vit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="mf">90e6</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">### Victim Radar Configuration ###</span>
+
+<span class="c1"># Frequency offsets for frequency diversity (4 chirps)</span>
+<span class="c1"># Each chirp hops to different frequency band (90 MHz steps)</span>
+<span class="n">f_offset_vit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="mf">90e6</span>  <span class="c1"># [0, 90, 180, 270] MHz</span>
+
+<span class="c1"># Configure victim radar transmitter</span>
 <span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">60.6e9</span><span class="p">,</span> <span class="mf">60.4e9</span><span class="p">],</span>
-    <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">16e-6</span><span class="p">],</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">20e-6</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">f_offset</span><span class="o">=</span><span class="n">f_offset_vit</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">pulse_phs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))],</span>
+    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">60.6e9</span><span class="p">,</span> <span class="mf">60.4e9</span><span class="p">],</span>     <span class="c1"># Frequency sweep: 60.6-60.4 GHz (200 MHz BW, down-chirp)</span>
+    <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">16e-6</span><span class="p">],</span>           <span class="c1"># Chirp duration: 0-16 μs (longer than interferer)</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>            <span class="c1"># Transmit power: 25 dBm (~316 mW, higher than interferer)</span>
+    <span class="n">prp</span><span class="o">=</span><span class="mf">20e-6</span><span class="p">,</span>              <span class="c1"># Pulse repetition period: 20 μs (50 kHz PRF)</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>               <span class="c1"># Number of chirps: 4 (fewer than interferer)</span>
+    <span class="n">f_offset</span><span class="o">=</span><span class="n">f_offset_vit</span><span class="p">,</span>  <span class="c1"># Frequency diversity: different carrier per chirp</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Antenna position: at origin</span>
+            <span class="n">pulse_phs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># Phase coding: first chirp 180°</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
 <span class="p">)</span>
 
+<span class="c1"># Configure victim radar receiver</span>
 <span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="mf">40e6</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))],</span>
+    <span class="n">fs</span><span class="o">=</span><span class="mf">40e6</span><span class="p">,</span>             <span class="c1"># Sampling rate: 40 MHz (higher than interferer)</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>      <span class="c1"># Noise figure: 2 dB (lower noise, better sensitivity)</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>          <span class="c1"># RF gain: 20 dB</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>   <span class="c1"># Load resistance: 500 Ω</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>    <span class="c1"># Baseband gain: 60 dB (higher than interferer)</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))],</span>  <span class="c1"># Receiver antenna at origin</span>
 <span class="p">)</span>
 
+<span class="c1"># Create victim radar system</span>
+<span class="c1"># Location: (0, 0, 0) m → At origin</span>
+<span class="c1"># Rotation: (0, 0, 0) deg → Facing +X direction (default)</span>
 <span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7650,7 +7854,23 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Target">Target<a class="anchor-link" href="#Target">¶</a></h2><p>We add 2 targets here with different ranges and speeds.</p>
+<h2 id="Target-Configuration">Target Configuration<a class="anchor-link" href="#Target-Configuration">¶</a></h2><p>Define two point targets for the victim radar to detect while experiencing interference.</p>
+<h3 id="Target-Parameters">Target Parameters<a class="anchor-link" href="#Target-Parameters">¶</a></h3><p><strong>Target 1 (Stationary at Interferer Location):</strong></p>
+<ul>
+<li><strong>Location</strong>: (30, 0, 0) m → Same position as interferer</li>
+<li><strong>Velocity</strong>: (0, 0, 0) m/s → Stationary</li>
+<li><strong>RCS</strong>: 10 dBsm → Moderate reflector</li>
+<li><strong>Scenario</strong>: Simulates vehicle carrying interfering radar</li>
+</ul>
+<p><strong>Target 2 (Moving Target):</strong></p>
+<ul>
+<li><strong>Location</strong>: (20, 1, 0) m → 20m range, 1m offset in Y</li>
+<li><strong>Velocity</strong>: (-10, 0, 0) m/s → Approaching at 10 m/s</li>
+<li><strong>RCS</strong>: 10 dBsm → Moderate reflector</li>
+<li><strong>Scenario</strong>: Nearby vehicle approaching</li>
+</ul>
+<p><strong>Interference Challenge:</strong></p>
+<p>The victim radar must detect these legitimate targets while being corrupted by interference from the radar at the same location as Target 1. This represents a realistic automotive scenario where nearby vehicles have both targets (vehicles) and interference sources (their radars).</p>
 </div>
 </div>
 </div>
@@ -7659,12 +7879,26 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">target_1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">target_2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure Target 1: Stationary at interferer location</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: 30m (co-located with interfering radar)</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>      <span class="c1"># Velocity: stationary</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>               <span class="c1"># Radar cross section: 10 dBsm</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>              <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
 
+<span class="c1"># Configure Target 2: Moving vehicle</span>
+<span class="n">target_2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: 20m range, 1m Y-offset</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>    <span class="c1"># Velocity: -10 m/s (approaching)</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>               <span class="c1"># Radar cross section: 10 dBsm</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>              <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
+
+<span class="c1"># Combine targets for simulation</span>
 <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_1</span><span class="p">,</span> <span class="n">target_2</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -7678,10 +7912,37 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Simulation">Simulation<a class="anchor-link" href="#Simulation">¶</a></h2><p>Use the <code>simulator.sim_radar</code> module to simulate the baseband samples from the defined radar system and targets.</p>
-<p>The output baseband data is a dict including the timestamp and baseband. Both of them are 3-D matrix:</p>
-<p><code>[channels, pulses, ADC samples]</code></p>
-<p>For convenience, the baseband data and the interference data are separated. To obtain the interferenced baseband data, simply add them together.</p>
+<h2 id="Radar-Interference-Simulation">Radar Interference Simulation<a class="anchor-link" href="#Radar-Interference-Simulation">¶</a></h2><p>Simulate victim radar operation with interference from the interfering radar.</p>
+<h3 id="Simulation-Configuration">Simulation Configuration<a class="anchor-link" href="#Simulation-Configuration">¶</a></h3><p><strong>Interference Modeling:</strong></p>
+<p>The <code>interf</code> parameter in <code>sim_radar</code> enables mutual interference simulation:</p>
+<ul>
+<li>Computes when victim RX receives interferer TX</li>
+<li>Calculates interference power (1/R² propagation)</li>
+<li>Generates beat frequencies from chirp mixing</li>
+<li>Adds interference to victim baseband</li>
+</ul>
+<p><strong>Output Structure:</strong></p>
+<p>The simulation returns three separate components:</p>
+<ol>
+<li><strong>baseband</strong>: Clean target returns (no interference)</li>
+<li><strong>interference</strong>: Pure interference signal</li>
+<li><strong>Total</strong>: baseband + interference (realistic scenario)</li>
+</ol>
+<p>This separation enables:</p>
+<ul>
+<li>Analysis of interference-free performance</li>
+<li>Quantification of interference impact</li>
+<li>Development of mitigation algorithms</li>
+<li>Before/after comparison</li>
+</ul>
+<p><strong>Data Dimensions:</strong></p>
+<ul>
+<li><strong>Channels</strong>: 1 (single victim TX/RX)</li>
+<li><strong>Pulses</strong>: 4 (victim radar chirps)</li>
+<li><strong>Samples</strong>: 640 per chirp (40 MHz × 16 μs)</li>
+</ul>
+<p><strong>Computational Note:</strong></p>
+<p>Interference simulation adds computational complexity as it models electromagnetic propagation between radars in addition to target returns.</p>
 </div>
 </div>
 </div>
@@ -7690,19 +7951,29 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import radar simulator and timing module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
+<span class="c1"># Start timing</span>
 <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">bb_data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">interf</span><span class="o">=</span><span class="n">int_radar</span><span class="p">)</span>
-<span class="n">timestamp</span> <span class="o">=</span> <span class="n">bb_data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>
-<span class="n">baseband</span> <span class="o">=</span> <span class="n">bb_data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>  <span class="c1"># baseband data without interference</span>
-<span class="n">interf</span> <span class="o">=</span> <span class="n">bb_data</span><span class="p">[</span><span class="s2">"interference"</span><span class="p">]</span>  <span class="c1"># interference data</span>
 
-<span class="n">interf_bb</span> <span class="o">=</span> <span class="n">baseband</span> <span class="o">+</span> <span class="n">interf</span>  <span class="c1"># baseband data with interference</span>
+<span class="c1"># Simulate victim radar with interference from interfering radar</span>
+<span class="c1"># interf=int_radar: Links interfering radar to victim for mutual interference</span>
+<span class="n">bb_data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">interf</span><span class="o">=</span><span class="n">int_radar</span><span class="p">)</span>
+
+<span class="c1"># Extract simulation outputs</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">bb_data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>        <span class="c1"># Time axis for each sample [1, 4, 640]</span>
+<span class="n">baseband</span> <span class="o">=</span> <span class="n">bb_data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>          <span class="c1"># Clean target returns (no interference)</span>
+<span class="n">interf</span> <span class="o">=</span> <span class="n">bb_data</span><span class="p">[</span><span class="s2">"interference"</span><span class="p">]</span>        <span class="c1"># Pure interference component</span>
+
+<span class="c1"># Combine clean and interference for realistic scenario</span>
+<span class="n">interf_bb</span> <span class="o">=</span> <span class="n">baseband</span> <span class="o">+</span> <span class="n">interf</span>           <span class="c1"># Total baseband with interference</span>
+
+<span class="c1"># End timing</span>
 <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Exec time:"</span><span class="p">,</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">)</span>
 </pre></div>
@@ -7730,7 +8001,23 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot the baseband samples</em></p>
+<h2 id="Visualization:-Chirp-Timing-and-Interference-Impact">Visualization: Chirp Timing and Interference Impact<a class="anchor-link" href="#Visualization:-Chirp-Timing-and-Interference-Impact">¶</a></h2><p>Visualize chirp timing relationships and resulting baseband corruption.</p>
+<h3 id="Two-Panel-Visualization">Two-Panel Visualization<a class="anchor-link" href="#Two-Panel-Visualization">¶</a></h3><p><strong>Panel 1: Time-Frequency Diagram</strong></p>
+<p>Shows when and where chirps occur:</p>
+<ul>
+<li><strong>Victim chirps</strong> (blue): 4 down-chirps with frequency hopping</li>
+<li><strong>Interferer chirps</strong> (orange): 8 up-chirps with frequency hopping</li>
+<li><strong>Overlap regions</strong>: Where interference corruption occurs</li>
+</ul>
+<p><strong>Panel 2: Interfered Baseband</strong></p>
+<p>Shows corrupted I/Q signals:</p>
+<ul>
+<li><strong>Real part</strong> (teal): In-phase component</li>
+<li><strong>Imaginary part</strong> (purple): Quadrature component</li>
+<li><strong>Corruption visible</strong>: Amplitude spikes during chirp overlaps</li>
+</ul>
+<p><strong>Interpretation:</strong></p>
+<p>Look for temporal correlation between chirp overlaps (Panel 1) and baseband corruption (Panel 2). Periods with no chirp overlap show clean baseband; overlapping periods show distortion.</p>
 </div>
 </div>
 </div>
@@ -7739,91 +8026,141 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import plotting libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
+<span class="c1"># Create two-panel figure</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
+    <span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">subplot_titles</span><span class="o">=</span><span class="p">(</span><span class="s2">"Chirp Timing: Victim vs. Interferer"</span><span class="p">,</span> <span class="s2">"Interfered Baseband I/Q Signals"</span><span class="p">),</span>
+    <span class="n">vertical_spacing</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1">### Panel 1: Victim Radar Chirps (Time-Frequency) ###</span>
 
+<span class="c1"># Plot victim radar chirps (4 down-chirps with frequency hopping)</span>
 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulses"</span><span class="p">]):</span>
+    <span class="c1"># Create frequency axis for down-chirp (60.6 → 60.4 GHz)</span>
+    <span class="n">freq_axis</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">/</span> <span class="mf">1e9</span>  <span class="c1"># Convert to GHz</span>
+        <span class="o">+</span> <span class="n">f_offset_vit</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e9</span>  <span class="c1"># Add frequency hopping offset</span>
+    <span class="p">)</span>
+    
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-                <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span>
-                <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="o">/</span> <span class="mf">1e9</span>
-            <span class="o">+</span> <span class="n">f_offset_vit</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>
-            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>  <span class="c1"># Time axis for this chirp</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">freq_axis</span><span class="p">,</span>              <span class="c1"># Frequency axis with hopping</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">"Victim"</span><span class="p">,</span>
-            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Show legend only once</span>
         <span class="p">),</span>
         <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
 
+<span class="c1">### Panel 1: Interferer Radar Chirps (Time-Frequency) ###</span>
+
+<span class="c1"># Plot interferer radar chirps (8 up-chirps with frequency hopping)</span>
 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">int_radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulses"</span><span class="p">]):</span>
+    <span class="c1"># Create frequency axis for up-chirp (60.4 → 60.6 GHz)</span>
+    <span class="n">freq_axis</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="n">int_radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">int_radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">int_radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">/</span> <span class="mf">1e9</span>  <span class="c1"># Convert to GHz</span>
+        <span class="o">+</span> <span class="n">f_offset_int</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e9</span>  <span class="c1"># Add frequency hopping offset</span>
+    <span class="p">)</span>
+    
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">int_radar</span><span class="o">.</span><span class="n">time_prop</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-                <span class="n">int_radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">int_radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"f"</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">int_radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span>
-                <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="o">/</span> <span class="mf">1e9</span>
-            <span class="o">+</span> <span class="n">f_offset_int</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">,</span>
-            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">int_radar</span><span class="o">.</span><span class="n">time_prop</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>  <span class="c1"># Interferer time axis</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">freq_axis</span><span class="p">,</span>                                     <span class="c1"># Frequency axis with hopping</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">"Interference"</span><span class="p">,</span>
-            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Show legend only once</span>
         <span class="p">),</span>
         <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
 
+<span class="c1">### Panel 2: Interfered Baseband I/Q Signals ###</span>
 
+<span class="c1"># Plot baseband I/Q for all victim chirps</span>
 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulses"</span><span class="p">]):</span>
+    <span class="c1"># Plot Real part (I channel)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">interf_bb</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:]),</span>
-            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">"Real"</span><span class="p">,</span>
-            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>           <span class="c1"># Time axis for this chirp</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">interf_bb</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:]),</span> <span class="c1"># Real part of interfered baseband</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"Real (I)"</span><span class="p">,</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Show legend only once</span>
         <span class="p">),</span>
         <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
+    
+    <span class="c1"># Plot Imaginary part (Q channel)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">interf_bb</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:]),</span>
-            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">"Imag"</span><span class="p">,</span>
-            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>           <span class="c1"># Time axis for this chirp</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">interf_bb</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:]),</span> <span class="c1"># Imaginary part of interfered baseband</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">px</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">qualitative</span><span class="o">.</span><span class="n">Plotly</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"Imag (Q)"</span><span class="p">,</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Show legend only once</span>
         <span class="p">),</span>
         <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Frequency (GHz)"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Amplitude (V)"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1">### Configure Plot Layout ###</span>
 
+<span class="c1"># Panel 1 axes (Time-Frequency)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span>
+    <span class="n">title_text</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">,</span> 
+    <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span>  <span class="c1"># Show all 4 victim chirps</span>
+    <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">col</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span>
+    <span class="n">title_text</span><span class="o">=</span><span class="s2">"Frequency (GHz)"</span><span class="p">,</span> 
+    <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">col</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># Panel 2 axes (Baseband)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span>
+    <span class="n">title_text</span><span class="o">=</span><span class="s2">"Time (s)"</span><span class="p">,</span> 
+    <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span>  <span class="c1"># Show all 4 victim chirps</span>
+    <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+    <span class="n">col</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span>
+    <span class="n">title_text</span><span class="o">=</span><span class="s2">"Amplitude (V)"</span><span class="p">,</span> 
+    <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+    <span class="n">col</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># Overall layout</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
     <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
-    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">40</span><span class="p">),</span>
+    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">60</span><span class="p">),</span>
+    <span class="n">hovermode</span><span class="o">=</span><span class="s1">'x unified'</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
@@ -7856,7 +8193,186 @@ The victim radar is located at (0, 0, 0) m and facing towards <code>+x</code> di
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>From the provided data, it is evident that the samples experience contamination during periods in which the chirps from the victim radar intersect with those of the interference radar.</p>
+<h2 id="Analysis:-Interference-Correlation">Analysis: Interference Correlation<a class="anchor-link" href="#Analysis:-Interference-Correlation">¶</a></h2><p><strong>Key Observations:</strong></p>
+<p>From the visualization, interference corruption is clearly visible in the baseband when victim and interferer chirps overlap temporally and spectrally:</p>
+<p><strong>Temporal Overlap:</strong></p>
+<ul>
+<li>Interferer has shorter PRP (11 μs) and transmits more frequently (8 chirps vs. 4)</li>
+<li>Multiple interferer chirps can collide with a single victim chirp</li>
+<li>Clean periods occur when no temporal overlap exists</li>
+</ul>
+<p><strong>Spectral Overlap:</strong></p>
+<ul>
+<li>Both radars operate in 60.4-60.6 GHz band (200 MHz)</li>
+<li>Frequency hopping reduces collision probability but doesn't eliminate it</li>
+<li>When hopped frequencies overlap during temporal collision → strong interference</li>
+</ul>
+<p><strong>Baseband Corruption Pattern:</strong></p>
+<ul>
+<li><strong>Amplitude spikes</strong>: Sudden increases during interference</li>
+<li><strong>Phase distortion</strong>: Random phase from unsynchronized interferer</li>
+<li><strong>Intermittent nature</strong>: Not continuous, depends on chirp timing</li>
+<li><strong>Unpredictable timing</strong>: Asynchronous PRFs create varying collision patterns</li>
+</ul>
+<p><strong>Mitigation Implications:</strong></p>
+<ol>
+<li><strong>Detection</strong>: Amplitude threshold can identify corrupted samples</li>
+<li><strong>Blanking</strong>: Zero out or interpolate through corruption</li>
+<li><strong>Frequency diversity</strong>: Partially helps but incomplete protection</li>
+<li><strong>Statistical methods</strong>: CFAR with interference rejection</li>
+<li><strong>Machine learning</strong>: Classify and remove interference patterns</li>
+</ol>
+<p>This simulation demonstrates the realistic challenge of automotive radar coexistence and the need for robust interference mitigation in signal processing.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><p>In this notebook, you learned how to model and analyze mutual radar interference using RadarSimPy:</p>
+<h3 id="Key-Takeaways">Key Takeaways<a class="anchor-link" href="#Key-Takeaways">¶</a></h3><p><strong>1. Interference Fundamentals</strong></p>
+<ul>
+<li>Understood radar-to-radar mutual interference challenge</li>
+<li>Learned interference power: 1/R² (stronger than target 1/R⁴)</li>
+<li>Recognized automotive radar coexistence problem</li>
+<li>Appreciated increasing interference with ADAS proliferation</li>
+</ul>
+<p><strong>2. Victim-Interferer Scenario</strong></p>
+<ul>
+<li>Configured victim radar (down-chirp, 4 pulses, 20 μs PRP)</li>
+<li>Set up interfering radar (up-chirp, 8 pulses, 11 μs PRP)</li>
+<li>Positioned radars 30m apart, facing each other</li>
+<li>Modeled realistic automotive encounter geometry</li>
+</ul>
+<p><strong>3. Frequency Diversity</strong></p>
+<ul>
+<li>Implemented frequency hopping (90 MHz and 70 MHz steps)</li>
+<li>Understood partial mitigation from frequency diversity</li>
+<li>Observed incomplete protection (overlapping bands)</li>
+<li>Recognized need for additional mitigation techniques</li>
+</ul>
+<p><strong>4. Interference Mechanisms</strong></p>
+<ul>
+<li>Learned temporal overlap creates interference windows</li>
+<li>Understood spectral overlap requirement for corruption</li>
+<li>Observed beat frequency generation from chirp mixing</li>
+<li>Identified intermittent nature of asynchronous interference</li>
+</ul>
+<p><strong>5. Simulation Capabilities</strong></p>
+<ul>
+<li>Used <code>interf</code> parameter to link victim and interferer</li>
+<li>Separated clean baseband and interference components</li>
+<li>Generated realistic corrupted signals (baseband + interference)</li>
+<li>Enabled algorithm development and testing</li>
+</ul>
+<p><strong>6. Chirp Timing Analysis</strong></p>
+<ul>
+<li>Visualized time-frequency diagrams for both radars</li>
+<li>Identified chirp overlap regions (temporal collision)</li>
+<li>Observed frequency hopping patterns</li>
+<li>Correlated overlaps with baseband corruption</li>
+</ul>
+<p><strong>7. Baseband Corruption</strong></p>
+<ul>
+<li>Observed amplitude spikes during interference</li>
+<li>Identified phase distortion from unsynchronized radars</li>
+<li>Recognized intermittent corruption pattern</li>
+<li>Measured interference impact on I/Q signals</li>
+</ul>
+<p><strong>8. Mitigation Insights</strong></p>
+<ul>
+<li>Understood detection via amplitude thresholding</li>
+<li>Recognized blanking and interpolation strategies</li>
+<li>Appreciated frequency diversity limitations</li>
+<li>Identified need for robust signal processing (CFAR, ML)</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
+<p><strong>1. PRF Variations</strong>:</p>
+<ul>
+<li>Change victim PRP: 10 μs, 15 μs, 30 μs</li>
+<li>Modify interferer PRP: 8 μs, 13 μs, 20 μs</li>
+<li>Observe collision pattern changes</li>
+<li>Test synchronized vs. asynchronous</li>
+</ul>
+<p><strong>2. Pulse Count Studies</strong>:</p>
+<ul>
+<li>Vary victim pulses: 2, 8, 16</li>
+<li>Adjust interferer pulses: 4, 16, 32</li>
+<li>Observe interference density</li>
+<li>Analyze processing gain trade-offs</li>
+</ul>
+<p><strong>3. Frequency Hopping</strong>:</p>
+<ul>
+<li>Increase hop size: 100 MHz, 200 MHz, 500 MHz</li>
+<li>Test more hop steps: 8, 16, 32</li>
+<li>Reduce to no hopping: observe impact</li>
+<li>Compare mitigation effectiveness</li>
+</ul>
+<p><strong>4. Chirp Direction</strong>:</p>
+<ul>
+<li>Both up-chirps: test same-direction interference</li>
+<li>Both down-chirps: observe beat frequency differences</li>
+<li>Compare opposite vs. same direction impact</li>
+<li>Understand beat frequency dependence</li>
+</ul>
+<p><strong>5. Bandwidth Variations</strong>:</p>
+<ul>
+<li>Narrow bandwidth: 100 MHz, 50 MHz</li>
+<li>Wide bandwidth: 500 MHz, 1 GHz</li>
+<li>Observe spectral overlap probability</li>
+<li>Test frequency diversity effectiveness</li>
+</ul>
+<p><strong>6. Spatial Geometry</strong>:</p>
+<ul>
+<li>Vary distance: 10m, 50m, 100m</li>
+<li>Change angles: 45°, 90° separation</li>
+<li>Test side-by-side vs. head-on</li>
+<li>Understand antenna pattern effects</li>
+</ul>
+<p><strong>7. Power Levels</strong>:</p>
+<ul>
+<li>Increase interferer power: 20, 25, 30 dBm</li>
+<li>Reduce victim power: 20, 15, 10 dBm</li>
+<li>Observe interference-to-signal ratio</li>
+<li>Test saturation effects</li>
+</ul>
+<p><strong>8. Pulse Width</strong>:</p>
+<ul>
+<li>Match pulse widths: both 10 μs</li>
+<li>Large difference: 5 μs vs. 20 μs</li>
+<li>Observe duty cycle impact</li>
+<li>Analyze collision probability</li>
+</ul>
+<p><strong>9. Phase Coding</strong>:</p>
+<ul>
+<li>Remove phase coding: all zeros</li>
+<li>Apply different codes: BPSK, polyphase</li>
+<li>Test orthogonal codes</li>
+<li>Understand code impact on interference</li>
+</ul>
+<p><strong>10. Multi-Interferer</strong>:</p>
+<ul>
+<li>Add 2nd, 3rd interfering radars</li>
+<li>Different parameters for each</li>
+<li>Simulate dense traffic scenario</li>
+<li>Test cumulative interference effects</li>
+</ul>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>RadarSimPy Simulator Module: <a href="https://radarsimx.github.io/radarsimpy/simulator.html">https://radarsimx.github.io/radarsimpy/simulator.html</a></li>
+<li>Automotive Radar Interference: Mutual interference challenges</li>
+<li>FMCW Radar: Frequency-modulated continuous wave principles</li>
+<li>Frequency Diversity: Hopping for interference mitigation</li>
+<li>Interference Detection: Threshold-based and statistical methods</li>
+<li>CFAR Processing: Constant false alarm rate with interference</li>
+<li>Radar Coexistence: Standards and regulations (IEEE, ETSI)</li>
+<li>Signal Processing: Blanking, subtraction, robust algorithms</li>
+<li>Machine Learning: Deep learning for interference classification</li>
+</ul>
 </div>
 </div>
 </div>

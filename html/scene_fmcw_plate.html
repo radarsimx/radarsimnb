@@ -7515,10 +7515,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import RadarSimPy library and display version information</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
 </pre></div>
@@ -7546,34 +7547,148 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="FMCW-Radar-with-a-Plate">FMCW Radar with a Plate<a class="anchor-link" href="#FMCW-Radar-with-a-Plate">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>An FMCW (Frequency-Modulated Continuous Wave) radar is a type of radar system that uses frequency modulation to continuously transmit a signal with varying frequency. FMCW radar systems are commonly used in various applications, including automotive radar, weather monitoring, navigation, and industrial sensing. They offer several advantages over other radar types, such as pulsed radar.</p>
-<p>Here's how FMCW radar works:</p>
+<h1 id="FMCW-Radar-with-Rotating-Plate:-RCS-vs.-Aspect-Angle">FMCW Radar with Rotating Plate: RCS vs. Aspect Angle<a class="anchor-link" href="#FMCW-Radar-with-Rotating-Plate:-RCS-vs.-Aspect-Angle">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>aspect angle dependence</strong> of radar cross section (RCS) using a rotating flat plate. Understanding how RCS varies with target orientation is fundamental for radar system design, target identification, and understanding detection performance.</p>
+<h3 id="Radar-Cross-Section-(RCS)-Fundamentals">Radar Cross Section (RCS) Fundamentals<a class="anchor-link" href="#Radar-Cross-Section-(RCS)-Fundamentals">¶</a></h3><p><strong>RCS (σ)</strong> quantifies how much radar energy a target reflects back to the radar. It depends critically on:</p>
+<ul>
+<li>Target size and shape</li>
+<li>Target material (conductivity)</li>
+<li>Radar wavelength</li>
+<li><strong>Aspect angle</strong> (target orientation relative to radar)</li>
+</ul>
+<p><strong>RCS Definition:</strong></p>
+<p>$$\sigma = \lim_{R \to \infty} 4\pi R^2 \frac{|E_s|^2}{|E_i|^2}$$</p>
+<p>Where:</p>
+<ul>
+<li>$\sigma$ = RCS (m²)</li>
+<li>$R$ = Range to target</li>
+<li>$E_s$ = Scattered electric field</li>
+<li>$E_i$ = Incident electric field</li>
+</ul>
+<h3 id="Flat-Plate-RCS-Theory">Flat Plate RCS Theory<a class="anchor-link" href="#Flat-Plate-RCS-Theory">¶</a></h3><p><strong>Flat plates</strong> are ideal for studying aspect angle dependence because their RCS has well-known analytical solutions.</p>
+<p><strong>Physical Optics (PO) Approximation:</strong></p>
+<p>For a flat rectangular plate with dimensions $a × b$ at normal incidence:</p>
+<p>$$\sigma_{max} = \frac{4\pi a^2 b^2}{\lambda^2}$$</p>
+<p>Where:</p>
+<ul>
+<li>$a, b$ = Plate dimensions (m)</li>
+<li>$\lambda$ = Radar wavelength (m)</li>
+</ul>
+<p><strong>Key Characteristics:</strong></p>
 <ol>
-<li><p><strong>Frequency Modulation</strong>: In an FMCW radar, the radar transmitter emits a continuous waveform that changes frequency over time. This waveform is typically a sinusoidal signal. The frequency change occurs in a linear or ramp-like manner, hence the name "Frequency-Modulated Continuous Wave."</p>
-</li>
-<li><p><strong>Transmit and Receive Phases</strong>: The radar emits the frequency-modulated signal, which travels towards the target. When the signal encounters an object, a portion of it gets reflected back towards the radar receiver.</p>
-</li>
-<li><p><strong>Mixing and Beat Frequency</strong>: The reflected signal is mixed with the original transmitted signal in the radar receiver. Because the received signal has traveled a certain distance to the target and back, it experiences a frequency shift due to the Doppler effect and the frequency modulation of the transmitted signal. This frequency shift creates a beat frequency that is proportional to the distance and relative velocity of the target.</p>
-</li>
-<li><p><strong>Signal Processing</strong>: By analyzing the beat frequency, the radar system can determine both the range (distance) and velocity of the target. The range is determined by the phase shift of the beat frequency, and the velocity is derived from the rate of change of the beat frequency over time.</p>
-</li>
+<li><strong>Maximum RCS</strong>: At normal incidence (0°), plate acts as perfect reflector</li>
+<li><strong>Aspect Angle Dependence</strong>: RCS drops rapidly as plate rotates</li>
+<li><strong>Lobing Pattern</strong>: Sinc-like pattern with nulls at specific angles</li>
+<li><strong>Polarization</strong>: Sensitive to incident wave polarization</li>
 </ol>
-<p>Advantages of FMCW radar include:</p>
+<h3 id="Aspect-Angle-Effects">Aspect Angle Effects<a class="anchor-link" href="#Aspect-Angle-Effects">¶</a></h3><p><strong>Normal Incidence (0°):</strong></p>
+<ul>
+<li>Maximum RCS (specular reflection)</li>
+<li>All incident energy reflected back</li>
+<li>Plate appears as large target</li>
+</ul>
+<p><strong>Oblique Angles (15-75°):</strong></p>
+<ul>
+<li>RCS decreases as $\cos^2(\theta)$ (approximate)</li>
+<li>Partial specular reflection</li>
+<li>Side lobes may appear</li>
+</ul>
+<p><strong>Grazing Angles (&gt;80°):</strong></p>
+<ul>
+<li>Minimum RCS (edge-on view)</li>
+<li>Only edge diffraction contributes</li>
+<li>Plate nearly invisible to radar</li>
+</ul>
+<h3 id="Sinc-Pattern-and-Nulls">Sinc Pattern and Nulls<a class="anchor-link" href="#Sinc-Pattern-and-Nulls">¶</a></h3><p>The angular RCS pattern exhibits <strong>sinc function</strong> behavior:</p>
+<p>$$\sigma(\theta) \propto \left|\frac{\sin(k a \sin\theta)}{k a \sin\theta}\right|^2$$</p>
+<p>Where:</p>
+<ul>
+<li>$k = 2\pi/\lambda$ = Wavenumber</li>
+<li>$a$ = Plate dimension</li>
+<li>$\theta$ = Aspect angle</li>
+</ul>
+<p><strong>Null Positions:</strong></p>
+<p>Nulls occur when: $k a \sin\theta = n\pi$ (n = 1, 2, 3...)</p>
+<p><strong>First Null Angle:</strong></p>
+<p>$$\theta_{null} = \arcsin\left(\frac{\lambda}{2a}\right)$$</p>
+<p>For a 5m plate at 1 GHz (λ = 0.3m):</p>
+<ul>
+<li>$\theta_{null} = \arcsin(0.3/10) \approx 1.7°$</li>
+</ul>
+<h3 id="Applications">Applications<a class="anchor-link" href="#Applications">¶</a></h3><p><strong>Target Identification:</strong></p>
+<ul>
+<li>RCS vs. angle signature unique to target shape</li>
+<li>Distinguish aircraft from missiles based on RCS modulation</li>
+<li>Classify ships by aspect-dependent returns</li>
+</ul>
+<p><strong>Stealth Technology:</strong></p>
+<ul>
+<li>Minimize RCS at critical aspect angles</li>
+<li>Shape design to deflect energy away from radar</li>
+<li>Flat surfaces aligned to avoid normal incidence</li>
+</ul>
+<p><strong>Radar System Design:</strong></p>
+<ul>
+<li>Predict detection range vs. target orientation</li>
+<li>Account for RCS fluctuations in tracking</li>
+<li>Design for worst-case (minimum RCS) scenarios</li>
+</ul>
+<p><strong>RCS Measurement:</strong></p>
+<ul>
+<li>Calibration targets for radar testing</li>
+<li>Standard target for gain verification</li>
+<li>Controlled aspect angles in anechoic chambers</li>
+</ul>
+<h3 id="FMCW-Radar-for-RCS-Measurement">FMCW Radar for RCS Measurement<a class="anchor-link" href="#FMCW-Radar-for-RCS-Measurement">¶</a></h3><p><strong>Advantages:</strong></p>
 <ol>
-<li><p><strong>Continuous Operation</strong>: FMCW radars operate continuously without interruptions, making them well-suited for tracking moving targets and providing real-time data.</p>
-</li>
-<li><p><strong>Range and Velocity Information</strong>: FMCW radar can simultaneously provide information about the range and velocity of targets, making it useful for applications such as automotive collision avoidance and speed measurement.</p>
-</li>
-<li><p><strong>High Range Resolution</strong>: FMCW radar systems can achieve high range resolution due to the continuous waveform and the use of frequency modulation.</p>
-</li>
-<li><p><strong>Simplicity and Cost-Effectiveness</strong>: FMCW radar systems can be simpler and more cost-effective to implement compared to some other radar types, like pulsed radar.</p>
-</li>
-<li><p><strong>Adaptability to Multiple Targets</strong>: FMCW radars can handle multiple targets within their field of view due to their continuous operation and the ability to separate different targets based on their individual beat frequencies.</p>
-</li>
+<li><strong>Continuous Measurement</strong>: Track RCS during rotation</li>
+<li><strong>High SNR</strong>: Long integration time improves sensitivity</li>
+<li><strong>Range Resolution</strong>: Isolate target from clutter</li>
+<li><strong>Simple Setup</strong>: Monostatic measurement geometry</li>
+<li><strong>Cost-Effective</strong>: Suitable for laboratory measurements</li>
 </ol>
-<p>Despite their advantages, FMCW radars also have limitations, such as reduced performance in certain cluttered environments and susceptibility to interference from other radar systems using similar frequencies. However, advancements in signal processing and technology have helped mitigate many of these challenges.</p>
-<p>This illustration provides a simulation of an FMCW radar system with a rotating metal plate. This simulation is executed through the raytracing framework available in <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a>.</p>
-<h2 id="Create-Radar-Model">Create Radar Model<a class="anchor-link" href="#Create-Radar-Model">¶</a></h2><p>Firstly, import the required modules from <code>radarsimpy</code>. <code>numpy</code> will also be needed in this example.</p>
+<p><strong>Measurement Approach:</strong></p>
+<ul>
+<li>Rotate plate continuously during observation</li>
+<li>Each chirp captures different aspect angle</li>
+<li>Range FFT extracts target return</li>
+<li>Peak amplitude indicates RCS at each angle</li>
+</ul>
+<h3 id="You'll-Learn-How-To:">You'll Learn How To:<a class="anchor-link" href="#You'll-Learn-How-To:">¶</a></h3><ul>
+<li>Configure 1 GHz FMCW radar for RCS measurement</li>
+<li>Model a rotating flat plate (5m × 5m)</li>
+<li>Simulate aspect angle variation over 90° rotation</li>
+<li>Apply range FFT to extract target returns</li>
+<li>Generate range-time heatmap showing RCS variation</li>
+<li>Plot RCS vs. aspect angle (dB scale)</li>
+<li>Identify RCS peaks and nulls</li>
+<li>Understand physical optics scattering patterns</li>
+<li>Validate against flat plate RCS theory</li>
+<li>Interpret sinc-pattern angular lobing</li>
+</ul>
+<h3 id="About-This-Example">About This Example<a class="anchor-link" href="#About-This-Example">¶</a></h3><p>This notebook uses <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> to demonstrate:</p>
+<p><strong>Scenario:</strong></p>
+<ul>
+<li>1 GHz FMCW radar (L-band, 100 MHz bandwidth)</li>
+<li>5m × 5m flat metal plate at 200m range</li>
+<li>Plate rotates 90° over observation period</li>
+<li>180 chirps capture complete rotation</li>
+</ul>
+<p><strong>Processing:</strong></p>
+<ul>
+<li>Range FFT with Chebyshev windowing</li>
+<li>Peak extraction at plate range bin</li>
+<li>RCS vs. angle visualization</li>
+</ul>
+<p><strong>Expected Results:</strong></p>
+<ul>
+<li>Maximum RCS at 0° (normal incidence)</li>
+<li>RCS drops ~20-30 dB at 90° (edge-on)</li>
+<li>Lobing pattern with nulls following sinc function</li>
+<li>Validates physical optics prediction</li>
+</ul>
+<p>The simulation demonstrates fundamental RCS behavior essential for radar system design and target characterization.</p>
+<h2 id="Radar-System-Configuration">Radar System Configuration<a class="anchor-link" href="#Radar-System-Configuration">¶</a></h2><p>Configure a 1 GHz FMCW radar for RCS measurement.</p>
+<h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3><p>Import necessary RadarSimPy modules and NumPy for numerical operations.</p>
 </div>
 </div>
 </div>
@@ -7582,10 +7697,11 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Transmitter</span><span class="p">,</span> <span class="n">Receiver</span>
 </pre></div>
 </div>
@@ -7599,65 +7715,49 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Transmitter">Transmitter<a class="anchor-link" href="#Transmitter">¶</a></h3><p>Setup the basic transmitter parameters through <a href="https://radarsimx.github.io/radarsimpy/radar.html#radarsimpy-transmitter">Transmitter</a> module.</p>
-<h4 id="Define-a-Radar-Transmitter">Define a Radar Transmitter<a class="anchor-link" href="#Define-a-Radar-Transmitter">¶</a></h4><p>As shown in the diagram below, <code>f</code> and <code>t</code> are used to define the waveform modulation. For a linear frequency-modulated continuous waveform (FMCW), it can be specified as <code>f = [fstart, fend]</code> and <code>t = [tstart, tend]</code>. If <code>t</code> is a single number <code>t = t0</code>, which is equivalent to <code>t = [0, t0]</code>. The bandwidth of the FMCW is <code>abs(fstart - fend)</code>. <code>prp</code> is the pulse repetition period, and <code>prp &gt;= (tend - tstart)</code>.</p>
-<pre><code>|                       prp
-|                  +-----------+
-|
-|            +---f[1]---&gt;  /            /            /
-|                         /            /            /
-|                        /            /            /
-|                       /            /            /
-|                      /            /            /     ...
-|                     /            /            /
-|                    /            /            /
-|                   /            /            /
-|      +---f[0]---&gt;/            /            /
-|
-|                  +-------+
-|                 t[0]    t[1]
-</code></pre>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">1e9</span> <span class="o">-</span> <span class="mf">50e6</span><span class="p">,</span> <span class="mf">1e9</span> <span class="o">+</span> <span class="mf">50e6</span><span class="p">],</span>
-    <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">],</span>
-    <span class="n">tx_power</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-    <span class="n">prp</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">pulses</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Receiver">Receiver<a class="anchor-link" href="#Receiver">¶</a></h3><p>Setup the receiver parameters through <a href="https://radarsimx.github.io/radarsimpy/radar.html#radarsimpy-receiver">Receiver</a> module.</p>
-<h4 id="Define-a-Radar-Receiver">Define a Radar Receiver<a class="anchor-link" href="#Define-a-Radar-Receiver">¶</a></h4><ul>
-<li><code>fs</code> – Sampling rate (sps)</li>
-<li><code>noise_figure</code> – Noise figure (dB)</li>
-<li><code>rf_gain</code> – Total RF gain (dB)</li>
-<li><code>load_resistor</code> – Load resistor to convert power to voltage (Ohm)</li>
-<li><code>baseband_gain</code> – Total baseband gain (dB)</li>
+<h3 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h3><p>Configure FMCW transmitter for RCS measurement over extended observation.</p>
+<h4 id="Define-FMCW-Radar-Transmitter">Define FMCW Radar Transmitter<a class="anchor-link" href="#Define-FMCW-Radar-Transmitter">¶</a></h4><p>Configure chirp parameters for continuous RCS monitoring during plate rotation.</p>
+<p><strong>Transmitter Parameters:</strong></p>
+<ul>
+<li><p><strong>Frequency Range</strong>: 950 MHz - 1.05 GHz</p>
+<ul>
+<li>Center: 1 GHz (L-band)</li>
+<li>Bandwidth: 100 MHz</li>
+<li>Range resolution: ΔR = c/(2B) = 1.5 m</li>
+</ul>
+</li>
+<li><p><strong>Chirp Duration</strong>: 80 μs</p>
+<ul>
+<li>Fast-time sampling period</li>
+</ul>
+</li>
+<li><p><strong>Transmit Power</strong>: 15 dBm (~32 mW)</p>
+<ul>
+<li>Moderate power for laboratory setup</li>
+</ul>
+</li>
+<li><p><strong>Pulse Repetition Period</strong>: 0.5 seconds</p>
+<ul>
+<li>Very long PRP for slow rotation measurement</li>
+<li>One chirp every 0.5 seconds</li>
+<li>Allows plate to rotate between measurements</li>
+</ul>
+</li>
+<li><p><strong>Number of Pulses</strong>: 180</p>
+<ul>
+<li>Total observation: 180 × 0.5s = 90 seconds</li>
+<li>Plate rotates 90° (1°/s rotation rate)</li>
+<li>Each chirp captures 0.5° rotation step</li>
+</ul>
+</li>
+</ul>
+<p><strong>Measurement Strategy:</strong></p>
+<p>With PRP = 0.5s and 180 pulses:</p>
+<ul>
+<li>Observation duration: 90 seconds</li>
+<li>Angular sampling: 90°/180 = 0.5° per chirp</li>
+<li>Captures complete 0° to 90° rotation</li>
+<li>Sufficient for detailed RCS pattern</li>
 </ul>
 </div>
 </div>
@@ -7667,20 +7767,22 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define transmitter antenna location</span>
+<span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position at origin</span>
 <span class="p">)</span>
 
-<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
-    <span class="n">fs</span><span class="o">=</span><span class="mf">2e6</span><span class="p">,</span>
-    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>
+<span class="c1"># Configure FMCW transmitter</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">1e9</span> <span class="o">-</span> <span class="mf">50e6</span><span class="p">,</span> <span class="mf">1e9</span> <span class="o">+</span> <span class="mf">50e6</span><span class="p">],</span>  <span class="c1"># Frequency sweep: 950 MHz - 1.05 GHz (100 MHz BW)</span>
+    <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">80e-6</span><span class="p">],</span>                 <span class="c1"># Chirp duration: 0-80 μs</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>                  <span class="c1"># Transmit power: 15 dBm</span>
+    <span class="n">prp</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>                      <span class="c1"># Pulse repetition period: 0.5 seconds (slow for rotation)</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span>                   <span class="c1"># Number of chirps: 180 (90° rotation at 0.5° steps)</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>        <span class="c1"># Transmitter antenna configuration</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -7694,7 +7796,38 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Radar-System">Radar System<a class="anchor-link" href="#Radar-System">¶</a></h3><p>Use the defined transmitter and receiver to create the radar system.</p>
+<h3 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h3><p>Configure receiver for baseband sampling and RCS measurement.</p>
+<h4 id="Define-Radar-Receiver">Define Radar Receiver<a class="anchor-link" href="#Define-Radar-Receiver">¶</a></h4><p>Set up receiver parameters optimized for RCS measurement.</p>
+<p><strong>Receiver Parameters:</strong></p>
+<ul>
+<li><p><strong>Sampling Rate</strong>: 2 MHz</p>
+<ul>
+<li>Captures beat frequencies</li>
+<li>Max range: ~240 m</li>
+</ul>
+</li>
+<li><p><strong>Noise Figure</strong>: 8 dB</p>
+<ul>
+<li>Standard receiver performance</li>
+</ul>
+</li>
+<li><p><strong>RF Gain</strong>: 20 dB</p>
+<ul>
+<li>LNA amplification</li>
+</ul>
+</li>
+<li><p><strong>Load Resistor</strong>: 500 Ω</p>
+<ul>
+<li>Power-to-voltage conversion</li>
+</ul>
+</li>
+<li><p><strong>Baseband Gain</strong>: 30 dB</p>
+<ul>
+<li>IF amplification</li>
+<li>Total gain: 50 dB</li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7703,10 +7836,23 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define receiver antenna location</span>
+<span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Co-located with transmitter (monostatic)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure radar receiver</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
+    <span class="n">fs</span><span class="o">=</span><span class="mf">2e6</span><span class="p">,</span>              <span class="c1"># Sampling rate: 2 MHz</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>      <span class="c1"># Noise figure: 8 dB</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>          <span class="c1"># RF gain: 20 dB</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>   <span class="c1"># Load resistance: 500 Ω</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>    <span class="c1"># Baseband gain: 30 dB</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>  <span class="c1"># Receiver antenna configuration</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7719,7 +7865,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Plate-model">Plate model<a class="anchor-link" href="#Plate-model">¶</a></h2><p>The plate model is with <code>.stl</code>.</p>
+<h3 id="Create-Radar-System">Create Radar System<a class="anchor-link" href="#Create-Radar-System">¶</a></h3><p>Combine transmitter and receiver to form the complete FMCW radar for RCS measurement.</p>
 </div>
 </div>
 </div>
@@ -7728,17 +7874,76 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">target_1</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/plate5x5.stl"</span><span class="p">,</span>
-    <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">,</span>
-    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"rotation_rate"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create complete radar system</span>
+<span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Rotating-Plate-Target-Model">Rotating Plate Target Model<a class="anchor-link" href="#Rotating-Plate-Target-Model">¶</a></h2><p>Configure a flat metal plate that rotates during observation to demonstrate RCS aspect angle dependence.</p>
+<h3 id="Target-Configuration">Target Configuration<a class="anchor-link" href="#Target-Configuration">¶</a></h3><p><strong>Flat Plate Properties:</strong></p>
+<ul>
+<li><strong>Model</strong>: 5m × 5m square metal plate</li>
+<li><strong>Location</strong>: 200m range along x-axis</li>
+<li><strong>Material</strong>: Perfect electric conductor (PEC)</li>
+<li><strong>Rotation</strong>: 1°/s around x-axis (yaw rotation)</li>
+<li><strong>Total Rotation</strong>: 90° (0° to 90° aspect angles)</li>
+</ul>
+<p><strong>Rotation Dynamics:</strong></p>
+<ul>
+<li><strong>rotation_rate</strong>: (1, 0, 0) deg/s<ul>
+<li>Rotates around x-axis at 1°/s</li>
+<li>Starts at 0° (normal incidence)</li>
+<li>Ends at 90° (edge-on view)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Expected RCS Behavior:</strong></p>
+<p>At 1 GHz (λ = 0.3 m), 5×5m plate:</p>
+<ul>
+<li><strong>Maximum RCS</strong> (0°): σ_max = 4πa²b²/λ² ≈ 10,000 m² = 40 dBsm</li>
+<li><strong>Edge-on RCS</strong> (90°): σ_edge &lt;&lt; σ_max (only edge diffraction)</li>
+<li><strong>First null</strong>: θ ≈ arcsin(λ/2a) ≈ 1.7°</li>
+</ul>
+<p><strong>Measurement Timeline:</strong></p>
+<ul>
+<li>Duration: 90 seconds</li>
+<li>Rotation: 1°/s × 90s = 90°</li>
+<li>Chirps: 180 (one every 0.5s)</li>
+<li>Angular resolution: 0.5° per chirp</li>
+</ul>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure rotating flat plate target</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"../models/plate5x5.stl"</span><span class="p">,</span>  <span class="c1"># 5m × 5m square plate</span>
+    <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">,</span>                         <span class="c1"># Model units in meters</span>
+    <span class="s2">"location"</span><span class="p">:</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>            <span class="c1"># Position: 200m along x-axis</span>
+    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>                 <span class="c1"># No translational motion</span>
+    <span class="s2">"rotation_rate"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>         <span class="c1"># Rotation: 1°/s around x-axis (yaw)</span>
 <span class="p">}</span>
 
+<span class="c1"># Create target list for simulation</span>
 <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_1</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -7752,7 +7957,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot the 3D mesh of the plate</em></p>
+<h3 id="Visualize-Plate-Model">Visualize Plate Model<a class="anchor-link" href="#Visualize-Plate-Model">¶</a></h3><p>Display the 5m × 5m flat plate geometry.</p>
 </div>
 </div>
 </div>
@@ -7761,34 +7966,42 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymeshlab</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import libraries for 3D visualization</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pymeshlab</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
+<span class="c1"># Load plate 3D mesh</span>
 <span class="n">ms</span> <span class="o">=</span> <span class="n">pymeshlab</span><span class="o">.</span><span class="n">MeshSet</span><span class="p">()</span>
 <span class="n">ms</span><span class="o">.</span><span class="n">load_new_mesh</span><span class="p">(</span><span class="n">target_1</span><span class="p">[</span><span class="s2">"model"</span><span class="p">])</span>
 <span class="n">t_mesh</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">current_mesh</span><span class="p">()</span>
-<span class="n">v_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">vertex_matrix</span><span class="p">())</span>
-<span class="n">f_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">face_matrix</span><span class="p">())</span>
 
+<span class="c1"># Extract vertex positions and face connectivity</span>
+<span class="n">v_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">vertex_matrix</span><span class="p">())</span>  <span class="c1"># Vertex coordinates (N x 3)</span>
+<span class="n">f_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">face_matrix</span><span class="p">())</span>    <span class="c1"># Face indices (M x 3)</span>
+
+<span class="c1"># Create 3D mesh visualization</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Mesh3d</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
-        <span class="n">z</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-        <span class="n">i</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>        <span class="c1"># X coordinates</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>        <span class="c1"># Y coordinates</span>
+        <span class="n">z</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>        <span class="c1"># Z coordinates</span>
+        <span class="n">i</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>        <span class="c1"># Face vertex indices</span>
         <span class="n">j</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
         <span class="n">k</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-        <span class="n">intensity</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-        <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Viridis"</span><span class="p">,</span>
+        <span class="n">intensity</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>  <span class="c1"># Color by height</span>
+        <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Viridis"</span><span class="p">,</span>      <span class="c1"># Color scheme</span>
     <span class="p">)</span>
 <span class="p">)</span>
-<span class="n">fig</span><span class="p">[</span><span class="s2">"layout"</span><span class="p">][</span><span class="s2">"scene"</span><span class="p">][</span><span class="s2">"aspectmode"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"data"</span>
-<span class="n">fig</span><span class="p">[</span><span class="s2">"layout"</span><span class="p">][</span><span class="s2">"height"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">800</span>
+
+<span class="c1"># Configure 3D plot layout</span>
+<span class="n">fig</span><span class="p">[</span><span class="s2">"layout"</span><span class="p">][</span><span class="s2">"scene"</span><span class="p">][</span><span class="s2">"aspectmode"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"data"</span>  <span class="c1"># Maintain aspect ratio</span>
+<span class="n">fig</span><span class="p">[</span><span class="s2">"layout"</span><span class="p">][</span><span class="s2">"height"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">800</span>                   <span class="c1"># Plot height in pixels</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"5m × 5m Flat Plate Target"</span><span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
 <span class="c1"># fig.show()</span>
@@ -7820,9 +8033,45 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Radar-Scene-Simulation">Radar Scene Simulation<a class="anchor-link" href="#Radar-Scene-Simulation">¶</a></h2><p>Use the <code>simulator.sim_radar</code> module to simulate the baseband samples from the defined radar system and targets.</p>
-<p>The output baseband data is a dict including the timestamp and baseband. Both of them are 3-D matrix:</p>
-<p><code>[channels, pulses, ADC samples]</code></p>
+<h2 id="Radar-Scene-Simulation">Radar Scene Simulation<a class="anchor-link" href="#Radar-Scene-Simulation">¶</a></h2><p>Simulate radar returns from the rotating plate over 90 seconds using ray tracing.</p>
+<h3 id="Simulation-Parameters">Simulation Parameters<a class="anchor-link" href="#Simulation-Parameters">¶</a></h3><p><strong>Ray Tracing Configuration:</strong></p>
+<ul>
+<li><p><strong>Density</strong>: 1 ray per wavelength²</p>
+<ul>
+<li>Standard density for flat surfaces</li>
+<li>Adequate for specular reflection</li>
+</ul>
+</li>
+<li><p><strong>Level</strong>: <code>'pulse'</code></p>
+<ul>
+<li>Ray tracing per pulse (one per chirp)</li>
+<li>Updates plate orientation for each measurement</li>
+<li>Captures aspect angle variation efficiently</li>
+<li>Faster than <code>'sample'</code> level</li>
+</ul>
+</li>
+</ul>
+<p><strong>Output Data Structure:</strong></p>
+<ul>
+<li><strong>Dimensions</strong>: [channels, pulses, samples]</li>
+<li><strong>Channels</strong>: 1 (single Tx/Rx)</li>
+<li><strong>Pulses</strong>: 180 (one every 0.5 seconds)</li>
+<li><strong>Samples</strong>: ~160 per chirp (2 MHz × 80 μs)</li>
+</ul>
+<p><strong>Simulation Strategy:</strong></p>
+<p>At each pulse:</p>
+<ol>
+<li>Plate rotates by 0.5° from previous pulse</li>
+<li>Ray tracer computes new RCS for current aspect angle</li>
+<li>Baseband signal captures return amplitude</li>
+<li>180 pulses build complete 0-90° RCS pattern</li>
+</ol>
+<p><strong>Expected Computation:</strong></p>
+<ul>
+<li>Pulse-level ray tracing is relatively fast</li>
+<li>Typical runtime: 10-30 seconds</li>
+<li>Much faster than sample-level for rotation studies</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7831,18 +8080,28 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import radar simulator and timing module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
+<span class="c1"># Start timing</span>
 <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Simulate radar returns from rotating plate</span>
+<span class="c1"># density=1: Standard ray tracing density for flat surfaces</span>
+<span class="c1"># level='pulse': Ray tracing per chirp (captures rotation efficiently)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"pulse"</span><span class="p">)</span>
 
-<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>
+<span class="c1"># Extract baseband I/Q signals (no noise added for clean RCS measurement)</span>
+<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>  <span class="c1"># Complex samples [1, 180, 160]</span>
+
+<span class="c1"># End timing</span>
 <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
+<span class="c1"># Display execution time</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Exec time:"</span><span class="p">,</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7869,7 +8128,22 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">¶</a></h2><h3 id="Range-Processing">Range Processing<a class="anchor-link" href="#Range-Processing">¶</a></h3>
+<h2 id="Radar-Signal-Processing">Radar Signal Processing<a class="anchor-link" href="#Radar-Signal-Processing">¶</a></h2><p>Process range profiles to extract RCS vs. aspect angle.</p>
+<h3 id="Range-FFT-Processing">Range FFT Processing<a class="anchor-link" href="#Range-FFT-Processing">¶</a></h3><p><strong>Range Compression:</strong></p>
+<p>Apply FFT across fast-time to compress chirp into range bins:</p>
+<ul>
+<li>Input: Baseband [1 channel, 180 pulses, 160 samples]</li>
+<li>Window: Chebyshev with 60 dB sidelobe suppression</li>
+<li>Output: Range profiles [1, 180, 160 range bins]</li>
+</ul>
+<p><strong>RCS Extraction:</strong></p>
+<p>For each pulse (aspect angle):</p>
+<ul>
+<li>Locate plate at range bin ~133 (corresponding to 200m)</li>
+<li>Extract peak amplitude</li>
+<li>Amplitude indicates RCS at that aspect angle</li>
+<li>180 measurements create RCS vs. angle curve</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7878,13 +8152,19 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import signal processing modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy.processing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">proc</span>
 
+<span class="c1"># Create Chebyshev window for range FFT (60 dB sidelobe suppression)</span>
 <span class="n">range_window</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">chebwin</span><span class="p">(</span><span class="n">radar</span><span class="o">.</span><span class="n">sample_prop</span><span class="p">[</span><span class="s2">"samples_per_pulse"</span><span class="p">],</span> <span class="n">at</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="c1"># Perform range FFT to compress chirp</span>
+<span class="c1"># Input: baseband [1 channel, 180 pulses, 160 samples]</span>
+<span class="c1"># Output: range_profile [1 channel, 180 pulses, 160 range_bins]</span>
 <span class="n">range_profile</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">range_fft</span><span class="p">(</span><span class="n">baseband</span><span class="p">,</span> <span class="n">range_window</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7898,7 +8178,21 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot range profiles</em></p>
+<h3 id="Visualize-Range-Time-Heatmap">Visualize Range-Time Heatmap<a class="anchor-link" href="#Visualize-Range-Time-Heatmap">¶</a></h3><p>Display range profiles over time showing RCS variation as plate rotates.</p>
+<p><strong>Heatmap Interpretation:</strong></p>
+<ul>
+<li><strong>Horizontal Axis</strong>: Range bin (proportional to distance)</li>
+<li><strong>Vertical Axis</strong>: Chirp index (proportional to time and aspect angle)</li>
+<li><strong>Color</strong>: Amplitude in dB (brightness indicates RCS)</li>
+</ul>
+<p><strong>Expected Pattern:</strong></p>
+<ol>
+<li><strong>Horizontal Line</strong>: Plate at constant range (bin 133)</li>
+<li><strong>Vertical Variation</strong>: Brightness changes with rotation</li>
+<li><strong>Maximum at Top</strong>: Brightest at chirp 0 (0° normal incidence)</li>
+<li><strong>Minimum at Bottom</strong>: Dimmest at chirp 180 (90° edge-on)</li>
+<li><strong>Lobing</strong>: Periodic variations from sinc pattern</li>
+</ol>
 </div>
 </div>
 </div>
@@ -7907,16 +8201,30 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import plotting library</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
 
+<span class="c1"># Create heatmap of range profiles over time</span>
+<span class="c1"># Shows RCS variation as plate rotates</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
-    <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s2">"hot"</span>
+    <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span>  <span class="c1"># Convert to dB scale</span>
+    <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s2">"hot"</span><span class="p">,</span>  <span class="c1"># Hot colormap (dark=low, bright=high)</span>
+    <span class="n">labels</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">),</span>
+    <span class="n">aspect</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range bin"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Chirp index"</span><span class="p">)</span>
+
+<span class="c1"># Configure axes</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range Bin (bin 133 ≈ 200m)"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Chirp Index (0-180 = 0°-90° rotation)"</span><span class="p">)</span>
+
+<span class="c1"># Configure layout</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Range Profiles vs. Time: RCS Variation During Rotation"</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
 <span class="c1"># fig.show()</span>
@@ -7948,7 +8256,28 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><em>Plot peak amplitude versus observation angle</em></p>
+<h3 id="Visualize-RCS-vs.-Aspect-Angle">Visualize RCS vs. Aspect Angle<a class="anchor-link" href="#Visualize-RCS-vs.-Aspect-Angle">¶</a></h3><p>Plot peak amplitude versus observation angle to show classic flat plate RCS pattern.</p>
+<p><strong>RCS Pattern Analysis:</strong></p>
+<ol>
+<li><strong>Maximum at 0°</strong>: Normal incidence produces peak RCS</li>
+<li><strong>Rapid Decay</strong>: RCS drops quickly as plate rotates</li>
+<li><strong>First Null</strong>: Around 1-2° (predicted: ~1.7°)</li>
+<li><strong>Side Lobes</strong>: Secondary peaks from sinc pattern</li>
+<li><strong>Deep Minimum at 90°</strong>: Edge-on view shows ~20-30 dB drop</li>
+</ol>
+<p><strong>Physical Interpretation:</strong></p>
+<ul>
+<li><strong>0-15°</strong>: Specular reflection dominates</li>
+<li><strong>15-75°</strong>: Mixed specular and edge effects</li>
+<li><strong>75-90°</strong>: Edge diffraction only</li>
+</ul>
+<p><strong>Comparison with Theory:</strong></p>
+<p>For 5m plate at 1 GHz:</p>
+<ul>
+<li>Theoretical first null: θ = arcsin(λ/2a) ≈ 1.7°</li>
+<li>Observed pattern should match sinc² function</li>
+<li>Edge-on RCS much lower than normal incidence</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7957,17 +8286,44 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">obs_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create aspect angle array (0° to 90° in 0.5° steps)</span>
+<span class="n">obs_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># 180 angles corresponding to 180 chirps</span>
 
+<span class="c1"># Extract peak amplitude at plate range bin (bin 133)</span>
+<span class="c1"># This represents RCS variation with aspect angle</span>
+<span class="n">rcs_vs_angle</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">)[:,</span> <span class="mi">133</span><span class="p">]</span>
+
+<span class="c1"># Create line plot of RCS vs. aspect angle</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">obs_angle</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">range_profile</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">)[:,</span> <span class="mi">133</span><span class="p">]</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">obs_angle</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">rcs_vs_angle</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="s2">"Aspect Angle (degrees)"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"Peak Amplitude (dB)"</span><span class="p">},</span>
 <span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Observation angle (deg)"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Peak amplitude (dB)"</span><span class="p">)</span>
+<span class="c1"># Add annotations for key features</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rcs_vs_angle</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">"Maximum RCS&lt;br&gt;(Normal Incidence)"</span><span class="p">,</span>
+    <span class="n">showarrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">arrowhead</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">ay</span><span class="o">=-</span><span class="mi">40</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure layout</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"RCS vs. Aspect Angle: Flat Plate (5m × 5m at 1 GHz)"</span><span class="p">,</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Observation Angle (degrees)"</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">]),</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Peak Amplitude (dB)"</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Add grid for easier reading</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">showgrid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'LightGray'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">showgrid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s1">'LightGray'</span><span class="p">)</span>
 
 <span class="c1"># uncomment this to display interactive plot</span>
 <span class="c1"># fig.show()</span>
@@ -7989,6 +8345,154 @@ a.anchor-link {
 <div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
 <img alt="No description has been provided for this image" class="" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAPoBXgDASIAAhEBAxEB/8QAHQABAAMBAQEBAQEAAAAAAAAAAAQGCAcFAwIBCf/EAGgQAAEDAgMDBQkMBQcGCQkIAwABAgMEBQYHEQgSIRMUFTGTIjRBUVJVYaGxMjVUcXJzgYKDkbLCFiNCRYQkJTNikqLBCRdDo7PDGCY5U1hjd9TwOERXlZa00dLxJyg2daWn0+GFlLX/xAAbAQEBAAMBAQEAAAAAAAAAAAAAAgEDBAYFB//EAEgRAQACAAMHAQQGBgkEAQIHAAABAgMEEQUSEyExUWFBBjJxkRQigaGxwSNCUpLR8BUkM0NTYoKi4QdysvEWJWMmNGSTo8Li/9oADAMBAAIRAxEAPwD/AFTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVe9e+c31fwoQTfGDrGurVOJpOmi7ApIM8DycXwuwKSBwPJxfC7ApIHA8nF8LsCkgcDycXwuwKSBwPJxfC7ApIHA8nF8LsCkgcDycXwuwKSBwPJxfC7ApIHA8nF8LsCkgcDycXwuwKSBwPJxfC7ApIHA8nF8LsCkgcDycXwuwKSBwPJxfC7Aq9478+zZ7CCYjB1jXUnE0nTRdgUkGeB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgVet7yofkO9pBMRg6x1JxNPRdgUkGeB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgVf9y/xX5CCYjB19ScTT0XYFJBngeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFJA4Hk4vhdgUkDgeTi+F2BSQOB5OL4XYFXoe8635tvtIJiMHWepxPC7ApIM8DycXwuwKSBwPJxfC7ApIHA8nF8LsCkgcDycXwuwKSBwPJxfC7ApIHA8nF8LsCkl2NeJh7iq23gAGtYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKvevfOb6v4UIJOvXvnN9X8KEE7qe7Dmt1kABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATrx359mz2EEnXjvz7NnsIJNPdhVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnVveVD8h3tIJOre8qH5DvaQSa9FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACd+5f4r8hBJ37l/ivyEEmvqqQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOoe8635tvtIJOoe8635tvtIJMdZVPSAAFJAAAAAAAAAAAAAAuxSS7HPj+jdheoADnbQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVe9e+c31fwoQTmmUOecObUlwp7rRwW290sjnrSRuVWvg10a5u9xVW8Gu9Oi8NdE6Wfbzuz8xsvGnK5qu7ev88p9Ycdb1xI3q9AAHIyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdeO/Ps2ewgk68d+fZs9hBJp7sKt1AAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE6t7yofkO9pBJ1b3lQ/Id7SCTXoq3UABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATv3L/FfkIJO/cv8AFfkIJNfVUgAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdQ951vzbfaQSdQ951vzbfaQSY6yqekAAKSAAAAAAAAAAAAABdikl2OfH9G7C9QAHO2gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxrtM4VkyrzFoM1MESJQyVtUrp4mt7hKndRzl08LZGq7eb6HeVw0VarjBeLXR3alXWGtp46mP5L2o5PUpRNrCxdNZcXeZrN6W1zU9dGmnk6Mcv0Mkep+dnq+pfspbI9z96WgY+gkTxcm5UYn9jcPfZ+9tp+z2WzmJzvhWnDmfXSY3q6+I6Q+ZWOHj2rHSebo4APIugAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE68d+fZs9hBJ1478+zZ7CCTT3YVbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ1b3lQ/Id7SCTq3vKh+Q72kEmvRVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnfuX+K/IQSd+5f4r8hBJr6qkABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATqHvOt+bb7SCTqHvOt+bb7SCTHWVT0gABSQAAAAAAAAAAAAALsUkuxz4/o3YXqAA520AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFFx9Z4sQ0F5sM2iMuNHJSqvi34t3X6NTPeyDeJGW/EmFKnuJKSpjq2xr16vRWP+5Y2feaWvXvnN9X8KGWMBtdgnanvmH9EZDeFqkan7KNkalUzT4tN1PuPd+z/APW9kZ7JT1ilcSP9E8/ul83MfVxa386fNpkAHlG8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE68d+fZs9hBJ1478+zZ7CCTT3YVbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ1b3lQ/Id7SCTq3vKh+Q72kEmvRVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnfuX+K/IQSd+5f4r8hBJr6qkABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATqHvOt+bb7SCTqHvOt+bb7SCTHWVT0gABSQAAAAAAAAAAAAALsUkuxz4/o3YXqAA520AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFXvXvnN9X8KGW8xv5k2qcM16dz0gtDx6td9zoP8ADT/xqakvXvnN9X8KGW9pzS0ZmYJxJppyaM7r5moR/wAf7fjPd+xP189bA/xMO9fnXX8nzc5yrvdpaWAB5RvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOvHfn2bPYQSdeO/Ps2ewgk092FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdW95UPyHe0gk6t7yofkO9pBJr0VbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ37l/ivyEEnfuX+K/IQSa+qpAAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE6h7zrfm2+0gk6h7zrfm2+0gkx1lU9IAAUkAAAAAAAAAAAAAC7FJLsc+P6N2F6gAOdtAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABV7175zfV/ChmjbGolktGGbjoukFTUwa6Lp3bWL/uzS96985vq/hQ4PtaUXOcs6apRuq0l1hkVeHBqxyNX1uQ9l7G4vB2zlredPnEx+b5+bjXDs67ZK7pOzUFy3kdzulin1TTjvMR3g+MmlTymrekMscL1Kqqr0VTRuVddVVjEYq8fS0th8XOYXAzGJhfs2mPlOjZWdaxIADnZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATrx359mz2EEnXjvz7NnsIJNPdhVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnVveVD8h3tIJOre8qH5DvaQSa9FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACd+5f4r8hBJ37l/ivyEEmvqqQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOoe8635tvtIJOoe8635tvtIJMdZVPSAAFJAAAAAAAAAAAAAAuxSS7HPj+jdheoADnbQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVe9e+c31fwocn2jKFa3J6/I1NXwJTzt+rPHr/AHdTrF6985vq/hQo+a1Clxy0xRS6aqtpqZGpprq5kauRPvah9/YuLwM/l8Xtek/KYcWPG9W0fFXdm+tSsyesbdU3qdamF2noneqepUOmHE9kqt5zlrWUrncaS7TMRPE10cTk9auO2HZ7S4XB2vma/wCe0/OdfzRgTrhV+AAD4jaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnXjvz7NnsIJOvHfn2bPYQSae7CrdQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOre8qH5DvaQSdW95UPyHe0gk16Kt1AAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE79y/xX5CCTv3L/ABX5CCTX1VIACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnUPedb8232kEnUPedb8232kEmOsqnpAACkgAAAAAAAAAAAAAXYpJdjnx/RuwvUABztoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADK2F7ZjnaqxXjnEdTm/jfBWEML4inw5YaDC1Y23yVD6VrUmqZ5dxyyte56aN6k0VOtC6bOGOMZPxRmHkhmHiKTEF5y7uFMlPeJYEimrbdVxcrTrKjeCyNRFRXJpqit611Vd9sCaxPPnHWGquLrMcuU9HTb175zfV/Ch413okuVqrbc5NUqqeSBU+U1U8Pxns3r3zm+r+FCCdOFaabto6xo1W5zLOexzXb1uxPbHLosM9NOiL1922Rq/gQ93P/O7EGWt5tdjwxHQPnnpn1VUtTEsmjVduxomjk09y/Xr8H01DD2mUu03VWZf1VsxE9Y4k6m7lQqPjRE/qypyevxlWxta67OHN7GTqCRzorJRVT4UbxRyUrEY1rflycfrKfrU7Nyuf29baeaiJy9sOMTn05xFdJ866y+bxLUweHX3tdGssKX2LE+GbViGDRG3GkiqdE/ZVzUVW/QuqfQeqcY2VMSdL5cPsssms1kq5IUTXikUn6xq/2nSJ9U7Ofm+2MjOzc/jZX0raYj4en3aO7Cvv0iwAD5qwAAAAAAAAAAAAAAAAAAAAAAAAAAAABOvHfn2bPYQSdeO/Ps2ewgk092FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdW95UPyHe0gk6t7yofkO9pBJr0VbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ37l/ivyEEnfuX+K/IQSa+qpAAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE6h7zrfm2+0gk6h7zrfm2+0gkx1lU9IAAUkAAAAAAAAAAAAAC7FJLsc+P6N2F6gAOdtAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZ22LKqOHDOYmGJ2uiuVjzDvcNXC/RHN35GvY5E8lUVUReGqtd4OJEyRpnXTa/wBoDFNIrn0EXQNrSVPcOqI6JqSsRfGxY9FTwbya6Fyx9su4Hxvi2qx3a8VY0wTfbmyOO6VmEr263OuLY0VGpOiNc1+iLpqiIvBOJdMr8qsF5P4Z/RXA9tfTUslRJWVM00rpqirqX6b800ju6e9dETVfAiImiIiHXfFppa1eto6dukz+DRWluUT0h7VbdaWmqXwyUm+5umrtE48EU+HTlF8A9SEK9e+c31fwoQRXDrMRJN5iXCtsSz85osP5hWandTVdon5rNKxE3kY5d+J2v9V7XaemQ/uxpbIaKxYixdcqVaie61bKRj5NFVWRornrx8p0nH5B2m7We1X63y2q9W+nrqOfd5SCeNHsdoqOTVF8Soi/Gh/LPZbRh+gjtdjttPQ0cSuVkEEaMY1VXVVRE8aqqnrf/kWuwP6Gms66+9/l13tO/vfZo5OD+n4zPuQldFlhtAYoy/nhXmVx5aOljdpqvJrysCr4P6Fz/vNU9OUXwD1IZOxqnRW1lYqzTd54tJxXjrvxuh+jq0NLFe19K5nFy2et72LhUm3/AHRyn8IMraaRakeky9vpyi+AepB05RfAPUh4gPI8Krq35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTflYqy60tPNyclJvruouuieFD4dOUXwD1IQrx359mz2EExXDrMRLM3mJe305RfAPUg6covgHqQ8QGeFVjfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35WKe60sUMErqTeSVqq1NE4aKfDpyi+AepCFW95UPyHe0gmK4dZhmby9vpyi+AepB05RfAPUh4gM8KrG/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvysXStLzLnPNO45Xk93ROvTXU+HTlF8A9SEL9y/xX5CCYrh1lmby9vpyi+AepB05RfAPUh4gM8KrG/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvy9vpyi+AepB05RfAPUh4gHCqb8vb6covgHqQdOUXwD1IeIBwqm/L2+nKL4B6kHTlF8A9SHiAcKpvysUF1pZYZ5G0m6kTUVycOPE+HTlF8A9SEKh7zrfm2+0gmIw66yzN50e305RfAPUg6covgHqQ8QGeFVjfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1IOnKL4B6kPEA4VTfl7fTlF8A9SDpyi+AepDxAOFU35e305RfAPUg6covgHqQ8QDhVN+Xt9OUXwD1Ie2UkuxpxaxXTRsw7TPUABpbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVe9e+c31fwoQSdevfOb6v4UIJ3U92HNbrIACks056qlv2hcC3NvBF6PV6N4Ku7WP11X0oun0GljNO1hrQYswZeV4I1JeLvc/q5Y3fm4mllVETVV4HrNvfpNlbOxe9Lx+7bRz4PLEvHwRqy5223vijuFwpqZ06q2Js0zWLIqdaN1Xj9BJRUVNUXgYgz0x3U5kYzrLhbkfLZLLpR0r2oqs0V3GRV6tXuRdP6qN8Rr3Lq6dNYBw7dFejnVFspnSKi693ybUcn9pFNW2fZrE2NkcDNYtvrYnvV092dNYj46dTCx4xbzWPRYgAeYdAAAAAAAAAAAAAAAAAAAAAAAAAAAJ1478+zZ7CCTrx359mz2EEmnuwq3UABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATq3vKh+Q72kEnVveVD8h3tIJNeirdQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABO/cv8V+Qgk79y/xX5CCTX1VIACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnUPedb8232kEnUPedb8232kEmOsqnpAACkgAAAAAAAAAAAAAXYpJdjnx/RuwvUABztoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKvevfOb6v4UIJOvXvnN9X8KEE7qe7Dmt1kABSWdNsel37Zhet0T9VPVRa68e7bGv5DoWcWJaq3ZI3O90dQ+Koq6GnjY/qf+vcxjurqXde7q+gqm17Tb+X9qq0RVWK8MZ1dSOhl46+Di1PvPKzrvG9s34TVsia3KO2MciO16qZXrr8SsT6T9E2fgRnclsqto1iuLaJ+G9Fp/BxXncvifB4FmwJRQ7Kl2vcNOi3C5yNuEkjkTVGQVO41qehGNeqel6/EdZ2bbn0llDZ2Odq+ifUUrl18UrnN/uuafTDOHkqNnqlsCM7qtwy7RPCj5oFeng69X//AFKdsf3PlsHXu0K5VWkuKT6L4GyxtRPXEpO1Mxbaey89e06zTMb32W1pEfDkYdeHiU81/wCXfAefiC/2nC1mqr/fKrm1DRsR80u45+6iqiJwaiqvFUTgnhPNwPmBhjMO2zXXDFY6eGnmWCRsjFY9rkTVFVq8URUXVF+PxKeFrlce2DOZik7kTpNtOUT216auzejXd15rEADnZAAAAAAAAAAAAAAAAAAAAAAAATrx359mz2EEnXjvz7NnsIJNPdhVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnVveVD8h3tIJOre8qH5DvaQSa9FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACd+5f4r8hBJ37l/ivyEEmvqqQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOoe8635tvtIJOoe8635tvtIJMdZVPSAAFJAAAAAAAAAAAAAAuxSS7HPj+jdheoADnbQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVe9e+c31fwoQSdevfOb6v4UIJ3U92HNbrIACkuQ7U1LzjKeebTXmtdTS9fVqqs+n3Zx3Ne8c4yNyzot/Xlo53dWn9AiR+rf0O87RVMlTk5iFuiasbTyIqprpu1Earp9GqfSZhlqVxDb8rsL6q9zHSxKmuqry1we1PT1NRNPQfq/sbSMXZ+Di26YWNeZ+HCmfxfOzXK8x3iPxbXsVB0VZLfa9NOZ0sVPp4txiN9PiM7bMKrh/MnGuDfc8kju54/wDm9Qsf+9NLmaMPJ+jO1zcqD3LLo6fjpwXladJ/D/WTT4+B5b2ftOaye0MvbrbD3/3La/m6MaN21LedPm6FtOV6UWUNyg3kRa2opqdOPila/wBkanA8s7/fskcSWO/XhrugMVUbJZtxFVroVcqb2mnu41XXTyXcPdHWdr6v5LA9ntqOVFqbokq6L1pHE9NPven3IeBtBWVLbkhgSNYtHUHNKVy+JXUiqvD0qzU9L7NWw6bKwMhjV1pmsS8T8IrERMeYmIaMfWcSbx1rENKxSxzxMmhka+ORqOY5q6o5F4oqKfo8PAlUtdgfDtaq684tVJLrpprvQtXq+k/GOsZWzAGF6zFN2jkkgpNxOSi035HOcjUa3Xhrqv3Ip+a/RcS+Z+i4ca23t2I7zro7t6N3el74KrlvmJaczcPvxFZ6Wop4o6l9K+Oo3d9r2o137KqnU5FLURmMvi5TFtgY1dLVnSY7M1tFo1gABpZAAAAAAAAAAAAAAAAAABOvHfn2bPYQSdeO/Ps2ewgk092FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdW95UPyHe0gk6t7yofkO9pBJr0VbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ37l/ivyEEnfuX+K/IQSa+qpAAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE6h7zrfm2+0gk6h7zrfm2+0gkx1lU9IAAUkAAAAAAAAAAAAAC7FJLsc+P6N2F6gAOdtAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABV7175zfV/ChBJ16985vq/hQgndT3Yc1usgAKSp+cNLzvK3FMWjl3bXPL3PX3Dd78pj/JqCS8Zp4Ro5O6bS1jJGJ4kjc6bw+lFU2rjil59grEFEqIvOLXVxd0vDuonJx+8yPswUPO83bfUaa8ypamf4tY1j/3h+nex+ZjB2Dn5/ZiZj4zSYj8HBma641P59W0zM+d3/FTaCwjixqIyGp5o6Z/j3JlZJ/q1aaYM9bYVpWSw4dxAxNFpKyWkVydf61iOTj9iv3nm/YzErG1q4F/dxK2pP21n84hvzUfo9Y9Obz9riV9xveD8PRO7qTl3aemR8TG9fD9lS4bVFCx2U7OTYiMo7jTPammuibr2J8Xuus51jq7pjrO7LeZi7zJ6K01L0RNPdyLM/4u5VPi0Ov7SFKtTk5flaiq6FaaVNF06qiPX1Kp9+N7IYux8tblNZmZ/wBd4affjFtH86Q9jJiq55lVhebXXdt0UXutfcJufl6vB1HKNrG+1NfNhzLm1IslTXzpVyRNXi5yryULfpcsn0oh0DZxqudZOWDVdXRc5idw000qJNPVoctwZv5pbTFyxFO3foMPvkfCjk7nSH9VDp4lV68p8aKcmy8vXKbbzmexI+rl5xLfG2sxWPtnp8FYlt7CrSP1tHpbH1ze2hxNhydVY+mqIalrF8bkcx/3cm00UZnyh/4q7SOK8NqqtirueNiZpp/pGzR8PQze+80wfM9s6xO1ZzFemLWl4+2sfnDZlZ/R7vbWAHC8H7TlJiDMFcKXe0U9tt88r6WkqknV6rMjtGb6qiIjXdSaJwVU8HFO6HxdpbJzeyb1w83Tdm0ax68vjH3tuHiVxY1rIAD5ywAAAAAAAAAAAAAAAE68d+fZs9hBJ1478+zZ7CCTT3YVbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ1b3lQ/Id7SCTq3vKh+Q72kEmvRVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnfuX+K/IQSd+5f4r8hBJr6qkABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATqHvOt+bb7SCTqHvOt+bb7SCTHWVT0gABSQAAAAAAAAAAAAALsUkuxz4/o3YXqAA520AAAAAAAAAAAAAAAAAAAAAAAAAAAAAD5VdXS0FLNXV1TFT01PG6WaaV6MZGxqauc5y8ERERVVV4Ih9TzMT4dtWL8N3bCd9hdNbb3Qz26sja9WOfBNG6ORqOTi1Va5U1TihmNNeZLPt22tcR47utTh3Zdypr8wZKObm9Vf6qTmVmgei6KjZX6ctp16IrdU4tVyaHybS/5RKt0rluWSlBpq5aNW17tfDpruP8Ai939PhNC2Gz4bwlbKLCmHKGhtdFRQpHSUNM1sbY408lieDgvHwrqqlDzL2nciMn7u2wZhZiUdsubmo9aSOnnqpo2qmqK9kDHqzVOKb2mvgOmt9Z3cLD1++Wia6Rre35Q5jJtBbSGUTln2g8jae4YehTWoxHgmZ1TFTt193JTSOWRGonFzlViJ4EXqTvuAcwsG5oYYpcY4Ev9Nd7TWJ3E8Krq1yaase1dHMemqatciKmvFD74PxrhHMKww4mwViChvVqqVc1lTSSpIxXJwc1fE5PC1dFTwofDBuX2D8vmXeHBtkp7VBfLm+71kFOm7EtU+KON72sTgzVIWKqN0TXVetVIxLUtHOulvHT5LpFonrrCxAA0NgAAAAAAAAAAKvevfOb6v4UIJOvXvnN9X8KEE7qe7Dmt1kABSXzqoEqaaamcuiSxuYq6a6apoZT2Qrc9ccXuvexUWltiwKipxa58rF+/9WprAjUlrtlvc99BbqamdL7tYYWsV3x6Jx6z7mzts/QMhmslu68aKxrr00mdfjrEtV8LfvW3ZJOYbSVoS65R3aRrd6Sgkgq2cPJkRrl/sOcdPPGxpaFxBg+92NGK51db6inYiJqu86NUaqenXQ4tlZn6HnsHMfs2rP2RMa/crErvUmrImQUlTiLOTDktVq5tvpntTw6MipnNZ6900/nVSpWZU4oiVEXdt8kvFNfcaP8AymedkegSpzFr657NW0lpkVq6dT3SRon93fNPY+pVrcC4jokRVWotNZEiIvHuoXJw+89x7ZZiMP2iwIryjDin/lNvzcmVrrgT51c22YLmyPKCSaV3cW+tqkdq7giI1si/F7r/ABKpseU0kzsWXiZNXSvpYkdpoir+tc70eFpFyHvHMMhsfK1+j6Tnk7dEXVHPpGo3j8bE+Is+yHQ8jgC6V6t0dU3Z7E9LWRR6etzjdtnD+i5fa1v28TDj79/82MKd62H4iVbx7/xS2q7BeuEbLs6kcrteGkrXUrl9HV/iaPula222yruLtNKWCSZderRrVX/Azttb0kttumEsW0jUSaB8sSv8KOY5kkfrV52HMq8wsynxDeKd/cVFlmdE752JUav95D4+1ML+kMpszG/arw/3LaR+LbhzuWxI+1kfCGWy4sy3xXjKOd7K2wyRTR7yruyRNY90zV/raK1yL/V08OpqHZ/xtc8c5c01feXpLW0M76CWbe1dNuNarXu/rK1zdfGqa+E5/kNZ1l2fMWsVq71z6Rai66at5q1iJ96O+8n7IFVv4IvNFr/RXVZdNPLhjTr+ofe9qsx/SWUznE58DFrFfETEVmPhMxr8WnL13LV09Yd5Kdg7NvA+O7xV2HDlzknraJj5ZGOhc1Fja9GK9rlTRU1c3w+FDzs+MaJgnLa5VcMu5W3BvR9Jp1pJIio5yeJWsR7kXxohnXZtlq7BnDbaGsjdA650EjER3DejfCk8a/EqNaqfGh5vZHs3XP7IzO0cWZiaRM0iPXdjW0z3jpHL1b8XHmmLWkevVswA8+sxFh+3V0FruF9t1LW1LmNhp5qpjJZXOXRqNYq6uVV4JonFTyVKWxJ0pGs+HTMxHV6AAJAAAAAAAAAAATrx359mz2EEnXjvz7NnsIJNPdhVuoACkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnVveVD8h3tIJOre8qH5DvaQSa9FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACd+5f4r8hBJ37l/ivyEEmvqqQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOoe8635tvtIJOoe8635tvtIJMdZVPSAAFJAAAAAAAAAAAAAAuxSS7HPj+jdheoADnbQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGG8ktmrDu0dl4/aOxPirElNj/FdwuNwtlzp7g5iWlYqqWGBjGonFjeSTh5K6JpoXvYqy2wRjfJqmzjxzhe04ixdjmvuVfdbnc6GKolc5KyWLk2K9q7kekLV3G6JqvVwQq2VuUu3xlBgS2ZdYQvWViWi08tzdKp9RLL+tmfM7edySa93I7Th1aDK3KXb4ygwJbMusIXrKxLRaeW5ulU+oll/WzPmdvO5JNe7kdpw6tD6uLabxasYkdeXP058vwcNI3ZiZrPTn8eX/ACvuWOHLLlHtg4ryywPbYrXhvFGCKbFzrdTLuU1NWRVq0rlii03WI9rtVRuicE4aIiJpUzZktlXtGw5+VWcme9wwfUKuD34ZpksUkqKn8tjqGK5j2In/ADurtfJTTwmkzizExNo56zpGrpwY0ieWnMABztoAAAAAAAAAAKvevfOb6v4UIJOvXvnN9X8KEE7qe7Dmt1kABSQAAAABXML5dYLwXVVNbheww0E9Y1GzPY97t9EXXTunKicfEe5X0qVtDU0bkaqTwviXe6u6RU4/efcG7FzONj4nFxbTa3eZmZ5dOcsRWIjSGLMurtzPJPMynV6ov83NaiqnFZZXMXRPHonH0IaB2ZqHmmT9pm00WrmqZ17ZzE9TEMr1dctkt2M8Oq5UWquUECo7XeXkpZV8HDwcfoNkZNUPR2VeF6fd037bFP2icp+c/UvbmIwcje0f3uNW32RhVj8Xz8pzvHiPzU7astC3DK7n7WKq2y4QVCqidTXb0S/RrI31Hg4pxKlbslUlZv8A6yeho7eiquqq6Kdsbvp0icdSzftKXvLDE1Ard5ejpZ2J43xJyjU+9iGV58SLNs209i5X9ZT4nWHc1X+hWF0uv9ty/cfP9mcH+kNn5enrhZis/wCmY1/GF487l7T3q0Ps/wBna3JO0UczUatfFVPfvN1RUklkRF0Xr7ndOf7HFSqQ4rt79Wujko5Eaq8eKSovD0bqa/Gh2jKyhS3ZbYXpEREVtppXORPKdG1zvWqnEdmL+bcysbWPXTcR/Dr/AKKoc3r+uclcb6XlNsebVtH2Yk/krTdthfz6PztBOq8dZwYXy1ZPydI1It9U4Kj5n/rHenSNjdPp8Z88z6anwdtIYOr6KNIKadlvZo3gjGco6nVOHHRGIn0H2cqXnbEa1eMVEuiePuKDX0/tr9x9drylmoq3CWJKbhJC+eJXLrwc1Y3s/MfcyNuHmshsvpW+XtrHnEiZn/xar863xO1vwaRMWbR19qX5z109JMrJLS2ligkb1tc2Nsmqa+Jz1+42dR1UVbSQVkK6xzxtlZ8lyap7TJuGMLQ5r5tZj08qNfHLTXBKWR3U2bl2tgcuni3UX6PpPg+w18PI5nMZ3MR9XDppP+q0R+Ut2bib1rSvrLTuCsS0+MMJ2rE1Nuo24UrJnNauqMk00ez6rkcn0HtHAdkvFE0tlu+BLgrmVFoqOcQsfwVsb10e3Twbr26r6ZDrGYOYNhy1sTcQYhSpdBJO2mjZTxo975Fa5yNTVURODHcVVEPgbW2Pi5TauJs/ArNp3vqxHrE86/dLdh4sWw4vKzAzfS7VdyxDjOy2SzYdp6C2Vtxp6aolqZFlnWN8jWqqbujWLoq8O6+M0gaNqbFzmxppGcruzeNYjWJ+ejOHi1xdd30AAfKbAAAAABOvHfn2bPYQSdeO/Ps2ewgk092FW6gAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdW95UPyHe0gk6t7yofkO9pBJr0VbqAApIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ37l/ivyEEnfuX+K/IQSa+qpAAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE6h7zrfm2+0gk6h7zrfm2+0gkx1lU9IAAUkAAAAAAAAAAAAAC7FJLsc+P6N2F6gAOdtAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8rFbcSPwteWYOfRsv7rfUJanVmvN21nJu5FZdNV3OU3d7RNdNT1QZidJ1GMcwcabf+W1oorvfrvlbMlyulHZ6OnpIJ3zT1VTKkcTGorUTrXVePU1evqLPzD/KO+e8ov7FR/8AxnR9qHL3FePMAWy4YCpYavE+CsQ2/Ftoo5pNxlXUUjnLyKuXgiuY9+mvBXaIqprqnPov8oPlBa2JbcwML40wpiONEbPZq2zvWZJFXTRiovdJqioiqjdfEd9bWxKROHSJn15OWYiltL2mI+L09nrG20td82MVYHzyrMINgw7b45ObWuGRk80k7mOgqY1cmj6dWtqGKvBUezRUQ0cZtyKqcYZu5633aLuGC7zhHDLsMQ4VstFd2cjV3BqVPOHVUkSa7qNVVa1dVRUdwVeJpI5sxpF+kRyjp3bcH3QAGhtAAAAAAAAAABV7175zfV/ChBJ16985vq/hQgndT3Yc1usgAKSAAAAAAAA/z7zPpko8yMU07URGtvFYrURepqzOVE+5UN54aoVtmHLVbVbotJRQQaeLdjRv+BjLNuzrU59XSz7qrz26U7dHJpryrY1/ObeP0r26zPFyGz4j1pvf7aafm4cnXS9/i+dTTxVdPLSzsR0czHRvavhaqaKn3H+dtc24259XhKRyuSCvVFZpp+uZvRrp8evqQ/0WMVY5w1yO0bNYtzua/EFNLp4FSoeyRfB1frFMf9Os3XBxczhX6bsX/dn/AP0Z6usVmPg2db6RlvoKagjXVtNCyFq+hrUT/AzhlDpa9pnGdEqbqVPSKNavc9dSyRNE+JOHo4mljNNm1te2DW0jdUSrWXXTjrv0SS8derqPh+zczjYGfw59cG1v3ZifzbcflNJ8mU/88bTuL7gi6tpOkFRfAqNnZEmmnXwUtm1nbOeZa01e1vdUFzikVfExzHsX1ub9xU9llOlsd41xJ7rfRO660/XTPf1pw/0Z1fPq2dLZR4kp0bq6KmbVIuiapyUjZFX7mr96n2NpY/0P2oy1P8PhVn4aRr90tdK72Xt51SstsQRS5RWK/wA70cyls0bpXa9awx7r1VfjYpyXY/o5J/0rv9R3T55aeFH+Nf1j3/iYfvL/ABXHHssX1jahqzWynraByI7umcs5dxfGn9Nw+L0Fm2ULbzLLCSsVvG4XOeZF8bWtZGifexfvU15zL/0bs7acaab+NWkfCJm34M1nfvh+I1U7KxEs+1Di2hTRErOkERE4+6mZNp6Oo9XbDrNzDWHqDX+mrpZuryI9P94eW/S0bYjXKukdYqele7oNPD/XT7htba3LEeDbEnBXpPx6v6WSJvX9Q+rgUjG9odn5ielsGtp+ylv4Q1TOmBevn83j7QFrhwi7La4UsDIOaULY+4aid1AsTlVd3TVdXquvjU1cZ92wqHfwxh+4o3hT10kGvi5SPXT/AFZ23CdclzwrZrkjkclXb6edFTTjvRtXwcPCeZ23iTm9iZHMW6xOLE/vax9zowo3cW9fgz9te4seyexYQpKh7HRo65To12mirrHF1eH+l+9DrORN3fe8psO1ksivkjpnUzlV2q/qpHRpr9DUX6TPF4t0mcmaOOry1r5aOzW2tlpt1VVrlgjWOBE08pyb+nxnVtkm6rWZdVtte7V1Bc5EaniY9jHJ/e3z7m3dn4WW9msLLV/tMKaWv4nEi06ffHyhpwbzbHm3pOv3O2ySMiY6WV7WMYiuc5y6IiJ1qqnworlbrk177dX09U2N269YZWvRq6a6LovBdFKbnldks2U2JareRFlo1pE9PLOSL2PU4tsfYi5G833Cssnc1VOyuhRV/ajduP09KpI3+yeVyewL5zZGPtStv7OYjTTr01nXxE6um+NFcWMPu1GADzrcnXjvz7NnsIJOvHfn2bPYQSae7CrdQAFJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOre8qH5DvaQSdW95UPyHe0gk16Kt1AAUkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE79y/xX5CCTv3L/FfkIJNfVUgAKSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACdQ951vzbfaQSdQ951vzbfaQSY6yqekAAKSAAAAAAAAAAAAABdikl2OfH9G7C9QAHO2gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAePjG83DDmEb5iG02We8V1rttTW01ug15Ssljic9kDNEVd57mo1NEVdV6lPYBmOUkubZObQWWWd9rSpwffGMucTf5dZaxUiuFC9ODmSQquvBUVN5urV06zpJx/NfZTybzeuH6QXmxz2fEbV32X6xz8zrmv8AA9XtRWyOTwK9rlTwaFLh2Scw6CNKG1bXmakVv4osc9Wk8yNXwNlVUVvDq0TgvFNDfNMG3OttPEx+cNW9iV5TGru2M8d4Oy7sc2JMcYkoLJbYE7qoq5kYir5LU63uXwNaiqvgQrWSWb9Lndhm4YztOHLna7M26y0Vpmr4lifcqVkcapVsaqcGOe+RreK/0fHRdUTn2EtiPKa1XuPFWP7piTMq9xKix1WLbitayNfREqI1ya8dJN80DDDFTxMggiZHFG1GMYxqI1rUTRERE6kRCb8KsaV5z36M135nW3KH7ABpbAA8TGmM8NZe4XuGM8YXLo+zWqJJqup5GSXk2K5G67kbXPXiqdSKZiJmdIJnTnL2wZ9/4fWyX/6WP/0K5/8Ady75V7SGS+dl0rbNljjPpmst9OlVUx9HVdPuRK5Go7WaJiLxVE0RVU2WwMWka2rMR8JRGLS06RaPm8THO1NgrB2K7lge1YLx9jO+WV0bblSYXw7LWrSK+Nsjd96qxnFjmrwcvX40VC25UZz4EzltldcMG1tUk9qqOaXO311K+mrKCbj3E0T+LV4LoqaoujkRdUVEtVZUWTDlBX3mulo7bRxI+srqmRWxRtRre6lkdwTg1qauXwIniM9bL1JU45zTzW2jKKknosM43q6KgsLJWLG6tgoouRfWbvga9zdW68eL9dPDcVpbDm0Rpp669Z7fjKZtat4jXquWP9qHA+B8W1WBbZhXGmNr9bWRyXSiwnZH3B1tZIm8xZ13mtbqnHRFVePUXTK/NXBecGGf0qwPcn1NLHUSUdTDNE6GopKlmm/DNG7umPTVF0XwKipqiopyTYtpknw1mLiiqkdNcr5mHepqud/Fy7j2sYxF691qIuieDeXTgRMkal1r2v8AaAwtSI5lBL0DdEiT3DaiSiasr0TxvWTVV8O6mupd8KkRatetY69+kT+Ka3tymeku2Xr3zm+r+FCCexc7bVVFdLNG1itdu6avRPAhF6HrvIZ2iGa2jdjmxas6yggndD13kM7RB0PXeQztEK3692N2eyCCd0PXeQztEHQ9d5DO0Qb9e5uz2QQTuh67yGdog6HrvIZ2iDfr3N2eyCCd0PXeQztEHQ9d5DO0Qb9e5uz2Zlxnlliy6bR9BiqlsNRJZ+fW+qlrE05NORZHva9npoaMJ3Q9d5DO0QdD13kM7RD6u0ts4m08PAw8XSIwqRSNPWI9Z8teHg8OZmPWdUEq9wyxwNdcVwY3r7Ekt7pnRviqucSt0dH7hdxHIxdPShduh67yGdog6HrvIZ2iHBg5vEy0zbBvNZmNJ0nTWJ6xOnpPZU03usIJlnM+u/RfaXgvyrua0jJ0cuqf+bPj1TTivuTWnQ9d5DO0QyBtfUNTasybZVIrY3VFlYmrXarqkszVX0cFRD13sJFMfaV8vM8sTDvX56fwc2cia4cW7TC17HVFydixJcd3+nq4INdOvcY5f94aDqKeCrp5aWqhZLDMx0ckb01a9qpoqKnhRUORbItiqf8ANbUVsbGaVd2nkRVe1F0RkbPa1Tt3Q9d5DO0Q+f7XZiMTbmYtr0tp8oiPyXlqTwa8mE81sL3zKK/XvCNvmkTD+I445YUdqrZImSpIxqr5cbm7uvXouvDeNSZGWzonKXDNLuq3lKPnXH/rnul1/vluxNlnY8ZR00WKLDR3FtHIssCTORdxypovUvFF8KLwXRPEh6lJhyWgpYaGipYIKenjbFDFG5rWxsamjWoidSIiImh1ba9qa7Y2bhZS9dMSJ3r25aWmI3Yn46dWMLKzhYk2jp6Mw5s/zRtOYPr9d1Kvo9XO8HdTviXXXh1IM7kS6bReCLXp3EfR6P8AB11b3O0+qiH32raOawY/wRiCZGsVEXR6OTT9TOx/X1Jpyn/xF6o57ttk0Fo7nlKNYv2kRO4olm6/p/wPWbPmLZbLZ79jLY3+ydPzc14netTvaPvWzasoVq8q+XRuvMrlTz/Fqj4/94TMP4qfa9m2mxHBMrJqLDzooX6+5lYxYmf3kae9tEYeq6jJvEm/GxeRhhn132qqbk0blVPoRfvOI1F6lp9j6liV6IlTcltjV3tHKvOXz6enuWqnxHxdkZeu0tj5bBnnpmYrP/basTLbizOHi2n/ACrbsl4bposC3i9VEW8+71i0zkXqdDExERP7UknqPF2TZZbRiTGGEqly8pCsb9NOp0Uj43r/AH2/cdhyCwrWWzKDDUaRNTnFKtZqrkRVSZ7pEX7np9ByHA1HNhfa4v8Ah5Ua2S6rV6JvcF5VjatOPxNOi+b/AKUxdsYOuusb0fDCtp+GidycOMKf55rHta3bmeXdFa2PVH3G5Ro5vjjYx7l/vbhyrDVskylzhwPUyax095t1DJKi8GotTFyUmvxSau+4um1fT1V3xzgrAkenL1OrmsY9FVVqJmxM9cbtPpPT2wMHVNFh7DuLKaJsS22qdQq6Nyata9u8zq46NWJdPS4+hsHGpl8jk9m4k8s1GNvfbyrP26ckY1Zm98SP1dHfDEUOZ9fh3O+sxo6qnmpGXeqbJEr1ci0j5HNViJ6GaKnpahsewXiS75fUWOf1XIz2ptxf3aIjf1W89F+JUVPoMnZVZYS5h5X4+uiMa6son09VRyucjf1sLJXvb1/tNfu+JFVF8B8v2OplsnhZy+fj6v1MOf8AXaaz8ustma3rTSKeZ+TaNfUQVckVVSzMlhmhjkjkYurXtVqKiovhRUIpyjZYxLcsZZcpa6leUmw7KlC173pq6BU3ouvyUVWJ6GIUTadxXju1Zh2jCGFbvcqdy0MNSlNQSuR0s7pZN1NG8XroxuicU9Gp8DL+zWNjbWvsjfiJprrM9NI56/bGnzbrY8Rhxi6dWkgcxyGzeizVtzrTcXQQYjoI9aiHeRiVMaaJyzEX0ro5qdS+hUOoXRILJSpXXiupKKnWRkXKz1DGM33uRrU1VdNVVUT6T5Oe2fmNnZq2TzFdLxPTv2mO8T6NtLRiV369H5BNS0VqpqjY1Rf+sb/8T+PtVXGx0knJNa1FVzlkaiInjXicG9Hde7KGD6UMUdzY6S211FVtYujnQVLJEaviXRV0JXQ9d5DO0Qzad2dLcpY0mUEE7oeu8hnaIOh67yGdohjfr3Z3Z7IIJ3Q9d5DO0QdD13kM7RBv17m7PZBBVs28d02UmGGYiulElW+epZS09MydrXSOVFVV10XREa1V108SeE9DLfEbcysH0WMLZRupoKx0reRlkar2KyRzF1+Pd1+k7bZHMVykZ+a/opndi3LTXrp3/JG9E23PV7IJ3Q9d5DO0QdD13kM7RDi36917s9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsVveVD8h3tIJ7FVbaqSlpY2tZvRtcju7TxkXoeu8hnaITW1dOrM1nVBBO6HrvIZ2iDoeu8hnaIVv17sbs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsggndD13kM7RB0PXeQztEG/Xubs9kEE7oeu8hnaIOh67yGdog369zdnsfuX+K/IQT2Ojarovm+6zf5xv8A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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/9k="/>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><p>In this notebook, you learned how to measure and analyze RCS aspect angle dependence using RadarSimPy:</p>
+<h3 id="Key-Takeaways">Key Takeaways<a class="anchor-link" href="#Key-Takeaways">¶</a></h3><p><strong>1. RCS Fundamentals</strong></p>
+<ul>
+<li>Understood radar cross section as measure of target reflectivity</li>
+<li>Learned RCS formula: σ = lim 4πR²|E_s|²/|E_i|²</li>
+<li>Recognized critical dependence on aspect angle</li>
+<li>Appreciated target geometry and material effects</li>
+</ul>
+<p><strong>2. Flat Plate RCS Theory</strong></p>
+<ul>
+<li>Learned physical optics approximation: σ_max = 4πa²b²/λ²</li>
+<li>Understood maximum RCS at normal incidence (0°)</li>
+<li>Recognized sinc² angular pattern with nulls</li>
+<li>Calculated first null position: θ = arcsin(λ/2a)</li>
+</ul>
+<p><strong>3. Aspect Angle Effects</strong></p>
+<ul>
+<li>Observed maximum RCS at 0° (specular reflection)</li>
+<li>Saw rapid decay with increasing angle</li>
+<li>Identified lobing pattern from interference</li>
+<li>Measured 20-30 dB drop at 90° (edge-on)</li>
+</ul>
+<p><strong>4. FMCW Measurement Technique</strong></p>
+<ul>
+<li>Configured long PRP (0.5s) for slow rotation measurement</li>
+<li>Used 180 chirps to capture 90° rotation</li>
+<li>Applied pulse-level ray tracing for efficiency</li>
+<li>Extracted RCS from range-compressed returns</li>
+</ul>
+<p><strong>5. Rotation Dynamics</strong></p>
+<ul>
+<li>Modeled continuous rotation at 1°/s</li>
+<li>Captured 0.5° angular steps (180 measurements)</li>
+<li>Synchronized chirp timing with rotation</li>
+<li>Built complete aspect angle coverage</li>
+</ul>
+<p><strong>6. Range Processing</strong></p>
+<ul>
+<li>Applied range FFT with Chebyshev windowing</li>
+<li>Located target at specific range bin</li>
+<li>Extracted peak amplitude per chirp</li>
+<li>Created time-varying RCS measurement</li>
+</ul>
+<p><strong>7. RCS Pattern Visualization</strong></p>
+<ul>
+<li>Generated range-time heatmap showing variation</li>
+<li>Plotted RCS vs. angle curve (0-90°)</li>
+<li>Identified peaks, nulls, and side lobes</li>
+<li>Validated against theoretical predictions</li>
+</ul>
+<p><strong>8. Physical Interpretation</strong></p>
+<ul>
+<li>Connected RCS pattern to scattering physics</li>
+<li>Understood specular vs. edge diffraction</li>
+<li>Recognized sinc function from aperture effects</li>
+<li>Related to practical radar applications</li>
+</ul>
+<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
+<p><strong>1. Frequency Variations</strong>:</p>
+<ul>
+<li>Test different frequencies: 300 MHz, 3 GHz, 10 GHz</li>
+<li>Observe wavelength effect on null positions</li>
+<li>Calculate: θ_null = arcsin(λ/2a)</li>
+<li>Compare null spacing at different frequencies</li>
+</ul>
+<p><strong>2. Plate Size Studies</strong>:</p>
+<ul>
+<li>Vary dimensions: 2m, 10m, 20m plates</li>
+<li>Observe RCS scaling: σ ∝ a⁴/λ²</li>
+<li>Measure null positions vs. size</li>
+<li>Test large vs. small aperture effects</li>
+</ul>
+<p><strong>3. Rotation Rate Optimization</strong>:</p>
+<ul>
+<li>Increase to 2°/s, 5°/s (faster rotation)</li>
+<li>Decrease to 0.5°/s (finer sampling)</li>
+<li>Adjust PRP to match rotation</li>
+<li>Balance measurement time vs. resolution</li>
+</ul>
+<p><strong>4. Angular Range Extension</strong>:</p>
+<ul>
+<li>Extend to 180° (full front-to-back)</li>
+<li>Capture 360° complete rotation</li>
+<li>Observe symmetry in pattern</li>
+<li>Identify back-lobe characteristics</li>
+</ul>
+<p><strong>5. Bandwidth Effects</strong>:</p>
+<ul>
+<li>Increase to 500 MHz, 1 GHz</li>
+<li>Improve range resolution</li>
+<li>Better target isolation</li>
+<li>Cleaner RCS extraction</li>
+</ul>
+<p><strong>6. Polarization Studies</strong>:</p>
+<ul>
+<li>Configure different transmit polarizations</li>
+<li>Observe polarization-dependent RCS</li>
+<li>Test co-pol vs. cross-pol returns</li>
+<li>Understand polarization scattering</li>
+</ul>
+<p><strong>7. Multi-Plate Configurations</strong>:</p>
+<ul>
+<li>Add second plate at different range</li>
+<li>Test closely-spaced plates</li>
+<li>Observe interference effects</li>
+<li>Practice range resolution</li>
+</ul>
+<p><strong>8. Window Function Comparison</strong>:</p>
+<ul>
+<li>Test Hamming, Hanning, Blackman</li>
+<li>Vary sidelobe levels: 40 dB, 80 dB</li>
+<li>Observe impact on RCS measurement</li>
+<li>Balance resolution vs. dynamic range</li>
+</ul>
+<p><strong>9. Theoretical Validation</strong>:</p>
+<ul>
+<li>Calculate predicted RCS: 4πa²b²/λ²</li>
+<li>Compare with measured maximum</li>
+<li>Verify null positions analytically</li>
+<li>Plot theoretical sinc² overlay</li>
+</ul>
+<p><strong>10. Complex Target Shapes</strong>:</p>
+<ul>
+<li>Replace with cylinder, sphere, corner reflector</li>
+<li>Compare RCS patterns</li>
+<li>Understand shape-dependent scattering</li>
+<li>Build RCS signature library</li>
+</ul>
+<h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
+<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
+<li>RadarSimPy Simulator Module: <a href="https://radarsimx.github.io/radarsimpy/simulator.html">https://radarsimx.github.io/radarsimpy/simulator.html</a></li>
+<li>RCS Fundamentals: Radar cross section theory and measurement</li>
+<li>Physical Optics: High-frequency scattering approximations</li>
+<li>Flat Plate RCS: Analytical solutions and patterns</li>
+<li>Aspect Angle Dependence: Target orientation effects</li>
+<li>Radar Calibration: Using known targets for system verification</li>
+<li>Scattering Theory: Electromagnetic wave interaction with objects</li>
+</ul>
 </div>
 </div>
 </div>
