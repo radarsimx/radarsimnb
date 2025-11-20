@@ -1,0 +1,14 @@
+{%- extends 'lab/index.html.j2' -%}
+
+{# Remove all CSS so host site controls styling #}
+{% block html_head_css %}
+{# No CSS included - inherit from parent site #}
+{% endblock html_head_css %}
+
+{% block any_cell_style %}
+{# No cell-specific CSS #}
+{% endblock any_cell_style %}
+
+{% block notebook_css %}
+{# No notebook CSS #}
+{% endblock notebook_css %}

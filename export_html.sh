@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+TEMPLATE_PATH="$SCRIPT_DIR/templates"
+
 # Check if notebooks directory exists
 if [ ! -d "notebooks" ]; then
     echo "Error: notebooks directory not found"
@@ -11,6 +14,12 @@ fi
 if [ ! -d "html" ]; then
     echo "Creating html directory..."
     mkdir -p html
+fi
+
+# Check if template directory exists
+if [ ! -d "$TEMPLATE_PATH/iframe_template" ]; then
+    echo "Error: iframe_template not found in $TEMPLATE_PATH"
+    exit 1
 fi
 
 # Check if jupyter is available
@@ -28,7 +37,7 @@ for filename in ./notebooks/*.ipynb; do
     [ -e "$filename" ] || { echo "No .ipynb files found in notebooks directory"; exit 1; }
     
     echo "Converting $(basename "$filename")..."
-    if jupyter nbconvert --output-dir=./html --to html "$filename"; then
+    if jupyter nbconvert --output-dir=./html --to html --template=iframe_template --TemplateExporter.extra_template_basedirs="$TEMPLATE_PATH" "$filename"; then
         echo "  [OK] $(basename "$filename")"
         ((count++))
     else

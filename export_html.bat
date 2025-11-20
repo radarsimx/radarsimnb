@@ -1,5 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
+set "TEMPLATE_PATH=%~dp0templates"
 
 REM Check if notebooks directory exists
 if not exist "notebooks\" (
@@ -11,6 +12,12 @@ REM Check if html directory exists, create if needed
 if not exist "html\" (
     echo Creating html directory...
     mkdir html
+)
+
+REM Check if template directory exists
+if not exist "%TEMPLATE_PATH%\iframe_template" (
+    echo Error: iframe_template not found in %TEMPLATE_PATH%
+    exit /b 1
 )
 
 REM Check if jupyter is available
@@ -26,7 +33,7 @@ set failed=0
 
 FOR %%f IN (notebooks\*.ipynb) DO (
     echo Converting %%~nxf...
-    jupyter nbconvert --output-dir=./html --to html "%%f"
+    jupyter nbconvert --output-dir=./html --to html --template=iframe_template --TemplateExporter.extra_template_basedirs="%TEMPLATE_PATH%" "%%f"
     if errorlevel 1 (
         echo   [FAILED] %%~nxf
         set /a failed+=1
