@@ -1,5 +1,27 @@
 {%- extends 'lab/index.html.j2' -%}
 
+{% for css in resources.inlining.css -%}
+{# No inlining CSS #}
+{% endfor %}
+
+{% block notebook_css %}
+{# No notebook CSS #}
+{% endblock notebook_css %}
+
+{%- block html_head_js -%}
+{%- block html_head_js_requirejs -%}
+{# No html_head_js_requirejs #}
+{%- endblock html_head_js_requirejs -%}
+{%- endblock html_head_js -%}
+
+{% block jupyter_widgets %}
+{# No jupyter_widgets #}
+{% endblock jupyter_widgets %}
+
+{%- block html_head_js_mermaidjs -%}
+{# No MermaidJS #}
+{%- endblock html_head_js_mermaidjs -%}
+
 {# Override CSS to only keep code cell styling #}
 {% block html_head_css %}
 <style type="text/css">
@@ -135,21 +157,3 @@ div.prompt.input_prompt {
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
 </style>
 {% endblock html_head_css %}
-
-{% block notebook_css %}
-{# No notebook CSS #}
-{% endblock notebook_css %}
-
-{%- block html_head_js -%}
-{%- block html_head_js_requirejs -%}
-{# No html_head_js_requirejs #}
-{%- endblock html_head_js_requirejs -%}
-{%- endblock html_head_js -%}
-
-{% block jupyter_widgets %}
-{# No jupyter_widgets #}
-{% endblock jupyter_widgets %}
-
-{%- block html_head_js_mermaidjs -%}
-{# No MermaidJS #}
-{%- endblock html_head_js_mermaidjs -%}
