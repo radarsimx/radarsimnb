@@ -59,30 +59,24 @@ div.text_cell {
 
 .jp-InputPrompt,
 div.prompt.input_prompt {
-    color: var(--jp-prompt-color);
-    font-family: var(--jp-code-font-family);
-    font-size: 9pt;
-    padding-right: 0.3em;
-    min-width: 14ex;
-    text-align: right;
-    user-select: none;
+    display: none;
 }
 
-/* Target code only within input areas to avoid affecting markdown */
-.jp-InputArea pre,
-.jp-InputArea code {
-    font-family: var(--jp-code-font-family);
-    font-size: 11pt;
-    line-height: 1.21429em;
-    color: #000;
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
+/* Hide anchor links (¶) */
+a.anchor-link {
+    display: none !important;
 }
 
 /* Scrollbars for code blocks */
 .jp-InputArea pre {
+    padding: 0;
+    margin: 8px;
+    overflow-x: auto;
+}
+
+.jp-OutputArea-output pre {
+    padding: 0;
+    margin: 8px;
     overflow-x: auto;
 }
 
