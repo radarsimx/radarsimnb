@@ -72,12 +72,22 @@ a.anchor-link {
     padding: 0;
     margin: 8px;
     overflow-x: auto;
+    font-family: var(--jp-code-font-family);
 }
 
 .jp-OutputArea-output pre {
-    padding: 0;
+    padding: 8px;
     margin: 8px;
     overflow-x: auto;
+    font-family: var(--jp-code-font-family);
+}
+
+/* Apply font to code elements */
+.jp-InputArea code,
+.jp-OutputArea code,
+.highlight pre,
+.cm-editor {
+    font-family: var(--jp-code-font-family);
 }
 
 /* Syntax Highlighting (Pygments 'default' style) */
