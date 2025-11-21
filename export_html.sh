@@ -17,8 +17,8 @@ if [ ! -d "html" ]; then
 fi
 
 # Check if template directory exists
-if [ ! -d "$TEMPLATE_PATH/iframe_template" ]; then
-    echo "Error: iframe_template not found in $TEMPLATE_PATH"
+if [ ! -d "$TEMPLATE_PATH/notebook_template" ]; then
+    echo "Error: notebook_template not found in $TEMPLATE_PATH"
     exit 1
 fi
 
@@ -37,7 +37,7 @@ for filename in ./notebooks/*.ipynb; do
     [ -e "$filename" ] || { echo "No .ipynb files found in notebooks directory"; exit 1; }
     
     echo "Converting $(basename "$filename")..."
-    if jupyter nbconvert --output-dir=./html --to html --template=iframe_template --TemplateExporter.extra_template_basedirs="$TEMPLATE_PATH" "$filename"; then
+    if jupyter nbconvert --output-dir=./html --to html --template=notebook_template --TemplateExporter.extra_template_basedirs="$TEMPLATE_PATH" "$filename"; then
         echo "  [OK] $(basename "$filename")"
         ((count++))
     else
