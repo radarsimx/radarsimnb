@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head><meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>waveform_pulsed_radar_range_ambiguous</title>
+<style type="text/css">
+    pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
+.highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
+.highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
+.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
+.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
+.highlight .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
+.highlight .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
+.highlight .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
+.highlight .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
+.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
+.highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
+.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
+.highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
+.highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
+.highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
+.highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
+.highlight .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
+.highlight .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
+.highlight .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
+.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
+.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
+.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
+.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
+.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
+.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
+.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
+.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
+.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
+.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
+.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
+.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
+.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
+.highlight .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
+  </style>
+<!-- Load mathjax -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
+<!-- MathJax configuration -->
+<script type="text/x-mathjax-config">
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                messageStyle: 'none',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+    }
+    init_mathjax();
+    </script>
+<!-- End of mathjax configuration -->
+<style type="text/css">
+/* Jupyter-style code cell styling */
+:root {
+    --jp-code-font-family: 'Roboto Mono', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
+    --jp-cell-bg: #f7f7f7;
+    --jp-cell-border: #cfcfcf;
+    --jp-prompt-color: #303f9f;
+}
+
+/* Only target code input areas - apply border to InputArea only */
+.jp-Cell.jp-CodeCell .jp-InputArea,
+div.code_cell div.input_area {
+    background-color: var(--jp-cell-bg);
+    border: 1px solid var(--jp-cell-border);
+    border-radius: 2px;
+    margin: 8px 0;
+    padding: 4px;
+}
+
+/* Remove border from wrapper to avoid double border */
+.jp-Cell.jp-CodeCell .jp-Cell-inputWrapper {
+    border: none !important;
+    background: transparent;
+}
+
+/* Ensure markdown cells have no border */
+.jp-Cell.jp-MarkdownCell,
+.jp-Cell.jp-MarkdownCell .jp-InputArea,
+div.text_cell {
+    border: none !important;
+    background: transparent !important;
+}
+
+.jp-InputPrompt,
+div.prompt.input_prompt {
+    display: none;
+}
+
+/* Hide anchor links (¶) */
+a.anchor-link {
+    display: none !important;
+}
+
+/* Scrollbars for code blocks */
+.jp-InputArea pre {
+    padding: 0;
+    margin: 8px;
+    overflow-x: auto;
+    font-family: var(--jp-code-font-family);
+}
+
+.jp-OutputArea-output pre {
+    padding: 8px;
+    margin: 8px;
+    overflow-x: auto;
+    font-family: var(--jp-code-font-family);
+}
+
+/* Apply font to code elements */
+.jp-InputArea code,
+.jp-OutputArea code,
+.highlight pre,
+.cm-editor {
+    font-family: var(--jp-code-font-family);
+}
+
+/* Syntax Highlighting (Pygments 'default' style) */
+.highlight .hll { background-color: #ffffcc }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
+</head>
+<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">radarsimpy</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"`RadarSimPy` used in this example is version: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">radarsimpy</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>`RadarSimPy` used in this example is version: 14.1.0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Transmitter</span><span class="p">,</span> <span class="n">Receiver</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define antenna gain</span>
+<span class="n">antenna_gain</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># dBi - High-gain directional antenna</span>
+
+<span class="c1">### Azimuth Pattern (Horizontal Plane) ###</span>
+
+<span class="c1"># Define azimuth angle array: -20° to +20° in 1° steps</span>
+<span class="n">az_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># 41 points</span>
+
+<span class="c1"># Azimuth pattern: cos^500 taper with 20 dBi peak gain</span>
+<span class="c1"># Very narrow beamwidth (~2° @ -3dB) with low sidelobes</span>
+<span class="n">az_pattern</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_angle</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">500</span><span class="p">)</span> <span class="o">+</span> <span class="n">antenna_gain</span>  <span class="c1"># dB</span>
+
+<span class="c1">### Elevation Pattern (Vertical Plane) ###</span>
+
+<span class="c1"># Define elevation angle array: -20° to +20° in 1° steps</span>
+<span class="n">el_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># 41 points</span>
+
+<span class="c1"># Elevation pattern: cos^400 taper with 20 dBi peak gain</span>
+<span class="c1"># Narrow beamwidth (~2.5° @ -3dB)</span>
+<span class="n">el_pattern</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">el_angle</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">**</span> <span class="mi">400</span><span class="p">)</span> <span class="o">+</span> <span class="n">antenna_gain</span>  <span class="c1"># dB</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+
+<span class="c1"># Speed of light constant</span>
+<span class="n">light_speed</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span>  <span class="c1"># 299,792,458 m/s</span>
+
+<span class="c1">### Calculate Pulsed Radar Waveform Parameters ###</span>
+
+<span class="c1"># Performance Requirements</span>
+<span class="n">max_range</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1"># Maximum unambiguous range: 5000 m (5 km)</span>
+<span class="n">range_res</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Required range resolution: 50 m</span>
+
+<span class="c1"># Derived Waveform Parameters</span>
+<span class="n">pulse_bw</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">range_res</span><span class="p">)</span>  <span class="c1"># Pulse bandwidth: c/(2*ΔR) = 3 MHz</span>
+<span class="n">pulse_width</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">pulse_bw</span>  <span class="c1"># Pulse width: 1/B ≈ 333 ns</span>
+<span class="n">prf</span> <span class="o">=</span> <span class="n">light_speed</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">max_range</span><span class="p">)</span>  <span class="c1"># PRF: c/(2*R_max) = 30 kHz</span>
+<span class="n">prp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span>  <span class="c1"># PRP: 1/PRF ≈ 33.3 μs</span>
+
+<span class="c1"># Radar Parameters</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mf">6e6</span>  <span class="c1"># Sampling rate: 6 MHz (&gt; 2 × pulse_bw for Nyquist)</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="mf">10e9</span>  <span class="c1"># Carrier frequency: 10 GHz (X-band)</span>
+<span class="n">num_pulse</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Number of pulses: 10 (for non-coherent integration)</span>
+
+<span class="c1"># Calculate sample counts</span>
+<span class="n">total_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">prp</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">*</span> <span class="n">num_pulse</span><span class="p">)</span>  <span class="c1"># Total samples in observation</span>
+<span class="n">sample_per_pulse</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">prp</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>  <span class="c1"># Samples per pulse</span>
+
+<span class="c1">### Create Rectangular Pulse Envelope ###</span>
+
+<span class="c1"># Create time array for single pulse period</span>
+<span class="n">mod_t_single_pulse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sample_per_pulse</span><span class="p">)</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Time vector (seconds)</span>
+
+<span class="c1"># Initialize amplitude modulation array (all zeros initially)</span>
+<span class="n">amp_single_pulse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mod_t_single_pulse</span><span class="p">)</span>
+
+<span class="c1"># Set pulse-on period: amplitude = 1 for duration of pulse_width</span>
+<span class="n">amp_single_pulse</span><span class="p">[</span><span class="n">mod_t_single_pulse</span> <span class="o">&lt;=</span> <span class="n">pulse_width</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">1</span>  <span class="c1"># Rectangular pulse (first ~333 ns)</span>
+<span class="p">)</span>
+
+<span class="c1"># Repeat the pulse pattern for all pulses</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">amp_single_pulse</span><span class="p">,</span> <span class="n">num_pulse</span><span class="p">)</span>  <span class="c1"># Repeat amplitude pattern num_pulse times</span>
+<span class="n">mod_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">amp</span><span class="p">))</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Time array for entire pulse train</span>
+
+
+<span class="c1">### Define Transmitter Channel ###</span>
+
+<span class="c1"># Configure TX channel with antenna pattern and pulse modulation</span>
+<span class="n">tx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Antenna position at origin</span>
+    <span class="n">azimuth_angle</span><span class="o">=</span><span class="n">az_angle</span><span class="p">,</span>  <span class="c1"># Azimuth angles array</span>
+    <span class="n">azimuth_pattern</span><span class="o">=</span><span class="n">az_pattern</span><span class="p">,</span>  <span class="c1"># Azimuth gain pattern (dB)</span>
+    <span class="n">elevation_angle</span><span class="o">=</span><span class="n">el_angle</span><span class="p">,</span>  <span class="c1"># Elevation angles array</span>
+    <span class="n">elevation_pattern</span><span class="o">=</span><span class="n">el_pattern</span><span class="p">,</span>  <span class="c1"># Elevation gain pattern (dB)</span>
+    <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span>  <span class="c1"># Pulse amplitude modulation</span>
+    <span class="n">mod_t</span><span class="o">=</span><span class="n">mod_t</span><span class="p">,</span>  <span class="c1"># Modulation time array</span>
+<span class="p">)</span>
+
+<span class="c1">### Create Pulsed Radar Transmitter ###</span>
+
+<span class="n">tx</span> <span class="o">=</span> <span class="n">Transmitter</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><span class="n">fc</span><span class="p">,</span>  <span class="c1"># Carrier frequency: 10 GHz</span>
+    <span class="n">t</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">prf</span> <span class="o">*</span> <span class="n">num_pulse</span><span class="p">,</span>  <span class="c1"># Total observation time: PRP × num_pulse</span>
+    <span class="n">tx_power</span><span class="o">=</span><span class="mi">67</span><span class="p">,</span>  <span class="c1"># Transmit power: 67 dBm ≈ 5 kW peak power</span>
+    <span class="n">pulses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Number of pulse sequences: 1</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">tx_channel</span><span class="p">],</span>  <span class="c1"># Transmitter antenna configuration</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Visualize-Transmit-Pulse">Visualize Transmit Pulse<a class="anchor-link" href="#Visualize-Transmit-Pulse">¶</a></h3><p>Display the rectangular pulse envelope showing the short pulse duration.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+<span class="c1"># Create figure for pulse visualization</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Plot pulse envelope showing all 10 pulses</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">mod_t</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>  <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">amp</span> <span class="o">*</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Pulse amplitude</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Transmit Pulse"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">fill</span><span class="o">=</span><span class="s2">"tozeroy"</span><span class="p">,</span>
+        <span class="n">fillcolor</span><span class="o">=</span><span class="s2">"rgba(0,255,0,0.3)"</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Rectangular Transmit Pulse Train: 10 Pulses, 333 ns Each"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (normalized)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (μs)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># uncomment this to display interactive plot</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Define receiver channel with same antenna pattern (monostatic)</span>
+<span class="n">rx_channel</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Receiver position at origin (same as TX)</span>
+    <span class="n">azimuth_angle</span><span class="o">=</span><span class="n">az_angle</span><span class="p">,</span>  <span class="c1"># Same azimuth pattern as TX</span>
+    <span class="n">azimuth_pattern</span><span class="o">=</span><span class="n">az_pattern</span><span class="p">,</span>  <span class="c1"># Same azimuth gain</span>
+    <span class="n">elevation_angle</span><span class="o">=</span><span class="n">el_angle</span><span class="p">,</span>  <span class="c1"># Same elevation pattern</span>
+    <span class="n">elevation_pattern</span><span class="o">=</span><span class="n">el_pattern</span><span class="p">,</span>  <span class="c1"># Same elevation gain</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Create-Radar-Receiver">Create Radar Receiver<a class="anchor-link" href="#Create-Radar-Receiver">¶</a></h3><p>Define receiver with sampling and gain parameters.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create pulsed radar receiver</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">Receiver</span><span class="p">(</span>
+    <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>  <span class="c1"># Sampling rate: 6 MHz</span>
+    <span class="n">noise_figure</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>  <span class="c1"># Noise figure: 12 dB</span>
+    <span class="n">rf_gain</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>  <span class="c1"># RF gain: 20 dB (LNA)</span>
+    <span class="n">load_resistor</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>  <span class="c1"># Load resistance: 500 Ω</span>
+    <span class="n">baseband_gain</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>  <span class="c1"># Baseband gain: 80 dB</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="n">rx_channel</span><span class="p">],</span>  <span class="c1"># Receiver antenna configuration</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Create-Radar-System">Create Radar System<a class="anchor-link" href="#Create-Radar-System">¶</a></h3><p>Combine transmitter and receiver to form the complete pulsed radar.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create complete pulsed radar system</span>
+<span class="n">radar</span> <span class="o">=</span> <span class="n">Radar</span><span class="p">(</span><span class="n">transmitter</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">receiver</span><span class="o">=</span><span class="n">rx</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure Target 1: 6 km range, stationary</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">6000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: 6000m range</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Velocity: stationary</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># Radar cross section: 10 dBsm (small aircraft)</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure Target 2: 3 km range, stationary</span>
+<span class="n">target_2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Position: 3000m range (3000m spacing from target 1)</span>
+    <span class="n">speed</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Velocity: stationary</span>
+    <span class="n">rcs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># Radar cross section: 10 dBsm (same as target 1)</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Initial phase: 0 degrees</span>
+<span class="p">)</span>
+
+<span class="c1"># Combine targets for simulation</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_1</span><span class="p">,</span> <span class="n">target_2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import radar simulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_radar</span>
+
+<span class="c1"># Simulate pulsed radar with two stationary targets</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">sim_radar</span><span class="p">(</span><span class="n">radar</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+
+<span class="c1"># Extract simulation results</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span>  <span class="c1"># Time array [1, 10, samples]</span>
+<span class="n">baseband</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"baseband"</span><span class="p">]</span>  <span class="c1"># Complex I/Q + noise [1, 10, samples]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Simulation complete:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Baseband shape: </span><span class="si">{</span><span class="n">baseband</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Simulation complete:
+  Baseband shape: (1, 1, 2001)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Visualize-Baseband-Signals">Visualize Baseband Signals<a class="anchor-link" href="#Visualize-Baseband-Signals">¶</a></h3><p>Display time-domain I/Q signals showing pulse returns and noise.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create figure for baseband I/Q visualization</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Plot In-phase (I) component</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>  <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>  <span class="c1"># Real part (I channel)</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"I (In-phase)"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Plot Quadrature (Q) component</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+    <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">timestamp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>  <span class="c1"># Convert to microseconds</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">baseband</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]),</span>  <span class="c1"># Imaginary part (Q channel)</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"Q (Quadrature)"</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure plot layout</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Baseband I/Q Signals: Pulse Returns from Two Targets"</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (V)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">),</span>
+    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Time (μs)"</span><span class="p">,</span> <span class="n">gridcolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.98</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body>
+</html>
