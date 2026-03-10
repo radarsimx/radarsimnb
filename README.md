@@ -67,7 +67,6 @@
 | Notebook | Description |
 |---|---|
 | [lidar](notebooks/lidar.ipynb) | Lidar point cloud simulation |
-| [ground_speed_example](notebooks/ground_speed_example.ipynb) | Ground speed measurement |
 
 ## Exporting to HTML
 
