@@ -263,154 +263,19 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Micro-Doppler-Signatures:-Rotating-Turbine-Analysis">Micro-Doppler Signatures: Rotating Turbine Analysis<a class="anchor-link" href="#Micro-Doppler-Signatures:-Rotating-Turbine-Analysis">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates <strong>micro-Doppler signature analysis</strong>—a powerful radar technique for detecting and classifying targets based on the unique Doppler patterns created by rotating or vibrating components. Micro-Doppler has revolutionized target recognition, enabling identification of specific features like turbine blades, propellers, human gait, and vehicle wheels.</p>
-<h3 id="What-is-Micro-Doppler?">What is Micro-Doppler?<a class="anchor-link" href="#What-is-Micro-Doppler?">¶</a></h3><p><strong>Micro-Doppler</strong> refers to the additional Doppler frequency shifts produced by micro-motions of target components, superimposed on the main Doppler shift from the target's bulk motion.</p>
-<p><strong>Sources of Micro-Doppler:</strong></p>
-<ol>
-<li><strong>Rotation</strong>: Turbine blades, propellers, helicopter rotors, wheels</li>
-<li><strong>Vibration</strong>: Engine vibrations, structural oscillations</li>
-<li><strong>Articulation</strong>: Human limb motion (walking, running)</li>
-<li><strong>Oscillation</strong>: Pendulum-like motions</li>
-</ol>
-<p><strong>Doppler Shift Formula:</strong></p>
-<p>For a point moving with radial velocity $v_r$:</p>
-<p>$$f_d = \frac{2v_r}{\lambda} = \frac{2v_r f_c}{c}$$</p>
-<p>Where:</p>
-<ul>
-<li>$f_d$ = Doppler frequency (Hz)</li>
-<li>$v_r$ = Radial velocity (m/s)</li>
-<li>$\lambda$ = Wavelength (m)</li>
-<li>$f_c$ = Carrier frequency (Hz)</li>
-<li>$c$ = Speed of light (3×10⁸ m/s)</li>
-</ul>
-<h3 id="Rotating-Components">Rotating Components<a class="anchor-link" href="#Rotating-Components">¶</a></h3><p><strong>For a point on a rotating blade:</strong></p>
-<p>The radial velocity varies sinusoidally:</p>
-<p>$$v_r(t) = \omega R \sin(\theta(t))$$</p>
-<p>Where:</p>
-<ul>
-<li>$\omega$ = Angular velocity (rad/s)</li>
-<li>$R$ = Distance from rotation axis (m)</li>
-<li>$\theta(t)$ = Angle at time t</li>
-</ul>
-<p><strong>Maximum Doppler:</strong></p>
+<h1 id="Micro-Doppler-Signatures:-Rotating-Turbine">Micro-Doppler Signatures: Rotating Turbine<a class="anchor-link" href="#Micro-Doppler-Signatures:-Rotating-Turbine">¶</a></h1><p><strong>Micro-Doppler</strong> refers to the additional Doppler frequency shifts from rotating or vibrating target components (turbine blades, propellers, human limbs), superimposed on the bulk motion Doppler. For a point at radius $R$ rotating at angular velocity $\omega$, the radial velocity is:</p>
+<p>$$v_r(t) = \omega R \sin(\theta(t)), \qquad f_d = \frac{2v_r f_c}{c}$$</p>
+<p><strong>Maximum Doppler</strong> from blade tips:</p>
 <p>$$f_{d,max} = \frac{2\omega R f_c}{c}$$</p>
-<p>This creates a time-varying Doppler signature characteristic of rotation.</p>
-<h3 id="Micro-Doppler-Signature-Characteristics">Micro-Doppler Signature Characteristics<a class="anchor-link" href="#Micro-Doppler-Signature-Characteristics">¶</a></h3><p><strong>Turbine/Propeller Signatures:</strong></p>
-<ol>
-<li><strong>Periodic Modulation</strong>: Repeats at blade passage frequency</li>
-<li><strong>Blade Flash</strong>: Bright returns when blade perpendicular to radar</li>
-<li><strong>Doppler Spread</strong>: From maximum tip velocity to zero at hub</li>
-<li><strong>Harmonic Structure</strong>: Multiple Doppler bands from blade count</li>
-<li><strong>Sinusoidal Pattern</strong>: Doppler varies as sin(ωt)</li>
-</ol>
-<p><strong>Key Parameters:</strong></p>
-<ul>
-<li><strong>Modulation Period</strong>: $T = 2\pi/\omega$ (rotation period)</li>
-<li><strong>Doppler Extent</strong>: Proportional to blade tip velocity</li>
-<li><strong>Blade Count</strong>: Creates repeated patterns per revolution</li>
-<li><strong>Hub Return</strong>: Strong zero-Doppler component</li>
+<p>This creates a time-varying sinusoidal signature, characteristic of rotation. <strong>Time-frequency analysis</strong> (STFT, spectrogram) reveals how Doppler changes over time — standard FFT loses this temporal information.</p>
+<h3 id="This-Example">This Example<a class="anchor-link" href="#This-Example">¶</a></h3><ul>
+<li><strong>Radar</strong>: 24 GHz FMCW (K-band), 8 GHz BW → ΔR = 1.875 cm</li>
+<li><strong>Target</strong>: 3-blade turbine at 5 m, rotating at 30°/s (5 RPM)</li>
+<li><strong>Observation</strong>: 1,280 chirps over 3.2 s (2.5 ms PRP) → PRF = 400 Hz, Δf_d = 0.3125 Hz</li>
+<li><strong>Processing</strong>: Range-Doppler FFT with Chebyshev windows → 3D visualization</li>
+<li><strong>Expected</strong>: Sinusoidal Doppler modulation; max Doppler ~83 Hz (blade tips: v_tip ≈ 0.52 m/s); three flashes per rotation (3 blades); zero Doppler from stationary hub</li>
 </ul>
-<h3 id="Applications">Applications<a class="anchor-link" href="#Applications">¶</a></h3><p><strong>Defense and Security:</strong></p>
-<ul>
-<li><strong>Aircraft Classification</strong>: Identify by propeller/rotor signatures</li>
-<li><strong>Drone Detection</strong>: Distinguish UAVs from birds</li>
-<li><strong>Helicopter Recognition</strong>: Rotor blade count and speed</li>
-<li><strong>Vehicle Identification</strong>: Wheel rotation patterns</li>
-</ul>
-<p><strong>Industrial:</strong></p>
-<ul>
-<li><strong>Wind Turbine Monitoring</strong>: Blade condition assessment</li>
-<li><strong>Machinery Diagnostics</strong>: Detect bearing faults, imbalance</li>
-<li><strong>Vibration Analysis</strong>: Structural health monitoring</li>
-<li><strong>Quality Control</strong>: Rotating component inspection</li>
-</ul>
-<p><strong>Biometrics:</strong></p>
-<ul>
-<li><strong>Human Gait Recognition</strong>: Walking pattern identification</li>
-<li><strong>Activity Classification</strong>: Running, jumping, climbing</li>
-<li><strong>Medical Diagnosis</strong>: Gait abnormalities, tremor analysis</li>
-<li><strong>Security Screening</strong>: Personnel identification</li>
-</ul>
-<p><strong>Transportation:</strong></p>
-<ul>
-<li><strong>Traffic Monitoring</strong>: Vehicle classification</li>
-<li><strong>Railway Inspection</strong>: Wheel condition monitoring</li>
-<li><strong>Aviation Safety</strong>: Propeller health monitoring</li>
-</ul>
-<h3 id="Time-Frequency-Analysis">Time-Frequency Analysis<a class="anchor-link" href="#Time-Frequency-Analysis">¶</a></h3><p><strong>Why Time-Frequency?</strong></p>
-<p>Standard FFT loses time information. For micro-Doppler, we need to see <strong>how Doppler frequency changes over time</strong>.</p>
-<p><strong>Techniques:</strong></p>
-<ol>
-<li><p><strong>Short-Time Fourier Transform (STFT)</strong>:</p>
-<ul>
-<li>Windowed FFT at successive time intervals</li>
-<li>Creates spectrogram showing Doppler vs. time</li>
-<li>Trade-off between time and frequency resolution</li>
-</ul>
-</li>
-<li><p><strong>Wavelet Transform</strong>:</p>
-<ul>
-<li>Multi-resolution analysis</li>
-<li>Better for transient signatures</li>
-</ul>
-</li>
-<li><p><strong>Wigner-Ville Distribution</strong>:</p>
-<ul>
-<li>High resolution but cross-term artifacts</li>
-</ul>
-</li>
-</ol>
-<h3 id="FMCW-Radar-for-Micro-Doppler">FMCW Radar for Micro-Doppler<a class="anchor-link" href="#FMCW-Radar-for-Micro-Doppler">¶</a></h3><p><strong>Advantages:</strong></p>
-<ol>
-<li><strong>Range Resolution</strong>: Isolate target from clutter</li>
-<li><strong>Continuous Monitoring</strong>: Track evolving signatures</li>
-<li><strong>High Sensitivity</strong>: Long integration time</li>
-<li><strong>Range-Doppler Map</strong>: 2D visualization</li>
-<li><strong>Compact Design</strong>: Suitable for portable systems</li>
-</ol>
-<p><strong>Processing Chain:</strong></p>
-<ol>
-<li>Range FFT → Isolate target range bin</li>
-<li>Doppler FFT → Extract velocity information</li>
-<li>Range-Doppler map → Show micro-motion patterns</li>
-<li>Time-frequency analysis → Detailed micro-Doppler signature</li>
-</ol>
-<h3 id="You'll-Learn-How-To:">You'll Learn How To:<a class="anchor-link" href="#You'll-Learn-How-To:">¶</a></h3><ul>
-<li>Configure 24 GHz FMCW radar for micro-Doppler detection</li>
-<li>Model a rotating 3-blade turbine with realistic motion</li>
-<li>Simulate radar returns using pulse-level ray tracing</li>
-<li>Apply range-Doppler FFT processing</li>
-<li>Generate 3D range-Doppler visualization</li>
-<li>Interpret micro-Doppler signatures</li>
-<li>Identify blade flash and modulation patterns</li>
-<li>Understand Doppler spread from rotation</li>
-<li>Relate signature to physical rotation parameters</li>
-<li>Analyze time-varying spectral content</li>
-</ul>
-<h3 id="About-This-Example">About This Example<a class="anchor-link" href="#About-This-Example">¶</a></h3><p>This notebook uses <a href="https://radarsimx.com/radarsimx/radarsimpy/"><code>RadarSimPy</code></a> to demonstrate:</p>
-<p><strong>Scenario:</strong></p>
-<ul>
-<li>24 GHz FMCW radar (K-band)</li>
-<li>3-blade turbine at 5m range</li>
-<li>Blade rotation: 30°/s (5 RPM)</li>
-<li>Wide bandwidth: 8 GHz for high resolution</li>
-</ul>
-<p><strong>Processing:</strong></p>
-<ul>
-<li>1,280 chirps over 3.2 seconds</li>
-<li>Range-Doppler FFT with Chebyshev windows</li>
-<li>3D visualization of micro-Doppler patterns</li>
-</ul>
-<p><strong>Expected Results:</strong></p>
-<ul>
-<li>Sinusoidal Doppler modulation from blade rotation</li>
-<li>Three flashes per rotation (3 blades)</li>
-<li>Maximum Doppler from blade tips: ~±8 Hz</li>
-<li>Zero Doppler from stationary hub and tower</li>
-</ul>
-<p>The simulation demonstrates how micro-Doppler signatures enable detection and classification of rotating components, with applications from drone detection to machinery diagnostics.</p>
-<h2 id="Radar-System-Configuration">Radar System Configuration<a class="anchor-link" href="#Radar-System-Configuration">¶</a></h2><p>Configure a 24 GHz FMCW radar optimized for micro-Doppler detection.</p>
-<h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3><p>Import necessary RadarSimPy modules and NumPy for numerical operations.</p>
+<h2 id="Radar-System-Configuration">Radar System Configuration<a class="anchor-link" href="#Radar-System-Configuration">¶</a></h2><h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3>
 </div>
 </div>
 </div>
@@ -419,12 +284,23 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import necessary modules for radar simulation</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Radar</span><span class="p">,</span> <span class="n">Transmitter</span><span class="p">,</span> <span class="n">Receiver</span>
+
+<span class="c1"># Set to True for interactive plots; False renders a static JPEG (e.g. for HTML export)</span>
+<span class="n">INTERACTIVE</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="n">fig</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">INTERACTIVE</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -437,55 +313,58 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h3><p>Configure FMCW transmitter with parameters optimized for micro-Doppler analysis.</p>
-<h4 id="Define-FMCW-Radar-Transmitter">Define FMCW Radar Transmitter<a class="anchor-link" href="#Define-FMCW-Radar-Transmitter">¶</a></h4><p>Configure wideband chirp for high-resolution micro-Doppler measurement.</p>
-<p><strong>Transmitter Parameters:</strong></p>
-<ul>
-<li><p><strong>Frequency Range</strong>: 20-28 GHz</p>
-<ul>
-<li>Center: 24 GHz (K-band)</li>
-<li>Bandwidth: 8 GHz (ultra-wideband)</li>
-<li>Range resolution: ΔR = c/(2B) = 1.875 cm</li>
-<li>Excellent for isolating turbine from background</li>
-</ul>
-</li>
-<li><p><strong>Chirp Duration</strong>: 300 μs</p>
-<ul>
-<li>Fast-time sampling period</li>
-<li>Allows frequent Doppler sampling</li>
-</ul>
-</li>
-<li><p><strong>Transmit Power</strong>: 25 dBm (~316 mW)</p>
-<ul>
-<li>Adequate for close-range detection</li>
-</ul>
-</li>
-<li><p><strong>Pulse Repetition Period</strong>: 2.5 ms</p>
-<ul>
-<li>Time between chirps</li>
-<li>PRF = 400 Hz</li>
-<li>Unambiguous velocity: ±31.25 m/s (at 24 GHz)</li>
-<li>More than sufficient for turbine blade tips</li>
-</ul>
-</li>
-<li><p><strong>Number of Pulses</strong>: 1,280</p>
-<ul>
-<li>Total observation: 1280 × 2.5 ms = 3.2 seconds</li>
-<li>At 30°/s rotation: 3.2s × 30°/s = 96° rotation</li>
-<li>Captures multiple blade rotations (&gt;1 full revolution)</li>
-</ul>
-</li>
-</ul>
-<p><strong>Doppler Resolution:</strong></p>
-<p>$$\Delta f_d = \frac{1}{N \cdot PRP} = \frac{1}{1280 \times 0.0025} = 0.3125 \text{ Hz}$$</p>
-<p>This fine Doppler resolution enables detailed micro-Doppler analysis.</p>
-<p><strong>Micro-Doppler Observability:</strong></p>
-<p>For blade tip at radius R = 1m, rotating at 30°/s:</p>
-<ul>
-<li>Tip velocity: v = ωR = (30°/s × π/180) × 1m ≈ 0.52 m/s</li>
-<li>Maximum Doppler: f_d = 2v×f_c/c = 2×0.52×24×10⁹/(3×10⁸) ≈ 83 Hz</li>
-<li>Well within unambiguous range (±31.25 m/s → ±5000 Hz)</li>
-</ul>
+<h3 id="Transmitter-Configuration">Transmitter Configuration<a class="anchor-link" href="#Transmitter-Configuration">¶</a></h3><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frequency</td>
+<td>20–28 GHz</td>
+<td>Center 24 GHz, BW = 8 GHz</td>
+</tr>
+<tr>
+<td>Range resolution</td>
+<td>ΔR = 1.875 cm</td>
+<td>c/(2B)</td>
+</tr>
+<tr>
+<td>Chirp duration</td>
+<td>300 µs</td>
+<td></td>
+</tr>
+<tr>
+<td>TX power</td>
+<td>25 dBm</td>
+<td>~316 mW</td>
+</tr>
+<tr>
+<td>PRP</td>
+<td>2.5 ms</td>
+<td>PRF = 400 Hz</td>
+</tr>
+<tr>
+<td>Pulses</td>
+<td>1,280</td>
+<td>3.2 s observation; captures &gt;1 rotation</td>
+</tr>
+<tr>
+<td>Doppler resolution</td>
+<td>0.3125 Hz</td>
+<td>1/(N×PRP)</td>
+</tr>
+<tr>
+<td>Unambiguous velocity</td>
+<td>±31.25 m/s</td>
+<td>More than sufficient for turbine tips</td>
+</tr>
+</tbody>
+</table>
+<p>For blade tip at R = 1 m, ω = 30°/s: v_tip ≈ 0.52 m/s → f_d ≈ 83 Hz (well within range).</p>
 </div>
 </div>
 </div>
@@ -523,39 +402,42 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h3><p>Configure receiver for high-sensitivity micro-Doppler detection.</p>
-<h4 id="Define-Radar-Receiver">Define Radar Receiver<a class="anchor-link" href="#Define-Radar-Receiver">¶</a></h4><p>Set up receiver parameters optimized for close-range micro-Doppler measurement.</p>
-<p><strong>Receiver Parameters:</strong></p>
-<ul>
-<li><p><strong>Sampling Rate</strong>: 2 MHz</p>
-<ul>
-<li>Captures beat frequencies</li>
-<li>Maximum range: ~30 m (adequate for 5m turbine)</li>
-</ul>
-</li>
-<li><p><strong>Noise Figure</strong>: 6 dB</p>
-<ul>
-<li>Low noise for sensitive detection</li>
-<li>Better than typical 8 dB</li>
-</ul>
-</li>
-<li><p><strong>RF Gain</strong>: 20 dB</p>
-<ul>
-<li>LNA amplification</li>
-</ul>
-</li>
-<li><p><strong>Load Resistor</strong>: 500 Ω</p>
-<ul>
-<li>Power-to-voltage conversion</li>
-</ul>
-</li>
-<li><p><strong>Baseband Gain</strong>: 30 dB</p>
-<ul>
-<li>IF amplification</li>
-<li>Total gain: 50 dB</li>
-</ul>
-</li>
-</ul>
+<h3 id="Receiver-Configuration">Receiver Configuration<a class="anchor-link" href="#Receiver-Configuration">¶</a></h3><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sampling rate</td>
+<td>2 MHz</td>
+<td>R_max ≈ 30 m</td>
+</tr>
+<tr>
+<td>Noise figure</td>
+<td>6 dB</td>
+<td>Low noise for sensitivity</td>
+</tr>
+<tr>
+<td>RF gain</td>
+<td>20 dB</td>
+<td></td>
+</tr>
+<tr>
+<td>BB gain</td>
+<td>30 dB</td>
+<td>Total 50 dB</td>
+</tr>
+<tr>
+<td>Load resistor</td>
+<td>500 Ω</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -593,7 +475,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Create-Radar-System">Create Radar System<a class="anchor-link" href="#Create-Radar-System">¶</a></h3><p>Combine transmitter and receiver to form the complete FMCW radar for micro-Doppler analysis.</p>
+<h3 id="Create-Radar-System">Create Radar System<a class="anchor-link" href="#Create-Radar-System">¶</a></h3>
 </div>
 </div>
 </div>
@@ -619,42 +501,13 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Rotating-Turbine-Target-Model">Rotating Turbine Target Model<a class="anchor-link" href="#Rotating-Turbine-Target-Model">¶</a></h2><p>Configure a 3-blade turbine with continuous rotation to generate micro-Doppler signatures.</p>
-<h3 id="Target-Configuration">Target Configuration<a class="anchor-link" href="#Target-Configuration">¶</a></h3><p><strong>Turbine Properties:</strong></p>
+<h2 id="Rotating-Turbine-Target-Model">Rotating Turbine Target Model<a class="anchor-link" href="#Rotating-Turbine-Target-Model">¶</a></h2><p>A 3-blade turbine at 5 m rotates continuously at 30°/s around the pitch axis (Y-axis). <code>rotation_rate=(0, 30, 0)</code> in deg/s. Over 3.2 s, it rotates 96° — enough to capture the full micro-Doppler pattern.</p>
+<p><strong>Expected micro-Doppler</strong>:</p>
 <ul>
-<li><strong>Model</strong>: 3-blade turbine (wind turbine or propeller style)</li>
-<li><strong>Location</strong>: 5m range along x-axis (close range for strong returns)</li>
-<li><strong>Initial Orientation</strong>: (0°, 0°, 0°) yaw, pitch, roll</li>
-<li><strong>Rotation</strong>: Around pitch axis (Y-axis) at 30°/s</li>
-<li><strong>Stationary</strong>: No translational motion</li>
-</ul>
-<p><strong>Rotation Parameters:</strong></p>
-<p>The <code>rotation_rate</code> parameter specifies continuous rotation:</p>
-<ul>
-<li><strong>Format</strong>: (yaw_rate, pitch_rate, roll_rate) in degrees/second</li>
-<li><strong>Value</strong>: (0, 30, 0) → Rotating around pitch axis (Y-axis)</li>
-<li><strong>Rate</strong>: 30°/s = 0.5 RPM (5 rotations per minute)</li>
-</ul>
-<p><strong>Physical Interpretation:</strong></p>
-<ul>
-<li><strong>Rotation Axis</strong>: Perpendicular to radar line-of-sight</li>
-<li><strong>Blade Motion</strong>: Creates maximum radial velocity variation</li>
-<li><strong>Optimal Viewing</strong>: Blades sweep through radar beam</li>
-<li><strong>Micro-Doppler</strong>: Strong sinusoidal modulation</li>
-</ul>
-<p><strong>Expected Micro-Doppler:</strong></p>
-<p>For a typical turbine with blade length ~1m:</p>
-<ul>
-<li><strong>Maximum tip velocity</strong>: v_tip = ωR = (30°/s × π/180) × 1m ≈ 0.52 m/s</li>
-<li><strong>Maximum Doppler shift</strong>: f_d = 2v/λ ≈ 2×0.52×24×10⁹/(3×10⁸) ≈ 83 Hz</li>
-<li><strong>Modulation period</strong>: T = 360°/30°/s = 12 seconds per rotation</li>
-<li><strong>Blade passage</strong>: 3 flashes per rotation (3 blades)</li>
-</ul>
-<p><strong>Observation Duration:</strong></p>
-<ul>
-<li>Total time: 1280 × 2.5ms = 3.2 seconds</li>
-<li>Rotation during observation: 30°/s × 3.2s = 96°</li>
-<li>Partial rotations: ~0.27 revolutions (but captures full micro-Doppler pattern)</li>
+<li>Blade tip velocity: $v_{tip} = \omega R = (30°/s \times \pi/180) \times 1\,\text{m} \approx 0.52\,\text{m/s}$</li>
+<li>Max Doppler: $f_d = 2v_{tip}f_c/c \approx 83\,\text{Hz}$</li>
+<li>Modulation period: 12 s/rotation</li>
+<li>Blade passage: 3 flashes per rotation</li>
 </ul>
 </div>
 </div>
@@ -691,7 +544,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Visualize-Turbine-Model">Visualize Turbine Model<a class="anchor-link" href="#Visualize-Turbine-Model">¶</a></h3><p>Display the 3-blade turbine geometry showing hub and blade structure.</p>
+<h3 id="Visualize-Turbine-Model">Visualize Turbine Model<a class="anchor-link" href="#Visualize-Turbine-Model">¶</a></h3>
 </div>
 </div>
 </div>
@@ -700,13 +553,10 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Import libraries for 3D visualization</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pymeshlab</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymeshlab</span>
 
 <span class="c1"># Load turbine 3D mesh</span>
 <span class="n">ms</span> <span class="o">=</span> <span class="n">pymeshlab</span><span class="o">.</span><span class="n">MeshSet</span><span class="p">()</span>
@@ -714,35 +564,39 @@ a.anchor-link {
 <span class="n">t_mesh</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">current_mesh</span><span class="p">()</span>
 
 <span class="c1"># Extract vertex positions and face connectivity</span>
-<span class="n">v_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">vertex_matrix</span><span class="p">())</span>  <span class="c1"># Vertex coordinates (N x 3)</span>
-<span class="n">f_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">face_matrix</span><span class="p">())</span>  <span class="c1"># Face indices (M x 3)</span>
+<span class="n">v_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">vertex_matrix</span><span class="p">())</span>
+<span class="n">f_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_mesh</span><span class="o">.</span><span class="n">face_matrix</span><span class="p">())</span>
 
 <span class="c1"># Create 3D mesh visualization</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Mesh3d</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># X coordinates</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>  <span class="c1"># Y coordinates</span>
-        <span class="n">z</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>  <span class="c1"># Z coordinates</span>
-        <span class="n">i</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># Face vertex indices</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">z</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">i</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="n">j</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
         <span class="n">k</span><span class="o">=</span><span class="n">f_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-        <span class="n">intensity</span><span class="o">=</span><span class="n">v_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>  <span class="c1"># Color by height</span>
-        <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Viridis"</span><span class="p">,</span>  <span class="c1"># Color scheme</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">"lightsteelblue"</span><span class="p">,</span>
+        <span class="n">flatshading</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">lighting</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">ambient</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">diffuse</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">specular</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">roughness</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+        <span class="n">lightposition</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1000</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
 
 <span class="c1"># Configure 3D plot layout</span>
-<span class="n">fig</span><span class="p">[</span><span class="s2">"layout"</span><span class="p">][</span><span class="s2">"scene"</span><span class="p">][</span><span class="s2">"aspectmode"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"data"</span>  <span class="c1"># Maintain aspect ratio</span>
-<span class="n">fig</span><span class="p">[</span><span class="s2">"layout"</span><span class="p">][</span><span class="s2">"height"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">800</span>  <span class="c1"># Plot height in pixels</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"3-Blade Turbine Model"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">scene</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">aspectmode</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
+        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">zaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<span class="p">)</span>
 
-<span class="c1"># uncomment this to display interactive plot</span>
-<span class="c1"># fig.show()</span>
-
-<span class="c1"># display static image to reduce size on radarsimx.com</span>
-<span class="n">img_bytes</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">img_bytes</span><span class="p">))</span>
+<span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -767,47 +621,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Radar-Scene-Simulation">Radar Scene Simulation<a class="anchor-link" href="#Radar-Scene-Simulation">¶</a></h2><p>Simulate radar returns from rotating turbine using pulse-level ray tracing.</p>
-<h3 id="Simulation-Parameters">Simulation Parameters<a class="anchor-link" href="#Simulation-Parameters">¶</a></h3><p><strong>Ray Tracing Configuration:</strong></p>
-<ul>
-<li><p><strong>Density</strong>: 1 ray per wavelength²</p>
-<ul>
-<li>Standard density for moderate-complexity targets</li>
-<li>Balances accuracy with computation time</li>
-</ul>
-</li>
-<li><p><strong>Level</strong>: <code>'pulse'</code></p>
-<ul>
-<li>Ray tracing computed once per chirp (pulse)</li>
-<li>Updates turbine orientation for each chirp</li>
-<li>More efficient than sample-level for rotation studies</li>
-<li>Adequate for micro-Doppler analysis</li>
-</ul>
-</li>
-</ul>
-<p><strong>Pulse-Level Ray Tracing:</strong></p>
-<p>At each pulse (every 2.5ms):</p>
-<ol>
-<li>Turbine rotates by: 30°/s × 2.5ms = 0.075° from previous pulse</li>
-<li>Ray tracer computes RCS for new orientation</li>
-<li>Baseband captures instantaneous return</li>
-<li>1,280 pulses build complete micro-Doppler signature</li>
-</ol>
-<p><strong>Output Data Structure:</strong></p>
-<ul>
-<li><strong>Dimensions</strong>: [channels, pulses, samples]</li>
-<li><strong>Channels</strong>: 1 (single Tx/Rx)</li>
-<li><strong>Pulses</strong>: 1,280 (slow-time)</li>
-<li><strong>Samples</strong>: ~600 per chirp (2 MHz × 300 μs, fast-time)</li>
-</ul>
-<p><strong>Expected Computation:</strong></p>
-<ul>
-<li>Pulse-level is much faster than sample-level</li>
-<li>Typical runtime: 30-120 seconds depending on mesh complexity</li>
-<li>Captures micro-Doppler variation efficiently</li>
-</ul>
-<p><strong>Noise Addition:</strong></p>
-<p>System noise is added to simulate realistic detection conditions and assess SNR for micro-Doppler features.</p>
+<h2 id="Radar-Scene-Simulation">Radar Scene Simulation<a class="anchor-link" href="#Radar-Scene-Simulation">¶</a></h2><p><strong>Pulse-level ray tracing</strong>: Each chirp (every 2.5 ms) updates the turbine orientation by 0.075°, recomputes RCS, and captures the return. Output: <code>[1 channel × 1,280 pulses × 600 samples]</code>. System noise is added for realistic SNR.</p>
 </div>
 </div>
 </div>
@@ -864,43 +678,13 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Range-Doppler-Processing">Range-Doppler Processing<a class="anchor-link" href="#Range-Doppler-Processing">¶</a></h2><p>Apply 2D FFT to generate range-Doppler map revealing micro-Doppler signatures.</p>
-<h3 id="Two-Dimensional-FFT-Processing">Two-Dimensional FFT Processing<a class="anchor-link" href="#Two-Dimensional-FFT-Processing">¶</a></h3><p><strong>Processing Steps:</strong></p>
+<h2 id="Range-Doppler-Processing">Range-Doppler Processing<a class="anchor-link" href="#Range-Doppler-Processing">¶</a></h2><p>Apply 2D FFT with Chebyshev windows (60 dB sidelobes) to generate a range-Doppler map:</p>
 <ol>
-<li><p><strong>Range FFT</strong>: Compress chirp across fast-time</p>
-<ul>
-<li>Window: Chebyshev (60 dB sidelobes)</li>
-<li>Extracts range profiles</li>
-</ul>
-</li>
-<li><p><strong>Doppler FFT</strong>: Analyze phase across slow-time</p>
-<ul>
-<li>Window: Chebyshev (60 dB sidelobes)</li>
-<li>Extracts velocity/Doppler information</li>
-</ul>
-</li>
-<li><p><strong>fftshift</strong>: Center zero-Doppler frequency</p>
-<ul>
-<li>Shifts Doppler axis for symmetric display</li>
-<li>Negative Doppler = approaching, Positive = receding</li>
-</ul>
-</li>
+<li><strong>Range FFT</strong>: Compress chirp → range profiles</li>
+<li><strong>Doppler FFT</strong>: Extract velocity across slow-time</li>
+<li><strong>fftshift</strong>: Center zero-Doppler for symmetric display</li>
 </ol>
-<p><strong>Micro-Doppler Extraction:</strong></p>
-<p>The range-Doppler map shows:</p>
-<ul>
-<li><strong>Range dimension</strong>: Isolates turbine at 5m</li>
-<li><strong>Doppler dimension</strong>: Shows time-varying micro-Doppler</li>
-<li><strong>Amplitude</strong>: Indicates scattering strength</li>
-</ul>
-<p><strong>Expected Features:</strong></p>
-<ol>
-<li><strong>Hub Component</strong>: Strong return at zero Doppler (stationary)</li>
-<li><strong>Blade Returns</strong>: Distributed across Doppler bins</li>
-<li><strong>Maximum Spread</strong>: ±83 Hz (blade tips)</li>
-<li><strong>Sinusoidal Pattern</strong>: Time-varying Doppler from rotation</li>
-<li><strong>Blade Flash</strong>: Periodic bright returns (3 per revolution)</li>
-</ol>
+<p>Expected features: hub at zero Doppler (stationary), blade returns spread across ±83 Hz, periodic bright flashes (blade perpendicular to radar), sinusoidal time-varying pattern.</p>
 </div>
 </div>
 </div>
@@ -941,29 +725,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Visualize-Micro-Doppler-Signature">Visualize Micro-Doppler Signature<a class="anchor-link" href="#Visualize-Micro-Doppler-Signature">¶</a></h3><p>Generate 3D range-Doppler map showing micro-Doppler patterns from rotating turbine blades.</p>
-<p><strong>Visualization Strategy:</strong></p>
-<ul>
-<li><strong>Focus on turbine range</strong>: Extract range bins 4.5-5.5m (around 5m target)</li>
-<li><strong>3D surface plot</strong>: Shows amplitude vs. range and Doppler</li>
-<li><strong>Camera angle</strong>: Optimized to reveal micro-Doppler structure</li>
-</ul>
-<p><strong>Interpretation Guide:</strong></p>
-<ol>
-<li><strong>Zero-Doppler Ridge</strong>: Hub and tower (stationary components)</li>
-<li><strong>Doppler Spread</strong>: ±83 Hz from rotating blade tips</li>
-<li><strong>Sinusoidal Modulation</strong>: Blade Doppler varies as sin(ωt)</li>
-<li><strong>Bright Flashes</strong>: Maximum RCS when blade perpendicular to radar</li>
-<li><strong>Three-Fold Pattern</strong>: Three blades create repeated signatures</li>
-</ol>
-<p><strong>Physical Meaning:</strong></p>
-<ul>
-<li><strong>Horizontal axis (Range)</strong>: Position of scatterers</li>
-<li><strong>Vertical axis (Velocity/Doppler)</strong>: Radial velocity of scatterers</li>
-<li><strong>Height/Color</strong>: Scattering amplitude (RCS)</li>
-</ul>
-<p><strong>Micro-Doppler Signature:</strong></p>
-<p>The characteristic "butterfly" or "propeller" pattern in Doppler space indicates rotation, distinguishing turbines from other targets.</p>
+<h3 id="Micro-Doppler-Signature-Visualization">Micro-Doppler Signature Visualization<a class="anchor-link" href="#Micro-Doppler-Signature-Visualization">¶</a></h3><p>3D surface plot (range 4.5–5.5 m) showing amplitude vs. range and Doppler. Expected: zero-Doppler ridge (hub), ±83 Hz spread (blade tips), three-fold repeating pattern (3 blades), characteristic "butterfly" or "propeller" shape in Doppler space.</p>
 </div>
 </div>
 </div>
@@ -972,7 +734,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Extract magnitude and convert to dB scale</span>
@@ -981,19 +743,19 @@ a.anchor-link {
 
 <span class="c1"># Calculate maximum unambiguous range</span>
 <span class="n">max_range</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">3e8</span>  <span class="c1"># Speed of light</span>
-    <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"receiver"</span><span class="p">]</span><span class="o">.</span><span class="n">bb_prop</span><span class="p">[</span><span class="s2">"fs"</span><span class="p">]</span>  <span class="c1"># Sampling rate</span>
-    <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulse_length"</span><span class="p">]</span>  <span class="c1"># Chirp duration</span>
-    <span class="o">/</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"bandwidth"</span><span class="p">]</span>  <span class="c1"># Chirp bandwidth</span>
-    <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># Two-way propagation</span>
+    <span class="mf">3e8</span>
+    <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"receiver"</span><span class="p">]</span><span class="o">.</span><span class="n">bb_prop</span><span class="p">[</span><span class="s2">"fs"</span><span class="p">]</span>
+    <span class="o">*</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulse_length"</span><span class="p">]</span>
+    <span class="o">/</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"bandwidth"</span><span class="p">]</span>
+    <span class="o">/</span> <span class="mi">2</span>
 <span class="p">)</span>
 
-<span class="c1"># Calculate unambiguous velocity (Doppler limits)</span>
+<span class="c1"># Calculate unambiguous velocity</span>
 <span class="n">unambiguous_speed</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">3e8</span>  <span class="c1"># Speed of light</span>
-    <span class="o">/</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"prp"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># PRP</span>
-    <span class="o">/</span> <span class="mf">24e9</span>  <span class="c1"># Carrier frequency</span>
-    <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># Two-way Doppler</span>
+    <span class="mf">3e8</span>
+    <span class="o">/</span> <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"prp"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="o">/</span> <span class="mf">24e9</span>
+    <span class="o">/</span> <span class="mi">2</span>
 <span class="p">)</span>
 
 <span class="c1"># Create range axis</span>
@@ -1006,8 +768,8 @@ a.anchor-link {
 
 <span class="c1"># Create Doppler axis (centered at zero)</span>
 <span class="n">doppler_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-    <span class="o">-</span><span class="n">unambiguous_speed</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># Negative velocities (approaching)</span>
-    <span class="n">unambiguous_speed</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># Positive velocities (receding)</span>
+    <span class="o">-</span><span class="n">unambiguous_speed</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">unambiguous_speed</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
     <span class="n">radar</span><span class="o">.</span><span class="n">radar_prop</span><span class="p">[</span><span class="s2">"transmitter"</span><span class="p">]</span><span class="o">.</span><span class="n">waveform_prop</span><span class="p">[</span><span class="s2">"pulses"</span><span class="p">],</span>
     <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1017,22 +779,21 @@ a.anchor-link {
 
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
     <span class="n">go</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">[</span><span class="n">rng_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>  <span class="c1"># Range axis (m): 4.5-5.5m</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">doppler_axis</span><span class="p">,</span>  <span class="c1"># Velocity axis (m/s)</span>
-        <span class="n">z</span><span class="o">=</span><span class="n">temp</span><span class="p">[:,</span> <span class="n">rng_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>  <span class="c1"># Amplitude (dB)</span>
-        <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Rainbow"</span><span class="p">,</span>  <span class="c1"># Color scheme</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">range_axis</span><span class="p">[</span><span class="n">rng_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">doppler_axis</span><span class="p">,</span>
+        <span class="n">z</span><span class="o">=</span><span class="n">temp</span><span class="p">[:,</span> <span class="n">rng_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Rainbow"</span><span class="p">,</span>
         <span class="n">colorbar</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
 
 <span class="c1"># Configure camera angle for optimal view</span>
 <span class="n">camera</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">up</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># Up direction</span>
-    <span class="n">center</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>  <span class="c1"># Center point</span>
-    <span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># Camera position</span>
+    <span class="n">up</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">center</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+    <span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
 <span class="p">)</span>
 
-<span class="c1"># Configure 3D plot layout</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">"Micro-Doppler Signature: Rotating Turbine (24 GHz)"</span><span class="p">,</span>
     <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
@@ -1040,19 +801,13 @@ a.anchor-link {
         <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Range (m)"</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">]),</span>
         <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Velocity (m/s)"</span><span class="p">),</span>
         <span class="n">zaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Amplitude (dB)"</span><span class="p">),</span>
-        <span class="n">aspectmode</span><span class="o">=</span><span class="s2">"cube"</span><span class="p">,</span>  <span class="c1"># Equal aspect ratio</span>
+        <span class="n">aspectmode</span><span class="o">=</span><span class="s2">"cube"</span><span class="p">,</span>
         <span class="n">camera</span><span class="o">=</span><span class="n">camera</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
-    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="s2">"h"</span><span class="p">),</span>
 <span class="p">)</span>
 
-<span class="c1"># uncomment this to display interactive plot</span>
-<span class="c1"># fig.show()</span>
-
-<span class="c1"># display static image to reduce size on radarsimx.com</span>
-<span class="n">img_bytes</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">img_bytes</span><span class="p">))</span>
+<span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1077,145 +832,60 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><p>In this notebook, you learned how to detect and analyze micro-Doppler signatures using RadarSimPy:</p>
-<h3 id="Key-Takeaways">Key Takeaways<a class="anchor-link" href="#Key-Takeaways">¶</a></h3><p><strong>1. Micro-Doppler Fundamentals</strong></p>
-<ul>
-<li>Understood micro-Doppler as additional Doppler from component motion</li>
-<li>Learned Doppler formula: f_d = 2v_r f_c / c</li>
-<li>Recognized sources: rotation, vibration, articulation, oscillation</li>
-<li>Appreciated sinusoidal patterns from rotating components</li>
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><ul>
+<li>Micro-Doppler signatures from rotating components create time-varying sinusoidal patterns distinct from bulk motion Doppler</li>
+<li>A 3-blade turbine at 5 m rotating at 30°/s produces max Doppler ~83 Hz from blade tips (v_tip ≈ 0.52 m/s)</li>
+<li>24 GHz FMCW radar with 1,280 chirps (3.2 s, 2.5 ms PRP) provides 0.3125 Hz Doppler resolution</li>
+<li>Pulse-level ray tracing efficiently captures rotation dynamics by updating orientation at each chirp</li>
+<li>Range-Doppler FFT reveals the characteristic "butterfly" pattern: zero-Doppler hub, ±83 Hz spread, three-fold blade structure</li>
+<li>Applications: drone/UAV detection, aircraft classification, machinery diagnostics, human gait recognition</li>
 </ul>
-<p><strong>2. Rotating Component Physics</strong></p>
-<ul>
-<li>Calculated radial velocity: v_r(t) = ωR sin(θ(t))</li>
-<li>Determined maximum Doppler: f_d,max = 2ωRf_c/c</li>
-<li>Understood blade tip velocity dominance</li>
-<li>Recognized periodic modulation from blade passage</li>
-</ul>
-<p><strong>3. Micro-Doppler Characteristics</strong></p>
-<ul>
-<li>Identified blade flash (bright returns when perpendicular)</li>
-<li>Observed Doppler spread (hub to tip velocity range)</li>
-<li>Counted harmonic structure (3 patterns for 3 blades)</li>
-<li>Analyzed sinusoidal time-varying pattern</li>
-</ul>
-<p><strong>4. FMCW Radar Configuration</strong></p>
-<ul>
-<li>Used 24 GHz (K-band) for good spatial resolution</li>
-<li>Applied 8 GHz bandwidth for 1.875 cm range resolution</li>
-<li>Set 400 Hz PRF for ±31.25 m/s unambiguous velocity</li>
-<li>Configured 1,280 chirps for fine Doppler resolution (0.3125 Hz)</li>
-</ul>
-<p><strong>5. Target Modeling</strong></p>
-<ul>
-<li>Modeled 3-blade turbine with realistic geometry</li>
-<li>Configured continuous rotation at 30°/s (5 RPM)</li>
-<li>Set rotation axis for optimal micro-Doppler generation</li>
-<li>Captured 96° rotation over 3.2 second observation</li>
-</ul>
-<p><strong>6. Pulse-Level Ray Tracing</strong></p>
-<ul>
-<li>Used pulse-level simulation for computational efficiency</li>
-<li>Updated turbine orientation every 2.5 ms (per chirp)</li>
-<li>Captured instantaneous RCS at each orientation</li>
-<li>Built complete micro-Doppler signature efficiently</li>
-</ul>
-<p><strong>7. Range-Doppler Processing</strong></p>
-<ul>
-<li>Applied 2D FFT with Chebyshev windowing (60 dB)</li>
-<li>Used fftshift to center zero-Doppler frequency</li>
-<li>Generated range-Doppler map showing micro-motion</li>
-<li>Isolated turbine range for focused analysis</li>
-</ul>
-<p><strong>8. Signature Interpretation</strong></p>
-<ul>
-<li>Identified zero-Doppler hub return (stationary)</li>
-<li>Observed ±83 Hz Doppler spread (rotating blades)</li>
-<li>Recognized three-fold pattern (3 blades)</li>
-<li>Distinguished turbine from other target types</li>
-</ul>
-<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try modifying the parameters to explore different scenarios:</p>
-<p><strong>1. Rotation Rate Variations</strong>:</p>
-<ul>
-<li>Increase to 60°/s, 120°/s (faster rotation)</li>
-<li>Decrease to 10°/s (slower rotation)</li>
-<li>Observe Doppler spread changes: f_d ∝ ω</li>
-<li>Test detection at different speeds</li>
-</ul>
-<p><strong>2. Frequency Band Studies</strong>:</p>
-<ul>
-<li>Test different frequencies: 10 GHz, 77 GHz, 94 GHz</li>
-<li>Observe wavelength effect on Doppler: f_d ∝ f_c</li>
-<li>Compare micro-Doppler sensitivity</li>
-<li>Understand frequency selection trade-offs</li>
-</ul>
-<p><strong>3. Blade Count Variations</strong>:</p>
-<ul>
-<li>Model 2-blade, 4-blade, 5-blade turbines</li>
-<li>Observe pattern repetition per revolution</li>
-<li>Analyze harmonic structure differences</li>
-<li>Practice blade count estimation</li>
-</ul>
-<p><strong>4. Observation Time</strong>:</p>
-<ul>
-<li>Extend to 10 seconds (multiple revolutions)</li>
-<li>Reduce to 1 second (partial rotation)</li>
-<li>Observe Doppler resolution: Δf_d = 1/(N×PRP)</li>
-<li>Balance resolution vs. processing time</li>
-</ul>
-<p><strong>5. PRF Optimization</strong>:</p>
-<ul>
-<li>Increase PRF: 1 kHz, 2 kHz</li>
-<li>Observe unambiguous velocity reduction</li>
-<li>Test Doppler aliasing effects</li>
-<li>Understand PRF selection trade-offs</li>
-</ul>
-<p><strong>6. Bandwidth Studies</strong>:</p>
-<ul>
-<li>Reduce to 1 GHz, 2 GHz bandwidth</li>
-<li>Increase to 4 GHz (if possible)</li>
-<li>Observe range resolution impact</li>
-<li>Test target isolation capability</li>
-</ul>
-<p><strong>7. Range Variations</strong>:</p>
-<ul>
-<li>Place turbine at 10m, 20m, 50m</li>
-<li>Observe SNR degradation with range</li>
-<li>Test maximum detection range</li>
-<li>Understand link budget effects</li>
-</ul>
-<p><strong>8. Multiple Turbines</strong>:</p>
-<ul>
-<li>Add second turbine at different range</li>
-<li>Configure different rotation rates</li>
-<li>Test simultaneous detection</li>
-<li>Practice multi-target separation</li>
-</ul>
-<p><strong>9. Orientation Studies</strong>:</p>
-<ul>
-<li>Rotate axis: test (30,0,0) yaw rotation</li>
-<li>Try (0,0,30) roll rotation</li>
-<li>Observe aspect angle effects</li>
-<li>Understand optimal viewing geometry</li>
-</ul>
-<p><strong>10. Time-Frequency Analysis</strong>:</p>
-<ul>
-<li>Extract single range bin time series</li>
-<li>Compute spectrogram (STFT)</li>
-<li>Analyze micro-Doppler evolution</li>
-<li>Compare with range-Doppler map</li>
-</ul>
+<h3 id="Things-to-Try">Things to Try<a class="anchor-link" href="#Things-to-Try">¶</a></h3><table>
+<thead>
+<tr>
+<th>Experiment</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vary rotation rate</td>
+<td>Try 10°/s, 60°/s, 120°/s; observe Doppler spread f_d ∝ ω</td>
+</tr>
+<tr>
+<td>Change frequency</td>
+<td>Test 10 GHz, 77 GHz; note Doppler sensitivity f_d ∝ f_c</td>
+</tr>
+<tr>
+<td>Adjust blade count</td>
+<td>Model 2-, 4-, or 5-blade turbines; observe pattern repetition</td>
+</tr>
+<tr>
+<td>Extend observation</td>
+<td>Use 10 s (multiple full rotations); improve Doppler resolution</td>
+</tr>
+<tr>
+<td>Optimize PRF</td>
+<td>Try 1 kHz PRF; observe unambiguous velocity trade-off</td>
+</tr>
+<tr>
+<td>Vary range</td>
+<td>Place turbine at 10 m, 20 m; observe SNR vs. distance</td>
+</tr>
+<tr>
+<td>Add second turbine</td>
+<td>Different rotation rate; test multi-target separation</td>
+</tr>
+<tr>
+<td>Extract STFT</td>
+<td>Compute spectrogram from single range bin; detailed time-frequency analysis</td>
+</tr>
+</tbody>
+</table>
 <h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
-<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
-<li>RadarSimPy Simulator Module: <a href="https://radarsimx.github.io/radarsimpy/simulator.html">https://radarsimx.github.io/radarsimpy/simulator.html</a></li>
-<li>Micro-Doppler Theory: Time-varying Doppler from micro-motions</li>
-<li>Rotating Scatterers: Blade flash and sinusoidal modulation</li>
-<li>Range-Doppler Processing: Two-dimensional FFT techniques</li>
-<li>Time-Frequency Analysis: STFT and spectrograms</li>
-<li>Target Classification: Signature-based recognition</li>
-<li>Drone Detection: UAV identification via micro-Doppler</li>
-<li>Human Activity Recognition: Gait analysis and classification</li>
-<li>Machinery Diagnostics: Vibration and fault detection</li>
+<li><a href="https://radarsimx.com/radarsimpy/">RadarSimPy Documentation</a></li>
+<li><a href="https://ieeexplore.ieee.org/document/1603402">Micro-Doppler Phenomena</a> — Chen et al., IEEE Trans. AES, 2006</li>
+<li><a href="https://ieeexplore.ieee.org/document/6034041">Radar Micro-Doppler Signatures</a> — Chen, IET, 2011</li>
 </ul>
 </div>
 </div>

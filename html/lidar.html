@@ -250,7 +250,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>`RadarSimPy` used in this example is version: 14.1.0
+<pre>`RadarSimPy` used in this example is version: 15.2.0
 </pre>
 </div>
 </div>
@@ -263,39 +263,14 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Lidar-Point-Cloud-Simulation-with-RadarSimPy">Lidar Point Cloud Simulation with RadarSimPy<a class="anchor-link" href="#Lidar-Point-Cloud-Simulation-with-RadarSimPy">¶</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><p>This notebook demonstrates how to use <strong>RadarSimPy's ray tracing engine</strong> to generate lidar point clouds. RadarSimPy's <code>sim_lidar()</code> function leverages the same ray tracing capabilities used for radar simulation to create 3D point clouds from mesh-based scenes.</p>
-<p><strong>What You'll Learn:</strong></p>
-<ul>
-<li>Use <code>sim_lidar()</code> to generate point clouds from 3D scenes</li>
-<li>Configure lidar scanning parameters (angles and position)</li>
-<li>Load and position 3D mesh models as targets (STL, OBJ, and other common formats)</li>
-<li>Simulate dynamic scenes with moving objects</li>
-<li>Generate time-sequence point clouds</li>
-<li>Visualize 3D point cloud data</li>
+<h1 id="Lidar-Point-Cloud-Simulation-with-RadarSimPy">Lidar Point Cloud Simulation with RadarSimPy<a class="anchor-link" href="#Lidar-Point-Cloud-Simulation-with-RadarSimPy">¶</a></h1><p>RadarSimPy's ray tracing engine traces rays through 3D mesh models to generate lidar point clouds — the same infrastructure used for radar RCS simulation.</p>
+<h3 id="This-Example">This Example<a class="anchor-link" href="#This-Example">¶</a></h3><ul>
+<li><strong>Scene</strong>: 5 objects (ground plane + 4 vehicles), mix of static and moving targets</li>
+<li><strong>Sensor</strong>: 360° azimuth × 40° elevation, 1° steps → 14,400 rays/scan at 1.5 m height</li>
+<li><strong>Motion</strong>: Cars 2 &amp; 4 auto-positioned via <code>speed</code>; Car 3 follows a manual turning path</li>
+<li><strong>Output</strong>: Time-sequence of 6 point clouds over 2.5 s</li>
 </ul>
-<p><strong>RadarSimPy's Ray Tracing Approach:</strong></p>
-<p>The ray tracing engine in RadarSimPy:</p>
-<ul>
-<li>Traces rays through 3D mesh models (supports STL, OBJ, and other common formats)</li>
-<li>Computes first intersection points (lidar returns)</li>
-<li>Handles complex geometries and occlusion automatically</li>
-<li>Supports both static and dynamic objects</li>
-<li>Can be used for both radar and lidar simulation</li>
-</ul>
-<p><strong>Key Feature</strong>: The same ray tracing infrastructure supports both electromagnetic (radar) and optical (lidar) wavelengths, making RadarSimPy versatile for sensor simulation.</p>
-<h2 id="Define-Scene-with-3D-Models">Define Scene with 3D Models<a class="anchor-link" href="#Define-Scene-with-3D-Models">¶</a></h2><p>RadarSimPy supports most common 3D model formats including <strong>STL, OBJ</strong>, and others. Each target is configured as a Python dictionary with the following properties:</p>
-<p><strong>Required Parameters:</strong></p>
-<ul>
-<li><code>model</code>: Path to 3D model file (e.g., .stl, .obj)</li>
-</ul>
-<p><strong>Optional Parameters:</strong></p>
-<ul>
-<li><code>location</code>: [x, y, z] position in meters (default: [0, 0, 0])</li>
-<li><code>rotation</code>: [yaw, pitch, roll] angles in degrees (default: [0, 0, 0])</li>
-<li><code>speed</code>: [vx, vy, vz] velocity in m/s (for automatic motion)</li>
-<li><code>rotation_rate</code>: [yaw_rate, pitch_rate, roll_rate] in deg/s</li>
-</ul>
-<h3 id="Scene-Configuration">Scene Configuration<a class="anchor-link" href="#Scene-Configuration">¶</a></h3><p>This example creates a multi-vehicle scene with 5 objects. Each object demonstrates different RadarSimPy configuration options:</p>
+<h2 id="Define-Scene-with-3D-Models">Define Scene with 3D Models<a class="anchor-link" href="#Define-Scene-with-3D-Models">¶</a></h2><h3 id="Import-Required-Modules">Import Required Modules<a class="anchor-link" href="#Import-Required-Modules">¶</a></h3>
 </div>
 </div>
 </div>
@@ -308,8 +283,33 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
 
-<span class="n">car3_speed</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># m/s</span>
+<span class="c1"># Set to True for interactive plots; False renders a static JPEG (e.g. for HTML export)</span>
+<span class="n">INTERACTIVE</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="n">fig</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">INTERACTIVE</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">car3_speed</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># m/s</span>
 <span class="n">car3_yaw</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># deg/s</span>
 
 <span class="n">ground</span> <span class="o">=</span> <span class="p">{</span>
@@ -357,15 +357,42 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Configure-Target-Objects">Configure Target Objects<a class="anchor-link" href="#Configure-Target-Objects">¶</a></h4><p>Each target dictionary configures a 3D model with position and motion parameters:</p>
-<ul>
-<li><strong>Ground</strong>: Static plane (only <code>model</code> specified, uses default position)</li>
-<li><strong>Car 1</strong>: Static vehicle using <code>location</code> parameter</li>
-<li><strong>Car 2</strong>: Moving vehicle using <code>speed</code> parameter for automatic motion</li>
-<li><strong>Car 3</strong>: Vehicle with manual trajectory control (updated in simulation loop)</li>
-<li><strong>Car 4</strong>: Moving vehicle with both <code>speed</code> and initial <code>rotation_rate</code> specified</li>
-</ul>
-<p><strong>Note</strong>: In this example, all models use <code>.stl</code> format, but RadarSimPy also supports <code>.obj</code> and other common 3D formats.</p>
+<h3 id="Target-Object-Configuration">Target Object Configuration<a class="anchor-link" href="#Target-Object-Configuration">¶</a></h3><table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Motion type</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ground</td>
+<td>Static</td>
+<td><code>model</code> only</td>
+</tr>
+<tr>
+<td>Car 1</td>
+<td>Static</td>
+<td><code>location</code></td>
+</tr>
+<tr>
+<td>Car 2</td>
+<td>Linear</td>
+<td><code>speed</code> auto-motion</td>
+</tr>
+<tr>
+<td>Car 3</td>
+<td>Turning</td>
+<td>Manual <code>location</code>/<code>rotation</code> update</td>
+</tr>
+<tr>
+<td>Car 4</td>
+<td>Linear</td>
+<td><code>speed</code> auto-motion</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -376,40 +403,33 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Configure-Lidar-Using-RadarSimPy">Configure Lidar Using RadarSimPy<a class="anchor-link" href="#Configure-Lidar-Using-RadarSimPy">¶</a></h2><p>RadarSimPy's <code>sim_lidar()</code> function requires a lidar configuration dictionary with three parameters:</p>
-<h3 id="Lidar-Dictionary-Parameters">Lidar Dictionary Parameters<a class="anchor-link" href="#Lidar-Dictionary-Parameters">¶</a></h3><div class="highlight"><pre><span></span><span class="n">lidar</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"position"</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>      <span class="c1"># Sensor location (meters)</span>
-    <span class="s2">"phi"</span><span class="p">:</span> <span class="n">array</span><span class="p">,</span>               <span class="c1"># Horizontal scan angles (degrees)</span>
-    <span class="s2">"theta"</span><span class="p">:</span> <span class="n">array</span>              <span class="c1"># Vertical scan angles (degrees)</span>
-<span class="p">}</span>
-</pre></div>
-<p><strong>Parameter Details:</strong></p>
-<ol>
-<li><p><strong>position</strong>: [x, y, z] coordinates in meters</p>
-<ul>
-<li>Defines where the lidar sensor is located in the scene</li>
-<li>Example: <code>[0, 0, 1.5]</code> places sensor at origin, 1.5m above ground</li>
-</ul>
-</li>
-<li><p><strong>phi</strong> (φ): Horizontal (azimuth) scanning angles</p>
-<ul>
-<li>Array of angles in degrees</li>
-<li>Example: <code>np.arange(0, 360, 1)</code> creates 360 rays covering full circle</li>
-<li>Resolution: angle step size determines azimuth resolution</li>
-</ul>
-</li>
-<li><p><strong>theta</strong> (θ): Vertical (elevation) scanning angles</p>
-<ul>
-<li>Array of angles in degrees</li>
-<li>90° = horizontal, &lt;90° = downward, &gt;90° = upward</li>
-<li>Example: <code>np.arange(70, 110, 1)</code> creates 40° vertical FOV</li>
-</ul>
-</li>
-</ol>
-<p><strong>Total Rays</strong>: RadarSimPy launches <code>len(phi) × len(theta)</code> rays per scan</p>
-<ul>
-<li>In this example: 360 × 40 = 14,400 rays</li>
-</ul>
+<h2 id="Configure-Lidar-Sensor">Configure Lidar Sensor<a class="anchor-link" href="#Configure-Lidar-Sensor">¶</a></h2><p>The lidar dictionary requires three keys: sensor <code>position</code>, azimuth angles <code>phi</code>, and elevation angles <code>theta</code>. Total rays = <code>len(phi) × len(theta)</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>position</code></td>
+<td>[0, 0, 1.5]</td>
+<td>Sensor at origin, 1.5 m above ground</td>
+</tr>
+<tr>
+<td><code>phi</code></td>
+<td>0°–359°, 1° step</td>
+<td>Full 360° azimuth scan</td>
+</tr>
+<tr>
+<td><code>theta</code></td>
+<td>70°–109°, 1° step</td>
+<td>40° vertical FOV (90° = horizontal)</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -418,7 +438,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">lidar</span> <span class="o">=</span> <span class="p">{</span>
@@ -438,35 +458,8 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Use-sim_lidar()-to-Generate-Point-Clouds">Use sim_lidar() to Generate Point Clouds<a class="anchor-link" href="#Use-sim_lidar()-to-Generate-Point-Clouds">¶</a></h2><p>The <code>sim_lidar()</code> function is the core RadarSimPy API for generating lidar point clouds.</p>
-<h3 id="Function-Signature">Function Signature<a class="anchor-link" href="#Function-Signature">¶</a></h3><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">radarsimpy.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_lidar</span>
-
-<span class="n">points</span> <span class="o">=</span> <span class="n">sim_lidar</span><span class="p">(</span><span class="n">lidar</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">frame_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-</pre></div>
-<h3 id="Parameters">Parameters<a class="anchor-link" href="#Parameters">¶</a></h3><ul>
-<li><strong>lidar</strong>: Dictionary with <code>position</code>, <code>phi</code>, and <code>theta</code> (as configured above)</li>
-<li><strong>targets</strong>: List of target dictionaries (STL models with positions/motion)</li>
-<li><strong>frame_time</strong> (optional): Timestamp for the simulation frame (default: 0.0)<ul>
-<li>Used to evaluate target positions when <code>speed</code> parameter is defined</li>
-<li>Allows time-sequence simulations</li>
-</ul>
-</li>
-</ul>
-<h3 id="Return-Value">Return Value<a class="anchor-link" href="#Return-Value">¶</a></h3><p>Returns a dictionary containing:</p>
-<ul>
-<li><strong><code>positions</code></strong>: NumPy array of shape (N, 3) with [x, y, z] coordinates<ul>
-<li>Each row is one lidar return point</li>
-<li>N = number of rays that hit objects (rays missing all objects are excluded)</li>
-</ul>
-</li>
-</ul>
-<h3 id="Time-Sequence-Simulation">Time-Sequence Simulation<a class="anchor-link" href="#Time-Sequence-Simulation">¶</a></h3><p>To simulate dynamic scenes, call <code>sim_lidar()</code> multiple times:</p>
-<ol>
-<li>Generate point cloud at time t using <code>frame_time=t</code></li>
-<li>Update target positions/rotations (for manual motion control)</li>
-<li>Repeat for next time step</li>
-</ol>
-<p><strong>Note</strong>: Targets with <code>speed</code> parameter are automatically positioned based on <code>frame_time</code>. For complex motion (e.g., turning), manually update <code>location</code> and <code>rotation</code> between frames.</p>
+<h2 id="Simulate-Point-Clouds">Simulate Point Clouds<a class="anchor-link" href="#Simulate-Point-Clouds">¶</a></h2><p><code>sim_lidar(lidar, targets, frame_time)</code> traces rays and returns all hit positions as a <code>(N, 3)</code> array. Each call advances the scene to <code>frame_time</code>: targets with <code>speed</code> are auto-positioned; Car 3's turning path is updated manually between calls.</p>
+<p>Output: <code>points[i]["positions"]</code> → NumPy array of shape <code>(N, 3)</code> for frame <code>i</code>.</p>
 </div>
 </div>
 </div>
@@ -475,7 +468,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -511,7 +504,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Exection time: 8.805810451507568 s
+<pre>Exection time: 8.244309902191162 s
 </pre>
 </div>
 </div>
@@ -524,18 +517,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Visualize-Point-Cloud-Results">Visualize Point Cloud Results<a class="anchor-link" href="#Visualize-Point-Cloud-Results">¶</a></h2><p>Use Plotly to visualize the point cloud data returned by <code>sim_lidar()</code>.</p>
-<h3 id="Accessing-Point-Cloud-Data">Accessing Point Cloud Data<a class="anchor-link" href="#Accessing-Point-Cloud-Data">¶</a></h3><p>The returned dictionary contains:</p>
-<div class="highlight"><pre><span></span><span class="n">points</span><span class="p">[</span><span class="n">frame_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># X coordinates</span>
-<span class="n">points</span><span class="p">[</span><span class="n">frame_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Y coordinates</span>
-<span class="n">points</span><span class="p">[</span><span class="n">frame_idx</span><span class="p">][</span><span class="s2">"positions"</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># Z coordinates</span>
-</pre></div>
-<h3 id="Visualization-Code">Visualization Code<a class="anchor-link" href="#Visualization-Code">¶</a></h3><p>This example creates a 3×2 grid showing 6 time frames:</p>
-<ul>
-<li>Each subplot is a 3D scatter plot of the point cloud</li>
-<li>Points are colored by height (z-coordinate) using a colorscale</li>
-<li><code>aspectmode="data"</code> maintains correct proportions</li>
-</ul>
+<h3 id="Visualize-Point-Cloud-Results">Visualize Point Cloud Results<a class="anchor-link" href="#Visualize-Point-Cloud-Results">¶</a></h3><p>Display 6 frames as a 3×2 subplot grid. Points are colored by height (z-coordinate).</p>
 </div>
 </div>
 </div>
@@ -544,14 +526,10 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
     <span class="n">rows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">cols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
@@ -592,12 +570,7 @@ a.anchor-link {
 
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">"plotly_dark"</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
 
-<span class="c1"># uncomment this to display interactive plot</span>
-<span class="c1"># fig.show()</span>
-
-<span class="c1"># display static image to reduce size on radarsimx.com</span>
-<span class="n">img_bytes</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_image</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"jpg"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">img_bytes</span><span class="p">))</span>
+<span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -622,114 +595,45 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Summary-and-Key-Takeaways">Summary and Key Takeaways<a class="anchor-link" href="#Summary-and-Key-Takeaways">¶</a></h2><h3 id="RadarSimPy-Functions-Used">RadarSimPy Functions Used<a class="anchor-link" href="#RadarSimPy-Functions-Used">¶</a></h3><p>This notebook demonstrated the following RadarSimPy capabilities:</p>
-<ol>
-<li><p><strong><code>sim_lidar(lidar, targets, frame_time)</code></strong>: Main function for point cloud generation</p>
-<ul>
-<li>Accepts lidar configuration dictionary</li>
-<li>Processes list of target dictionaries (STL models)</li>
-<li>Returns dictionary with <code>positions</code> array</li>
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary">¶</a></h2><ul>
+<li><code>sim_lidar()</code> uses ray tracing on 3D meshes to return a point cloud per scan frame.</li>
+<li>Scan resolution is set by <code>phi</code>/<code>theta</code> step sizes; finer steps increase point density and compute time.</li>
+<li>Two motion modes: <strong>auto</strong> (<code>speed</code> + <code>frame_time</code>) for linear paths, <strong>manual</strong> (update <code>location</code>/<code>rotation</code> between calls) for complex trajectories.</li>
 </ul>
-</li>
-<li><p><strong>STL Mesh Loading</strong>: Automatic handling of 3D models</p>
-<ul>
-<li>Specify path in <code>model</code> parameter</li>
-<li>RadarSimPy loads and triangulates meshes internally</li>
-</ul>
-</li>
-<li><p><strong>Ray Tracing Engine</strong>: Behind-the-scenes processing</p>
-<ul>
-<li>Launches rays at specified angles</li>
-<li>Computes intersections with mesh triangles</li>
-<li>Returns first hit points (lidar returns)</li>
-</ul>
-</li>
-<li><p><strong>Motion Handling</strong>: Two approaches</p>
-<ul>
-<li>Automatic: Use <code>speed</code> parameter with <code>frame_time</code></li>
-<li>Manual: Update <code>location</code> and <code>rotation</code> between calls</li>
-</ul>
-</li>
-</ol>
-<h3 id="RadarSimPy-Configuration-Best-Practices">RadarSimPy Configuration Best Practices<a class="anchor-link" href="#RadarSimPy-Configuration-Best-Practices">¶</a></h3><p><strong>Lidar Configuration:</strong></p>
-<div class="highlight"><pre><span></span><span class="n">lidar</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"position"</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>           <span class="c1"># Sensor location</span>
-    <span class="s2">"phi"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">),</span>     <span class="c1"># Horizontal angles</span>
-    <span class="s2">"theta"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>    <span class="c1"># Vertical angles</span>
-<span class="p">}</span>
-</pre></div>
-<p><strong>Target Configuration:</strong></p>
-<div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"path/to/file.stl"</span><span class="p">,</span>     <span class="c1"># Required: 3D model file (.stl, .obj, etc.)</span>
-    <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>           <span class="c1"># Optional: position (default [0,0,0])</span>
-    <span class="s2">"rotation"</span><span class="p">:</span> <span class="p">[</span><span class="n">yaw</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">roll</span><span class="p">],</span>  <span class="c1"># Optional: orientation (default [0,0,0])</span>
-    <span class="s2">"speed"</span><span class="p">:</span> <span class="p">[</span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">vz</span><span class="p">],</span>          <span class="c1"># Optional: velocity for auto-motion</span>
-    <span class="s2">"rotation_rate"</span><span class="p">:</span> <span class="p">[</span><span class="n">yaw_rate</span><span class="p">,</span> <span class="n">pitch_rate</span><span class="p">,</span> <span class="n">roll_rate</span><span class="p">]</span>  <span class="c1"># Optional: angular velocity</span>
-<span class="p">}</span>
-</pre></div>
-<h3 id="Practical-Usage-Tips">Practical Usage Tips<a class="anchor-link" href="#Practical-Usage-Tips">¶</a></h3><ol>
-<li><p><strong>Angular Resolution vs. Performance:</strong></p>
-<ul>
-<li>Finer angle steps → more rays → higher point density → longer computation</li>
-<li>Example: 0.5° step = 4× more rays than 1° step</li>
-<li>Balance resolution needs with computation time</li>
-</ul>
-</li>
-<li><p><strong>3D Model Format Support:</strong></p>
-<ul>
-<li>RadarSimPy supports most common 3D formats: STL, OBJ, and others</li>
-<li>Models should be closed, manifold meshes for best results</li>
-<li>Units should be consistent (typically meters)</li>
-<li>Models from CAD software or online repositories work well</li>
-</ul>
-</li>
-<li><p><strong>Scene Complexity:</strong></p>
-<ul>
-<li>More triangles = longer ray tracing time</li>
-<li>Simplify models if performance is critical</li>
-<li>RadarSimPy handles occlusion automatically</li>
-</ul>
-</li>
-<li><p><strong>Motion Simulation:</strong></p>
-<ul>
-<li>Use <code>speed</code> for simple linear motion</li>
-<li>Use manual updates for complex trajectories</li>
-<li>Update targets list between <code>sim_lidar()</code> calls</li>
-</ul>
-</li>
-</ol>
-<h3 id="Experiment-Further">Experiment Further<a class="anchor-link" href="#Experiment-Further">¶</a></h3><p>Try these modifications to explore RadarSimPy's capabilities:</p>
-<ol>
-<li><p><strong>Adjust scanning resolution:</strong></p>
-<div class="highlight"><pre><span></span><span class="s2">"phi"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>     <span class="c1"># Higher resolution</span>
-<span class="s2">"theta"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
-</pre></div>
-</li>
-<li><p><strong>Change sensor position:</strong></p>
-<div class="highlight"><pre><span></span><span class="s2">"position"</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>  <span class="c1"># Different viewpoint</span>
-</pre></div>
-</li>
-<li><p><strong>Add more targets:</strong></p>
-<div class="highlight"><pre><span></span><span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"model"</span><span class="p">:</span> <span class="s2">"path/to/new_object.stl"</span><span class="p">,</span> <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]})</span>
-<span class="c1"># Or use other formats: .obj, etc.</span>
-<span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"model"</span><span class="p">:</span> <span class="s2">"path/to/object.obj"</span><span class="p">,</span> <span class="s2">"location"</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]})</span>
-</pre></div>
-</li>
-<li><p><strong>Modify motion parameters:</strong></p>
-<div class="highlight"><pre><span></span><span class="s2">"speed"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># Diagonal motion</span>
-<span class="s2">"rotation_rate"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">]</span>  <span class="c1"># Rotating object</span>
-</pre></div>
-</li>
-</ol>
-<h3 id="Related-RadarSimPy-Functions">Related RadarSimPy Functions<a class="anchor-link" href="#Related-RadarSimPy-Functions">¶</a></h3><ul>
-<li><strong><code>sim_radar()</code></strong>: For radar simulation with same targets</li>
-<li><strong><code>rcs_sbr()</code></strong>: For RCS computation using shooting-and-bouncing rays</li>
-<li><strong>Ray tracing</strong>: Same engine powers both lidar and radar simulations</li>
-</ul>
+<h3 id="Things-to-Try">Things to Try<a class="anchor-link" href="#Things-to-Try">¶</a></h3><table>
+<thead>
+<tr>
+<th>Experiment</th>
+<th>Parameter to change</th>
+<th>Observable effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Higher resolution</td>
+<td>Decrease <code>phi</code>/<code>theta</code> step to 0.5°</td>
+<td>4× more points, longer runtime</td>
+</tr>
+<tr>
+<td>Wider vertical FOV</td>
+<td>Extend <code>theta</code> range</td>
+<td>More coverage above/below horizon</td>
+</tr>
+<tr>
+<td>Different viewpoint</td>
+<td>Change <code>position</code></td>
+<td>Different occlusion patterns</td>
+</tr>
+<tr>
+<td>Add a target</td>
+<td>Append dict to <code>targets</code></td>
+<td>New object appears in point cloud</td>
+</tr>
+</tbody>
+</table>
 <h3 id="Resources">Resources<a class="anchor-link" href="#Resources">¶</a></h3><ul>
-<li>RadarSimPy Documentation: <a href="https://radarsimx.com">https://radarsimx.com</a></li>
-<li>API Reference: <a href="https://radarsimx.github.io/radarsimpy/">https://radarsimx.github.io/radarsimpy/</a></li>
-<li>GitHub Repository: <a href="https://github.com/radarsimx/radarsimpy">https://github.com/radarsimx/radarsimpy</a></li>
+<li><a href="https://radarsimx.github.io/radarsimpy/index.html">RadarSimPy Documentation</a></li>
+<li><a href="https://radarsimx.github.io/radarsimpy/api/sim.html">Simulator Module API</a></li>
 </ul>
 </div>
 </div>
