@@ -1,0 +1,15 @@
+# Python dependencies for the RadarSimNb notebooks.
+# RadarSimPy is not listed here: download it from https://radarsimx.com and
+# unzip the `radarsimpy` folder into notebooks/.
+numpy
+scipy
+pandas
+plotly
+kaleido  # static image export for plotly figures (fig.to_image)
+pymeshlab
+ipython
+jupyterlab
+
+# Tooling (scripts/export_html.py, scripts/build_index.py)
+nbconvert
+pyyaml

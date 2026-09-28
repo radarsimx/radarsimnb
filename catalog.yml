@@ -1,0 +1,200 @@
+# Single source of truth for notebook categories, titles, and website posts.
+# The README "Notebooks" section is generated from this file:
+#   python scripts/build_index.py
+#
+# Notebook filenames are prefixed with their category key (e.g. imaging_pulse_sar.ipynb).
+
+categories:
+  waveform:
+    name: Radar Waveforms
+    site_slug: radar-systems-waveforms
+    description: Waveform design and the processing chain that goes with it.
+  mimo:
+    name: MIMO & Array Processing
+    site_slug: mimo-multi-channel-systems
+    description: Multi-channel radars, virtual arrays, and direction-of-arrival estimation.
+  imaging:
+    name: Radar Imaging (SAR & MIMO)
+    site_slug: radar-imaging
+    description: Forming radar images with synthetic apertures and MIMO arrays.
+  scene:
+    name: 3D Scenes & Ray Tracing
+    site_slug: 3d-scene-simulation-ray-tracing
+    description: Ray-traced mesh targets, moving platforms, and propagation effects.
+  rcs:
+    name: Radar Cross Section (RCS)
+    site_slug: radar-cross-section-rcs-analysis
+    description: Monostatic, bistatic, and polarimetric RCS of mesh targets.
+  detection:
+    name: Detection & Link Budget
+    site_slug: signal-processing-detection
+    description: Detection theory, CFAR, and end-to-end SNR analysis.
+  impairment:
+    name: Impairments & Interference
+    site_slug: impairments-interference
+    description: Hardware non-idealities and mutual interference.
+  lidar:
+    name: LiDAR Simulation
+    site_slug: lidar-simulation
+    description: Ray-traced LiDAR point clouds.
+
+notebooks:
+  # --- Radar Waveforms ---
+  - notebook: waveform_fmcw_radar
+    category: waveform
+    title: "FMCW Radar: Complete Range-Doppler Processing"
+    post: https://radarsimx.com/2018/10/11/fmcw-radar/
+  - notebook: waveform_pulsed_radar
+    category: waveform
+    title: "Pulsed Radar: Range Measurement with Matched Filtering"
+    post: https://radarsimx.com/2024/09/13/pulsed-radar/
+  - notebook: waveform_pulsed_radar_range_ambiguous
+    category: waveform
+    title: "Pulsed Radar: Range Ambiguity"
+    post: null
+  - notebook: waveform_pulse_doppler
+    category: waveform
+    title: "Pulse-Doppler Radar: Long-Range Detection with Doppler Processing"
+    post: null
+  - notebook: waveform_doppler_radar
+    category: waveform
+    title: "Doppler Radar: Continuous Wave Velocity Measurement"
+    post: https://radarsimx.com/2019/05/16/doppler-radar/
+  - notebook: waveform_pmcw_radar
+    category: waveform
+    title: "PMCW Radar: Phase-Modulated Continuous Wave"
+    post: https://radarsimx.com/2019/05/24/pmcw-radar/
+  - notebook: waveform_ofdm_radar
+    category: waveform
+    title: "OFDM Radar: Orthogonal Frequency Division Multiplexing"
+    post: https://radarsimx.com/2026/09/14/ofdm-radar/
+  - notebook: waveform_otfs_radar
+    category: waveform
+    title: "OTFS Radar: Orthogonal Time Frequency Space"
+    post: null
+  - notebook: waveform_interferometric_radar
+    category: waveform
+    title: "Interferometric Radar: Phase-Based Motion Detection"
+    post: https://radarsimx.com/2023/08/31/interferometric-radar/
+
+  # --- MIMO & Array Processing ---
+  - notebook: mimo_tdm_fmcw_radar
+    category: mimo
+    title: "TDM MIMO FMCW Radar: Virtual Array Beamforming"
+    post: https://radarsimx.com/2019/04/07/tdm-mimo-fmcw-radar/
+  - notebook: mimo_fmcw_doa
+    category: mimo
+    title: "Direction of Arrival (DoA) Estimation with FMCW Radar"
+    post: https://radarsimx.com/2022/12/12/doa-estimation/
+
+  # --- Radar Imaging (SAR & MIMO) ---
+  - notebook: imaging_pulse_sar
+    category: imaging
+    title: "Pulse Radar SAR Imaging: Strip-Map SAR via Back-Projection"
+    post: https://radarsimx.com/2026/06/30/pulse-radar-sar-imaging/
+  - notebook: imaging_sar_parking_lot
+    category: imaging
+    title: "SAR Survey of a Parking Lot"
+    post: https://radarsimx.com/2026/07/22/sar-survey-of-a-parking-lot/
+  - notebook: imaging_mimo_fmcw
+    category: imaging
+    title: "MIMO Imaging Radar"
+    post: https://radarsimx.com/2022/12/02/imaging-radar/
+
+  # --- 3D Scenes & Ray Tracing ---
+  - notebook: scene_fmcw_car
+    category: scene
+    title: "FMCW Automotive Radar: Vehicle Detection and Tracking"
+    post: https://radarsimx.com/2021/05/10/fmcw-radar-with-a-car/
+  - notebook: scene_fmcw_plate
+    category: scene
+    title: "FMCW Radar RCS Measurement: Rotating Flat Plate"
+    post: https://radarsimx.com/2021/05/10/fmcw-radar-with-a-plate/
+  - notebook: scene_fmcw_corner_reflector
+    category: scene
+    title: "FMCW Radar with Corner Reflector and CFAR Detection"
+    post: https://radarsimx.com/2021/05/10/fmcw-radar-with-a-corner-reflector/
+  - notebook: scene_doppler_turbine
+    category: scene
+    title: "Doppler Signature of a Rotating Wind Turbine"
+    post: https://radarsimx.com/2021/05/10/doppler-of-a-turbine/
+  - notebook: scene_micro_doppler
+    category: scene
+    title: "Micro-Doppler Signatures: Rotating Turbine"
+    post: https://radarsimx.com/2021/05/10/micro-doppler/
+  - notebook: scene_multi_path
+    category: scene
+    title: "Multipath Effect in Radar: Ground Reflection Analysis"
+    post: https://radarsimx.com/2021/05/10/multi-path-effect/
+  - notebook: scene_mounting_heights
+    category: scene
+    title: "Vertical Multipath Effect at Different Mounting Heights"
+    post: null
+  - notebook: scene_radar_motion_plan
+    category: scene
+    title: "FMCW Radar with Motion Planning"
+    post: https://radarsimx.com/2025/11/20/fmcw-radar-with-motion-planning/
+  - notebook: scene_pulse_radar_altimeter
+    category: scene
+    title: "Pulse Radar Altimeter: Altitude Measurement over Terrain"
+    post: https://radarsimx.com/2025/11/21/pulse-radar-altimeter-altitude/
+  - notebook: scene_state_visualization
+    category: scene
+    title: "Scene State Visualization and Retrieval"
+    post: null
+
+  # --- Radar Cross Section (RCS) ---
+  - notebook: rcs_car
+    category: rcs
+    title: "Radar Cross Section (RCS) of a Car"
+    post: https://radarsimx.com/2021/05/10/car-rcs/
+  - notebook: rcs_plate
+    category: rcs
+    title: "Radar Cross Section (RCS) of a 5 m × 5 m Flat Plate"
+    post: https://radarsimx.com/2021/05/10/plate-rcs/
+  - notebook: rcs_corner_reflector
+    category: rcs
+    title: "Radar Cross Section (RCS) of a Corner Reflector"
+    post: https://radarsimx.com/2021/05/10/corner-reflector-rcs/
+  - notebook: rcs_polarization
+    category: rcs
+    title: "RCS Polarimetry: Co-Pol vs. Cross-Pol"
+    post: https://radarsimx.com/2024/04/19/cross-polarization-and-co-polarization-rcs/
+
+  # --- Detection & Link Budget ---
+  - notebook: detection_cfar
+    category: detection
+    title: "CFAR Detection"
+    post: https://radarsimx.com/2021/01/10/cfar/
+  - notebook: detection_roc
+    category: detection
+    title: "Receiver Operating Characteristic (ROC) Analysis"
+    post: https://radarsimx.com/2019/10/06/receiver-operating-characteristic/
+  - notebook: detection_link_budget_point_target
+    category: detection
+    title: "FMCW Radar Link Budget Analysis (Point Target)"
+    post: https://radarsimx.com/2024/10/11/fmcw-radar-link-budget-point-target/
+  - notebook: detection_link_budget_mesh_target
+    category: detection
+    title: "FMCW Radar Link Budget Analysis (Mesh Target)"
+    post: https://radarsimx.com/2025/06/05/fmcw-radar-link-budget-mesh-target/
+
+  # --- Impairments & Interference ---
+  - notebook: impairment_phase_noise
+    category: impairment
+    title: "Phase Noise Simulation"
+    post: https://radarsimx.com/2021/01/13/phase-noise/
+  - notebook: impairment_non_linear_chirp
+    category: impairment
+    title: "Chirp Non-Linearity in FMCW Radar: Impact on Performance"
+    post: https://radarsimx.com/2021/05/10/arbitrary-waveform/
+  - notebook: impairment_fmcw_interference
+    category: impairment
+    title: "FMCW Radar Mutual Interference: Victim and Interferer Analysis"
+    post: https://radarsimx.com/2023/01/13/interference/
+
+  # --- LiDAR Simulation ---
+  - notebook: lidar_point_cloud
+    category: lidar
+    title: "Lidar Point Cloud Simulation with RadarSimPy"
+    post: https://radarsimx.com/2020/02/05/lidar-point-cloud/
